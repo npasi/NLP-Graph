@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# BookNLP model cache
+*.model
+*.bin
+*.pt
+*.safetensors
+
+# Large data files
+baseline/data/raw/*.txt
+baseline/data/processed/
+!baseline/data/raw/.gitkeep
+!baseline/data/processed/.gitkeep
+
+# Outputs (graphs are generated, not versioned)
+baseline/outputs/baseline_graphs/*.graphml
+baseline/outputs/baseline_graphs/*.json
+!baseline/outputs/baseline_graphs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/

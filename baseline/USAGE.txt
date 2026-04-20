@@ -1,0 +1,172 @@
+================================================================================
+  BASELINE PIPELINE — USAGE GUIDE
+  Graph Extraction from Full Books with Domain-Adapted Pretrained Models
+================================================================================
+
+REQUIREMENTS
+------------
+  Python 3.10+
+
+  Install dependencies:
+    pip install -r requirements.txt
+
+  Note: BookNLP requires a working PyTorch installation.
+  If you have a GPU, install the CUDA-compatible torch first:
+    pip install torch --index-url https://download.pytorch.org/whl/cu118
+  Then install the rest:
+    pip install -r requirements.txt
+
+
+DIRECTORY LAYOUT
+----------------
+  baseline/
+  ├── data/
+  │   ├── raw/              ← place full-book .txt files here before running
+  │   ├── processed/        ← BookNLP outputs cached here automatically
+  │   └── gold_standard/    ← optional: {book_id}_ch{N}.graphml for evaluation
+  ├── src/
+  │   ├── baseline/         ← BookNLP wrapper, edge extractor, graph builder
+  │   ├── utils/            ← text cleaner, chapter splitter
+  │   └── evaluation/       ← graph metrics (P/R/F1, Jaccard, GED, polarity)
+  ├── outputs/
+  │   └── baseline_graphs/  ← output .graphml and _summary.json files land here
+  ├── requirements.txt
+  ├── main_baseline.py
+  └── USAGE.txt             ← this file
+
+
+BASIC RUN
+---------
+  From the baseline/ directory:
+
+    python main_baseline.py \
+        --book_path data/raw/pride_prejudice.txt \
+        --book_id   pride_prejudice \
+        --window    100 \
+        --min_freq  3
+
+  Arguments:
+    --book_path   Path to the full-book .txt file (Project Gutenberg format).
+    --book_id     Short identifier used for all output filenames.
+    --window      Co-occurrence window size in tokens (default: 100).
+    --min_freq    Minimum co-occurrence count to keep an edge (default: 3).
+    --evaluate    Flag — if set, compare against gold graphs in data/gold_standard/.
+
+
+STEP-BY-STEP WHAT HAPPENS
+--------------------------
+  1. SPLIT      The full book is split into chapters using regex detection
+                (CHAPTER I / Chapter 1 / CHAPTER ONE, etc.).
+                Files are saved to data/raw/{book_id}_ch01.txt, ch02.txt, ...
+                Preamble and appendices are discarded.
+
+  2. BOOKNLP    For each chapter, BookNLP (model: en_booknlp) runs NER and
+                coreference resolution. Outputs are cached in:
+                data/processed/{book_id}_ch{N}/
+                Re-running the pipeline uses the cache — BookNLP is NOT
+                invoked again if the output files already exist.
+
+  3. EDGES      Characters appearing within --window tokens of each other
+                are linked. Each co-occurrence event gets a VADER sentiment
+                score. Pairs below --min_freq are discarded.
+
+  4. GRAPH      A NetworkX undirected graph is built for each chapter:
+                  Nodes: canonical character names + mention_count
+                  Edges: weight, sentiment, polarity, label
+                Exported to:
+                  outputs/baseline_graphs/{book_id}_ch{N}.graphml
+                  outputs/baseline_graphs/{book_id}_ch{N}_summary.json
+
+  5. SUMMARY    A table is printed to stdout:
+                  Chapter | Nodes | Edges | Density | AvgSentiment
+
+
+OUTPUTS
+-------
+  For a book with K chapters you get:
+
+    outputs/baseline_graphs/
+    ├── {book_id}_ch01.graphml
+    ├── {book_id}_ch01_summary.json
+    ├── {book_id}_ch02.graphml
+    ├── {book_id}_ch02_summary.json
+    ...
+    └── {book_id}_ch{K}_summary.json
+
+  GraphML files can be opened in:
+    Gephi (gephi.org) — recommended for visual exploration
+    Cytoscape        — for biological-network-style layouts
+    Any NetworkX script:
+      import networkx as nx
+      G = nx.read_graphml("outputs/baseline_graphs/pride_prejudice_ch01.graphml")
+
+
+EVALUATION (OPTIONAL)
+---------------------
+  Place gold-standard graphs in data/gold_standard/ using the naming:
+    {book_id}_ch{N:02d}.graphml   (e.g. pride_prejudice_ch03.graphml)
+
+  Then run with the --evaluate flag:
+
+    python main_baseline.py \
+        --book_path data/raw/pride_prejudice.txt \
+        --book_id   pride_prejudice \
+        --evaluate
+
+  Per-chapter metrics are printed inline and saved to:
+    outputs/baseline_graphs/{book_id}_eval_results.json
+
+  Metrics computed:
+    Precision / Recall / F1    edge-set comparison
+    Jaccard Index              set overlap similarity
+    Graph Edit Distance        structural similarity (timeout: 30s)
+    Polarity Agreement         fraction of matched edges with same polarity label
+
+
+COMMON ISSUES
+-------------
+  "No chapter headings detected"
+    → Check that the book uses "CHAPTER", "Chapter", or "CHAP." headings.
+      The splitter supports Arabic numerals, Roman numerals, and ordinal words
+      (One, Two, ... up to One Hundred). Non-standard formats need regex tuning
+      in src/utils/chapter_splitter.py.
+
+  "booknlp is not installed"
+    → Run: pip install booknlp
+      BookNLP will download the en_booknlp model on first use (~1.5 GB).
+
+  BookNLP is slow
+    → The en_booknlp model is transformer-based. On CPU, expect ~1-5 min per
+      chapter. On GPU it is ~10x faster. Outputs are cached so each chapter
+      is only processed once.
+
+  "No characters found in chapter N"
+    → The chapter may be too short or purely narrative (no named persons).
+      The graph for that chapter is skipped; the pipeline continues.
+
+  Import errors when running from a different directory
+    → Always run from baseline/ as the working directory, or add baseline/
+      to PYTHONPATH:
+        export PYTHONPATH=/path/to/baseline
+        python main_baseline.py ...
+
+
+EXAMPLE: PRIDE AND PREJUDICE (PROJECT GUTENBERG)
+-------------------------------------------------
+  1. Download the plain-text file:
+       https://www.gutenberg.org/ebooks/1342  →  "Plain Text UTF-8"
+     Save it as: data/raw/pride_prejudice.txt
+
+  2. Run:
+       python main_baseline.py \
+           --book_path data/raw/pride_prejudice.txt \
+           --book_id   pride_prejudice \
+           --window    100 \
+           --min_freq  3
+
+  3. Inspect outputs:
+       ls outputs/baseline_graphs/
+       cat outputs/baseline_graphs/pride_prejudice_ch01_summary.json
+
+
+================================================================================
