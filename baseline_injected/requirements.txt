@@ -1,0 +1,16 @@
+# baseline_injected pipeline dependencies
+# Python 3.10+ required
+
+# NLP core
+booknlp==1.0.7
+transformers==4.40.2
+torch==2.3.0
+
+# Sentiment analysis
+vaderSentiment==3.3.2
+
+# Graph
+networkx==3.3
+
+# CLI (stdlib in Python 3.10+, listed for explicitness)
+argparse==1.4.0

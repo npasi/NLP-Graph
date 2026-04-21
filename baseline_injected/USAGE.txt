@@ -1,0 +1,235 @@
+================================================================================
+  BASELINE-INJECTED PIPELINE — USAGE GUIDE
+  Markov-Conditioned Character Graph Extraction
+================================================================================
+
+OVERVIEW
+--------
+  This module implements a Markov-conditioned variant of the baseline pipeline:
+
+    baseline:           G_k = f(chapter_k)
+    baseline_injected:  G_k = f(chapter_k, G_{k-1})
+
+  Every graph G_k depends on both the current chapter AND the previous graph.
+  G_0 is an empty graph (no prior knowledge at chapter 1).
+
+  Markov update formula applied per edge (A, B):
+
+    G_k[A,B].weight    = α * G_{k-1}[A,B].weight    + (1-α) * new_cooccurrences(k)
+    G_k[A,B].sentiment = α * G_{k-1}[A,B].sentiment + (1-α) * vader_score(k)
+
+  Three edge cases are handled automatically:
+    • Edge in G_{k-1} only  → survives but weakens (is_carry=True in GraphML)
+    • Edge in chapter k only → is born with weight = (1-α) * count
+    • Edge in both          → is reinforced via the full formula
+
+  Setting alpha=0.0 reproduces baseline behaviour exactly.
+
+
+REQUIREMENTS
+------------
+  Python 3.10+
+
+  Install dependencies:
+    pip install -r requirements.txt
+
+  Note: BookNLP requires a working PyTorch installation.
+  For GPU (recommended):
+    pip install torch --index-url https://download.pytorch.org/whl/cu118
+    pip install -r requirements.txt
+
+
+DIRECTORY LAYOUT
+----------------
+  baseline_injected/
+  ├── data/
+  │   ├── raw/              ← place full-book .txt files here, OR pass --book_path
+  │   ├── processed/        ← BookNLP outputs cached here automatically
+  │   └── gold_standard/    ← optional: {book_id}_ch{N:02d}.graphml for evaluation
+  ├── src/
+  │   ├── baseline_injected/  ← BookNLP wrapper, edge extractor, Markov graph builder
+  │   ├── utils/              ← text cleaner, chapter splitter, graph serializer
+  │   └── evaluation/         ← graph metrics (P/R/F1, Jaccard, GED, polarity)
+  ├── outputs/
+  │   └── baseline_injected_graphs/  ← .graphml and _summary.json files land here
+  ├── requirements.txt
+  ├── main_baseline_injected.py
+  └── USAGE.txt                      ← this file
+
+
+BASIC RUN
+---------
+  From the baseline_injected/ directory:
+
+    python main_baseline_injected.py \
+        --book_path data/raw/pride_prejudice.txt \
+        --book_id   pride_prejudice \
+        --window    100 \
+        --min_freq  3 \
+        --alpha     0.7 \
+        --strategy  topN \
+        --topN      20
+
+  Arguments:
+    --book_path   Path to the full-book .txt file (Project Gutenberg format).
+    --book_id     Short identifier used for all output filenames.
+    --window      Co-occurrence window size in tokens (default: 100).
+    --min_freq    Minimum co-occurrence count to keep an edge (default: 3).
+    --alpha       Markov decay factor in [0.0, 1.0] (default: 0.7).
+                  alpha=0.0 → pure current chapter (same as baseline).
+                  alpha=1.0 → never update (G_k = G_{k-1} always).
+    --strategy    Serialization strategy for the G_{k-1} snapshot log:
+                    flat   — per-character adjacency list
+                    edges  — one line per edge with weight and polarity
+                    topN   — (default) top N edges by weight, filtered to
+                             characters present in the current chapter
+    --topN        Number of top edges for the topN strategy (default: 20).
+    --evaluate    Flag — if set, compare against gold graphs in data/gold_standard/.
+
+
+STEP-BY-STEP WHAT HAPPENS
+--------------------------
+  1. SPLIT      The full book is split into chapters using regex detection.
+                Files saved to data/raw/{book_id}_ch01.txt, ch02.txt, ...
+
+  2. SEQUENTIAL LOOP — for k = 1, 2, ..., K:
+
+     a. BOOKNLP     Run NER + coreference on chapter k.
+                    Outputs cached in data/processed/{book_id}_ch{N}/.
+
+     b. EDGES       Extract new co-occurrences from chapter k only.
+                    Returns a list of EdgeData (same as baseline).
+
+     c. GRAPH       Apply the Markov update formula:
+                      - Combine new_cooccurrences with G_{k-1} edge data.
+                      - Carry over decayed edges from G_{k-1} not in chapter k.
+                    Exported to:
+                      outputs/baseline_injected_graphs/{book_id}_ch{N}.graphml
+                      outputs/baseline_injected_graphs/{book_id}_ch{N}_summary.json
+
+     d. LOG         Serialize G_{k-1} snapshot and write to log.
+
+     e. ADVANCE     G_prev = G_k  (only state carried forward).
+
+  3. SUMMARY    A table is printed to stdout:
+                  Chapter | Nodes | Edges | Carried | Density | AvgSentiment | Alpha
+
+
+OUTPUTS
+-------
+  For a book with K chapters you get:
+
+    outputs/baseline_injected_graphs/
+    ├── {book_id}_ch01.graphml
+    ├── {book_id}_ch01_summary.json
+    ...
+    └── {book_id}_ch{K}_summary.json
+
+  GraphML edge attributes:
+    weight        float  Markov-updated co-occurrence weight
+    sentiment     float  Markov-updated VADER compound score
+    polarity      str    positive / negative / neutral
+    label         str    "co-occurrence-markov"
+    is_carry      bool   True if carried from G_{k-1} with no new occurrence
+
+  JSON summary attributes (additional vs baseline):
+    carried_edges   int    number of carry-over edges in this chapter's graph
+    alpha           float  the decay factor used
+
+
+COMPARING WITH BASELINE
+-----------------------
+  Both pipelines produce GraphML files with the same node/edge schema.
+  To compare:
+
+    import networkx as nx
+    G_base  = nx.read_graphml("../baseline/outputs/baseline_graphs/pride_prejudice_ch05.graphml")
+    G_injec = nx.read_graphml("outputs/baseline_injected_graphs/pride_prejudice_ch05.graphml")
+    print("Baseline edges:", G_base.number_of_edges())
+    print("Injected edges:", G_injec.number_of_edges())
+
+  The extra ``is_carry`` attribute on injected edges marks those that
+  were inherited from the previous chapter with no new co-occurrence.
+
+
+GRID SEARCH FOR OPTIMAL ALPHA
+------------------------------
+  Requires gold-standard graphs in data/gold_standard/.
+
+    python src/utils/grid_search_alpha.py --book_id pride_prejudice
+
+  This runs the full pipeline for alpha ∈ {0.3, 0.5, 0.7, 0.9} and
+  prints a table of P/R/F1 averaged across all evaluated chapters.
+  The best alpha is saved to:
+    outputs/best_alpha_{book_id}.json
+
+
+EVALUATION (OPTIONAL)
+---------------------
+  Place gold-standard graphs in data/gold_standard/ using the naming:
+    {book_id}_ch{N:02d}.graphml   (e.g. pride_prejudice_ch03.graphml)
+
+  Then run with the --evaluate flag:
+
+    python main_baseline_injected.py \
+        --book_path data/raw/pride_prejudice.txt \
+        --book_id   pride_prejudice \
+        --alpha     0.7 \
+        --evaluate
+
+  Metrics: Precision / Recall / F1 / Jaccard / GED / Polarity Agreement
+  Results saved to:
+    outputs/baseline_injected_graphs/{book_id}_eval_results.json
+
+
+COMMON ISSUES
+-------------
+  "No chapter headings detected"
+    → Same as baseline; see baseline/USAGE.txt for regex tuning guidance.
+
+  "No gold-standard graphs found" (grid search)
+    → Place .graphml files in data/gold_standard/ and re-run.
+
+  Import errors
+    → Always run from baseline_injected/ as the working directory, or:
+        export PYTHONPATH=/path/to/baseline_injected
+        python main_baseline_injected.py ...
+
+  Chapters processed out of order
+    → The pipeline sorts by chapter number automatically.  Filenames must
+      follow the {book_id}_ch{N:02d}.txt convention produced by the splitter.
+
+  "alpha=0.0 should reproduce baseline"
+    → Correct — with alpha=0.0 the Markov formula reduces to:
+        weight    = new_cooccurrences
+        sentiment = vader_score
+      But carry-over edges (from G_{k-1}) are also included at weight=0,
+      which are then pruned by min_weight_threshold.  For a perfect match
+      with baseline, use the baseline pipeline directly.
+
+
+EXAMPLE: PRIDE AND PREJUDICE (PROJECT GUTENBERG)
+-------------------------------------------------
+  1. Download the plain-text file:
+       https://www.gutenberg.org/ebooks/1342  →  "Plain Text UTF-8"
+     Save it as: data/raw/pride_prejudice.txt
+
+  2. Run with default alpha:
+       python main_baseline_injected.py \
+           --book_path data/raw/pride_prejudice.txt \
+           --book_id   pride_prejudice \
+           --window    100 \
+           --min_freq  3 \
+           --alpha     0.7 \
+           --strategy  topN \
+           --topN      20
+
+  3. Inspect outputs:
+       ls outputs/baseline_injected_graphs/
+       cat outputs/baseline_injected_graphs/pride_prejudice_ch05_summary.json
+
+  4. (Optional) find the best alpha:
+       python src/utils/grid_search_alpha.py --book_id pride_prejudice
+
+
+================================================================================
