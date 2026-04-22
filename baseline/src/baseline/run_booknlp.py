@@ -105,12 +105,12 @@ def run_booknlp(
             "pipeline": "entity,quote,supersense,event,coref",
             "model": "big",
         }
-        booknlp_instance = BookNLP("en_booknlp", model_params)
+        booknlp_instance = BookNLP("en", model_params)
         input_file = str(chapter_path)
-        output_prefix = str(output_subdir / f"{book_id}_ch{chapter_num:02d}")
+        idd = f"{book_id}_ch{chapter_num:02d}"
 
         try:
-            booknlp_instance.process(input_file, output_prefix)
+            booknlp_instance.process(input_file, str(output_subdir), idd=idd)
         except Exception as exc:
             raise RuntimeError(
                 f"BookNLP failed on '{chapter_path}': {exc}"
@@ -174,11 +174,14 @@ def _parse_entities_file(
     """Build canonical-name → token-positions map from BookNLP entities file.
 
     The ``.entities`` file has columns:
-    ``COREF``, ``start_token``, ``end_token``, ``text``, ``entity_type``.
+    ``COREF``, ``start_token``, ``end_token``, ``prop``, ``cat``, ``text``.
+
+    ``prop`` is the mention type (PROP/NOM/PRON); ``cat`` is the entity
+    category (PER/FAC/LOC/GPE/…).  Only PER-category mentions are used.
 
     All mentions sharing the same ``COREF`` cluster id and tagged as
-    ``PER`` (person) are grouped.  The most-frequent non-pronoun surface
-    form becomes the canonical name.
+    ``PER`` are grouped.  The most-frequent non-pronoun surface form
+    becomes the canonical name.
 
     Args:
         entities_file: Path to the ``.entities`` file produced by BookNLP.
@@ -200,9 +203,12 @@ def _parse_entities_file(
             if len(parts) < 5:
                 continue
 
-            coref_id_str, start_str, end_str, text, etype = (
-                parts[0], parts[1], parts[2], parts[3], parts[4]
-            )
+            coref_id_str = parts[0]
+            start_str    = parts[1]
+            end_str      = parts[2]
+            # parts[3] = prop (mention type: PROP/NOM/PRON)
+            etype        = parts[4]          # cat: PER/FAC/LOC/…
+            text         = parts[5] if len(parts) > 5 else ""
 
             if etype.upper() not in {"PER", "PERSON"}:
                 continue
