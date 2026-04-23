@@ -28,6 +28,8 @@ _ORDINAL_WORDS = (
 
 _ROMAN = r"M{0,4}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})"
 
+_ALLCAPS_RE = re.compile(r"^[A-Z][A-Z '.,]+$", re.MULTILINE)
+
 _CHAPTER_RE = re.compile(
     r"^\s*(?:chapter|chap\.?)\s+"          # keyword
     r"(?:"
@@ -50,7 +52,10 @@ def _find_chapter_starts(text: str) -> list[tuple[int, int]]:
     Returns:
         Sorted list of (start, end) character offsets for chapter headings.
     """
-    return [(m.start(), m.end()) for m in _CHAPTER_RE.finditer(text)]
+    _ALLCAPS_RE = re.compile(r"^[A-Z][A-Z][A-Z '.,\-]+$", re.MULTILINE)
+    matches = list(_CHAPTER_RE.finditer(text)) + list(_ALLCAPS_RE.finditer(text))
+    matches.sort(key=lambda m: m.start())
+    return [(m.start(), m.end()) for m in matches]
 
 
 def split_book_into_chapters(

@@ -266,6 +266,13 @@ def run_pipeline(args: argparse.Namespace) -> None:
         eval_out.write_text(json.dumps(eval_results, indent=2), encoding="utf-8")
         print(f"Evaluation results saved → {eval_out}\n")
 
+    try:
+        from src.utils.build_book_visualizer import build_visualizer
+        build_visualizer(book_id, OUTPUTS_DIR)
+        print(f"  Full book visualizer: outputs/baseline_graphs/{book_id}_full_book.html")
+    except Exception as exc:
+        logger.warning("Could not build visualizer: %s", exc)
+
 
 # ---------------------------------------------------------------------------
 # CLI entry point

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jekyll Hyde — Character Graph</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d0d1a;color:#e0e0e0;font-family:'SF Mono','Courier New',monospace;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+#header{display:flex;align-items:center;padding:0 20px;background:#12122a;border-bottom:1px solid #2a2a4a;height:50px;flex-shrink:0}
+#book-title{font-size:14px;font-weight:bold;color:#7b8cde;white-space:nowrap;flex:1}
+#chapter-label{flex:1;font-size:13px;color:#a0a0c0;text-align:center}
+#header-right{flex:1}
+#graph-container{flex:1;position:relative;background:#1a1a2e;overflow:hidden}
+#network{width:100%;height:100%}
+#loading{position:absolute;inset:0;background:#1a1a2eee;display:flex;align-items:center;justify-content:center;color:#7b8cde;font-size:14px;gap:10px;z-index:10}
+.spinner{width:16px;height:16px;border:2px solid #7b8cde;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#footer{background:#12122a;border-top:1px solid #2a2a4a;padding:10px 20px 8px;flex-shrink:0}
+#controls{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.btn{background:#2a2a4a;color:#a0a0c0;border:1px solid #3a3a5a;padding:4px 14px;cursor:pointer;font-size:13px;font-family:inherit;border-radius:3px;transition:background .15s;user-select:none}
+.btn:hover:not(:disabled){background:#3a3a5a;color:#e0e0e0}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+#slider{flex:1;accent-color:#7b8cde;cursor:pointer}
+#stats{font-size:11px;color:#606080;text-align:center;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div id="header">
+  <span id="book-title">Jekyll Hyde</span>
+  <span id="chapter-label"></span>
+  <span id="header-right"></span>
+</div>
+<div id="graph-container">
+  <div id="loading"><div class="spinner"></div>Computing layout…</div>
+  <div id="network"></div>
+</div>
+<div id="footer">
+  <div id="controls">
+    <button class="btn" id="btn-prev">‹ Prev</button>
+    <input type="range" id="slider" min="0" step="1" value="0">
+    <button class="btn" id="btn-next">Next ›</button>
+  </div>
+  <div id="stats">Active nodes: — | Active edges: — | Density: — | Avg sentiment: —</div>
+</div>
+<script>
+const BOOK_DATA = {"title":"Jekyll Hyde","chapters":[{"num":1,"title":"STORY OF THE DOOR","nodes":[{"id":"PRON","label":"PRON","mentions":239},{"id":"NOM","label":"NOM","mentions":92},{"id":"PROP","label":"PROP","mentions":5}],"edges":[{"from":"PRON","to":"NOM","weight":284,"sentiment":0.1593,"polarity":"positive"},{"from":"PRON","to":"PROP","weight":59,"sentiment":-0.065,"polarity":"negative"},{"from":"NOM","to":"PROP","weight":58,"sentiment":-0.0737,"polarity":"negative"}]},{"num":2,"title":"SEARCH FOR MR. HYDE","nodes":[{"id":"PRON","label":"PRON","mentions":286},{"id":"PROP","label":"PROP","mentions":50},{"id":"NOM","label":"NOM","mentions":79}],"edges":[{"from":"PRON","to":"PROP","weight":209,"sentiment":0.2446,"polarity":"positive"},{"from":"PRON","to":"NOM","weight":317,"sentiment":0.1863,"polarity":"positive"},{"from":"PROP","to":"NOM","weight":170,"sentiment":0.2236,"polarity":"positive"}]},{"num":3,"title":"DR. JEKYLL WAS QUITE AT EASE","nodes":[{"id":"PROP","label":"PROP","mentions":4},{"id":"PRON","label":"PRON","mentions":155},{"id":"NOM","label":"NOM","mentions":20}],"edges":[{"from":"PROP","to":"NOM","weight":42,"sentiment":0.3633,"polarity":"positive"},{"from":"PROP","to":"PRON","weight":42,"sentiment":0.3633,"polarity":"positive"},{"from":"PRON","to":"NOM","weight":122,"sentiment":0.6984,"polarity":"positive"}]},{"num":4,"title":"THE CAREW MURDER CASE","nodes":[{"id":"NOM","label":"NOM","mentions":55},{"id":"PRON","label":"PRON","mentions":141},{"id":"PROP","label":"PROP","mentions":6}],"edges":[{"from":"NOM","to":"PRON","weight":174,"sentiment":0.1356,"polarity":"positive"},{"from":"NOM","to":"PROP","weight":57,"sentiment":0.288,"polarity":"positive"},{"from":"PRON","to":"PROP","weight":58,"sentiment":0.2957,"polarity":"positive"}]},{"num":5,"title":"INCIDENT OF THE LETTER","nodes":[{"id":"PROP","label":"PROP","mentions":20},{"id":"PRON","label":"PRON","mentions":206},{"id":"NOM","label":"NOM","mentions":43}],"edges":[{"from":"PROP","to":"PRON","weight":143,"sentiment":0.4147,"polarity":"positive"},{"from":"PROP","to":"NOM","weight":108,"sentiment":0.4352,"polarity":"positive"},{"from":"PRON","to":"NOM","weight":197,"sentiment":0.381,"polarity":"positive"}]},{"num":6,"title":"INCIDENT OF DR. LANYON","nodes":[{"id":"PRON","label":"PRON","mentions":175},{"id":"PROP","label":"PROP","mentions":16},{"id":"NOM","label":"NOM","mentions":34}],"edges":[{"from":"PRON","to":"NOM","weight":181,"sentiment":-0.1108,"polarity":"negative"},{"from":"PRON","to":"PROP","weight":116,"sentiment":-0.0222,"polarity":"neutral"},{"from":"PROP","to":"NOM","weight":96,"sentiment":0.0477,"polarity":"neutral"}]},{"num":7,"title":"INCIDENT AT THE WINDOW","nodes":[{"id":"PRON","label":"PRON","mentions":68},{"id":"NOM","label":"NOM","mentions":10},{"id":"PROP","label":"PROP","mentions":11}],"edges":[{"from":"PRON","to":"NOM","weight":76,"sentiment":0.331,"polarity":"positive"},{"from":"PRON","to":"PROP","weight":55,"sentiment":0.3633,"polarity":"positive"},{"from":"NOM","to":"PROP","weight":55,"sentiment":0.3633,"polarity":"positive"}]},{"num":8,"title":"THE LAST NIGHT","nodes":[{"id":"PRON","label":"PRON","mentions":787},{"id":"NOM","label":"NOM","mentions":199},{"id":"PROP","label":"PROP","mentions":79}],"edges":[{"from":"PRON","to":"NOM","weight":812,"sentiment":0.0333,"polarity":"neutral"},{"from":"PRON","to":"PROP","weight":448,"sentiment":-0.0741,"polarity":"negative"},{"from":"NOM","to":"PROP","weight":389,"sentiment":-0.0297,"polarity":"neutral"}]},{"num":9,"title":"HASTIE LANYON.","nodes":[{"id":"PROP","label":"PROP","mentions":55},{"id":"PRON","label":"PRON","mentions":689},{"id":"NOM","label":"NOM","mentions":109}],"edges":[{"from":"PROP","to":"NOM","weight":257,"sentiment":-0.1972,"polarity":"negative"},{"from":"PROP","to":"PRON","weight":338,"sentiment":-0.1873,"polarity":"negative"},{"from":"PRON","to":"NOM","weight":590,"sentiment":-0.1654,"polarity":"negative"}]}],"all_nodes":[{"id":"PRON","label":"PRON","total_mentions":2746,"first_chapter":1},{"id":"NOM","label":"NOM","total_mentions":641,"first_chapter":1},{"id":"PROP","label":"PROP","total_mentions":246,"first_chapter":1}]};
+
+const K = BOOK_DATA.chapters.length;
+const allNodeMap = Object.fromEntries(BOOK_DATA.all_nodes.map(n => [n.id, n]));
+const chMaxMentions = BOOK_DATA.chapters.map(ch => ch.nodes.reduce((m, n) => Math.max(m, n.mentions), 1));
+const chMaxWeight   = BOOK_DATA.chapters.map(ch => ch.edges.reduce((m, e) => Math.max(m, e.weight), 1));
+
+// Union edges for layout only — always hidden so they never display
+const seenKeys = new Set();
+const unionEdges = [];
+BOOK_DATA.chapters.forEach(ch => ch.edges.forEach(e => {
+  const k = [e.from, e.to].sort().join('');
+  if (!seenKeys.has(k)) {
+    seenKeys.add(k);
+    unionEdges.push({ id: 'u_' + k, from: e.from, to: e.to, hidden: true });
+  }
+}));
+
+// Initialise DataSets with all nodes as ghost placeholders + union edges
+const nodesDS = new vis.DataSet(BOOK_DATA.all_nodes.map(n => ({
+  id: n.id, label: n.label, size: 8,
+  color: { background: '#2d2d4e', border: '#3d3d6e' },
+  font: { color: '#505078', size: 11 },
+})));
+const edgesDS = new vis.DataSet(unionEdges);
+
+// Build network — physics runs once for layout, then freezes
+const network = new vis.Network(
+  document.getElementById('network'),
+  { nodes: nodesDS, edges: edgesDS },
+  {
+    nodes: { shape: 'dot', borderWidth: 1.5 },
+    edges: { smooth: { type: 'continuous', roundness: 0.15 } },
+    physics: {
+      enabled: true,
+      barnesHut: {
+        gravitationalConstant: -4000,
+        centralGravity: 0.4,
+        springLength: 150,
+        springConstant: 0.04,
+      },
+      stabilization: { iterations: 400, updateInterval: 25 },
+    },
+    interaction: { hover: true, tooltipDelay: 120 },
+  }
+);
+
+let curIdx = 0, ready = false;
+
+function onReady() {
+  if (ready) return;
+  ready = true;
+  // Freeze positions permanently — node positions never change after this
+  network.setOptions({ physics: { enabled: false } });
+  document.getElementById('loading').style.display = 'none';
+  switchChapter(0);
+}
+
+network.on('stabilizationIterationsDone', onReady);
+setTimeout(onReady, 8000); // fallback if event never fires
+
+function edgeCol(polarity) {
+  return polarity === 'positive' ? '#27ae60' : polarity === 'negative' ? '#e74c3c' : '#95a5a6';
+}
+
+function switchChapter(idx) {
+  curIdx = idx;
+  const ch = BOOK_DATA.chapters[idx];
+  const active = new Set(ch.nodes.map(n => n.id));
+  const chNodeMap = Object.fromEntries(ch.nodes.map(n => [n.id, n]));
+  const maxM = chMaxMentions[idx];
+  const maxW = chMaxWeight[idx];
+
+  // Update node appearance — positions are never touched
+  nodesDS.update(BOOK_DATA.all_nodes.map(n => {
+    if (active.has(n.id)) {
+      const cn = chNodeMap[n.id];
+      const ec = ch.edges.filter(e => e.from === n.id || e.to === n.id).length;
+      const a  = allNodeMap[n.id];
+      return {
+        id: n.id,
+        size: 10 + Math.round((cn.mentions / maxM) * 40),
+        color: { background: '#4ecdc4', border: '#38b2ac' },
+        font: { color: '#fff', size: 13, strokeWidth: 2, strokeColor: '#1a1a2e' },
+        title: '<b>' + n.label + '</b>'
+          + '<br>Mentions this chapter: ' + cn.mentions
+          + '<br>Total mentions: ' + (a ? a.total_mentions : '?')
+          + '<br>First appeared: ch ' + (a ? a.first_chapter : '?')
+          + '<br>Edges in this chapter: ' + ec,
+      };
+    }
+    return {
+      id: n.id, size: 8,
+      color: { background: '#2d2d4e', border: '#3d3d6e' },
+      font: { color: '#505078', size: 11, strokeWidth: 0 },
+      title: n.label + ' (not in this chapter)',
+    };
+  }));
+
+  // Swap chapter edges — union edges remain permanently hidden
+  edgesDS.remove(edgesDS.getIds().filter(id => String(id).startsWith('ch_')));
+  edgesDS.add(ch.edges.map((e, i) => {
+    const col = edgeCol(e.polarity);
+    const s   = (e.sentiment >= 0 ? '+' : '') + e.sentiment.toFixed(3);
+    return {
+      id: 'ch_' + idx + '_' + i,
+      from: e.from, to: e.to,
+      width: 1 + Math.round((e.weight / maxW) * 5),
+      color: { color: col, highlight: col, hover: col },
+      title: e.from + ' ↔ ' + e.to
+        + '<br>co-occurrences: ' + e.weight
+        + '<br>sentiment: ' + s,
+    };
+  }));
+
+  // Header / slider / button state
+  document.getElementById('chapter-label').textContent =
+    'Chapter ' + ch.num + ' / ' + K + '  —  ' + ch.title;
+  document.getElementById('slider').value = idx;
+  document.getElementById('btn-prev').disabled = (idx === 0);
+  document.getElementById('btn-next').disabled = (idx === K - 1);
+
+  // Stats bar
+  const n = ch.nodes.length, e = ch.edges.length;
+  const d   = n > 1 ? (2 * e / (n * (n - 1))).toFixed(4) : '0.0000';
+  const avg = e ? (ch.edges.reduce((s, x) => s + x.sentiment, 0) / e).toFixed(4) : '0.0000';
+  document.getElementById('stats').textContent =
+    'Active nodes: ' + n + '  |  Active edges: ' + e
+    + '  |  Density: ' + d + '  |  Avg sentiment: ' + avg;
+}
+
+// Controls
+document.getElementById('slider').max = K - 1;
+document.getElementById('slider').addEventListener('input', ev => switchChapter(+ev.target.value));
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (curIdx > 0) switchChapter(curIdx - 1);
+});
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (curIdx < K - 1) switchChapter(curIdx + 1);
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'ArrowLeft'  && curIdx > 0)     switchChapter(curIdx - 1);
+  if (ev.key === 'ArrowRight' && curIdx < K - 1) switchChapter(curIdx + 1);
+});
+</script>
+</body>
+</html>

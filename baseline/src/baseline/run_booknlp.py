@@ -88,8 +88,8 @@ def run_booknlp(
     output_subdir.mkdir(parents=True, exist_ok=True)
 
     # BookNLP writes several files; the entities table is the key one.
-    entities_file = output_subdir / f"{book_id}_ch{chapter_num:02d}.entities"
-    tokens_file   = output_subdir / f"{book_id}_ch{chapter_num:02d}.tokens"
+    entities_file = output_subdir / f"{book_id}_ch{chapter_num:02d}" / f"{book_id}_ch{chapter_num:02d}.entities"
+    tokens_file   = output_subdir / f"{book_id}_ch{chapter_num:02d}" / f"{book_id}_ch{chapter_num:02d}.tokens"
 
     # --- Run BookNLP if outputs are missing ---
     if not entities_file.exists() or not tokens_file.exists():
