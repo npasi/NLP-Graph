@@ -5,23 +5,13 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Local caches / large derived artifacts (replicable)
-data/booknlp_output/
-data/booknlp_only_output/
-data/tmp/
-data/graphs/
-data/viz/
-data/reports/
-data/cleaned/
-data/chapters/
-data/books/**/edges/
-data/books/**/viz/
-data/books/**/bridge_merges.json
-data/books/**/llm_bridge_merges.json
-data/books/**/characters.json
-data/books/**/parse_split_report.json
-data/books/**/cleaned.txt
+# Ignore ALL data by default (keep raw/46.txt only)
+data/**
 
-# Keep empty folder structure
+# Keep this one reference raw file
+!data/raw/46.txt
+
+# Keep empty folder structure markers (if present)
 !data/raw/.gitkeep
 !data/booknlp_only_output/.gitkeep
 !data/booknlp_output/.gitkeep

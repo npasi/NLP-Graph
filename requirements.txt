@@ -10,6 +10,8 @@ setuptools>=70.0.0
 booknlp>=1.0.7.1
 spacy>=3.5.0
 vaderSentiment>=3.3.2
+transformers==4.30.0
+tokenizers==0.13.3
 
 # Graphs
 networkx>=3.1

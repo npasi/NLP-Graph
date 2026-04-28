@@ -7,7 +7,10 @@ and graph-oriented extraction.
 What you can do (main outputs)
 -----------------------------
 
-1) Run "classic" BookNLP on a full book (.txt) with all tasks enabled:
+1) Split a raw book into chapters (robust Gutenberg heading detection):
+   - Writes: data/books/<book_id>/chapters/chapter_###.txt + chapters.json
+
+2) Run BookNLP per chapter (big model, full pipeline):
    - tokens (POS + dependencies + token-level event tag)
    - entities (mentions + COREF cluster ids)
    - quotes (speaker attribution)
@@ -15,21 +18,49 @@ What you can do (main outputs)
    - book (JSON with characters + agent/patient/poss/mod lists)
    - native BookNLP HTML
 
-2) Generate an additional HTML listing page (read-only) that:
+3) Extract per-chapter derived JSON artefacts (no new NLP; uses BookNLP outputs):
+   - characters_by_chapter.json: character counts + aliases per chapter
+   - predicates_by_chapter.json: unordered character-pair -> predicates per chapter
+   - sentences_by_pair_by_chapter.json: unordered character-pair -> concatenated co-occurrence sentences
+
+4) (Optional) Run "classic" BookNLP on a single full-book .txt:
+   - writes under data/booknlp_only_output/<run_id>/
+
+5) (Optional) Generate an additional HTML listing page (read-only) that:
    - lists all BookNLP characters with agent/patient/poss/mod lists
    - shows event-tag counts from the tokens file
    - embeds a preview of extracted event triplets (if present)
 
-3) Extract event triplets for graph building:
+6) (Optional) Extract event triplets for graph building:
    - (agent_character, predicate_lemma, patient_character) per verb event
    - written as TSV + JSONL, derived from BookNLP native outputs only
 
 Key scripts (src/)
 -----------------
 
+- src/step1_split_only.py
+  Chapter splitting for a raw .txt:
+    data/books/<book_id>/chapters/chapter_###.txt
+
+- run_booknlp_per_chapter.py
+  Runs BookNLP on each chapter:
+    data/booknlp_chapter_output/<book_id>/booknlp_<book_id>_chapter_0000/*
+
+- src/step2_character_list_per_chapter.py
+  Writes:
+    data/booknlp_chapter_output/<book_id>/characters_by_chapter.json
+
+- src/step3_predicates_between_characters.py
+  Writes:
+    data/booknlp_chapter_output/<book_id>/predicates_by_chapter.json
+
+- src/step4_sentences_by_character_pair.py
+  Writes:
+    data/booknlp_chapter_output/<book_id>/sentences_by_pair_by_chapter.json
+
 - src/run_booknlp_only.py
   Minimal runner for BookNLP on a single full-book .txt.
-  Writes BookNLP artefacts under:
+  Writes:
     data/booknlp_only_output/<run_id>/
 
 - src/booknlp_listings_html.py
@@ -60,6 +91,7 @@ data/raw/                           : raw downloaded books (optional)
 Git hygiene
 -----------
 
-.gitignore excludes large/replicable artefacts (venv, BookNLP caches, reports).
+.gitignore ignores all data/ by default. Only keep the reference input:
+  data/raw/46.txt
 Commit only code + small docs + validated scripts.
 

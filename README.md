@@ -1,82 +1,85 @@
-# Book Graph Pipeline
+# NLP-Graph (BookNLP per-chapter pipeline)
 
-A research pipeline for extracting **character graphs** from literary works.
+This repo contains a small, reproducible pipeline to go from a raw book `.txt`
+to per-chapter BookNLP outputs and a few derived JSON artefacts.
 
-For each selected book the pipeline:
+## Setup
 
-1. Clones [LitBank](https://github.com/dbamman/litbank) and parses its
-   gold annotations (entities + coreference chains).
-2. Downloads the **full** book from Project Gutenberg using the ID in the
-   LitBank filename.
-3. Splits the full book into chapters.
-4. Runs **BookNLP** on every chapter to extract characters / quotes.
-5. Builds one **NetworkX** graph per chapter (100-token co-occurrence
-   window, sentiment per edge).
-6. Builds a **gold mini-graph** from the LitBank annotations (only the
-   ~2 000 annotated words) as a reference.
-7. Saves chapter graphs, gold graph and per-chapter metadata.
+Use **Python 3.11** for BookNLP + tokenizers compatibility.
 
----
-
-## Project layout (this repo)
-
-```
-book_graph_pipeline/
-├── data/
-│   ├── raw/                      # put your input full-book .txt here (optional)
-│   ├── booknlp_only_output/      # BookNLP outputs for full-book runs (local cache)
-│   ├── booknlp_output/           # other BookNLP caches (local cache)
-│   └── books/                    # optional per-book assets (kept local)
-├── script validati/              # validated scripts (kept in repo)
-├── src/                          # code (runners + extractors)
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Installation
-
-Python 3.10+. Git must be on the PATH (needed to clone LitBank).
-
-```powershell
-cd book_graph_pipeline
-python -m venv .venv
-.venv\Scripts\activate              # Linux/macOS: source .venv/bin/activate
-pip install -r requirements.txt
+```bash
+cd NLP-Graph
+python3.11 -m venv .venv311
+. .venv311/bin/activate
+python -m pip install -U pip
+python -m pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-BookNLP pulls ~1–2 GB of model weights the first time it runs.
+## Important: BERT / model downloads
 
----
+Running the **big** model requires downloading BookNLP model weights the first time:
 
-## Usage
+- cached under `data/booknlp_models/` (downloaded automatically by `run_booknlp_per_chapter.py`)
+- plus HuggingFace tokenizer cache (recommended to keep local to the repo):
 
-> **Windows users: launch Python with `-X utf8`.** BookNLP opens its own
-> data files without specifying an encoding, which triggers
-> ``UnicodeDecodeError`` on Windows (cp1252) for books that contain
-> smart quotes or em dashes. ``-X utf8`` makes ``open()`` default to
-> UTF-8 and sidesteps the problem entirely. The pipeline warns if the
-> flag is missing.
-
-### Run BookNLP on a full book (classic outputs)
-
-Put a text file in `data/raw/` (or pass any path), then run:
-
-```powershell
-python -X utf8 -m src.run_booknlp_only --input data/raw/<your_book>.txt --run-id my_run --model-size big
+```bash
+export HF_HOME="$PWD/data/hf_cache"
+export TRANSFORMERS_CACHE="$PWD/data/hf_cache"
+export XDG_CACHE_HOME="$PWD/data/hf_cache"
 ```
 
-This writes native BookNLP artefacts under:
+## End-to-end pipeline (raw book -> where we are now)
 
-- `data/booknlp_only_output/my_run/`
-  - `my_run.tokens` (includes token-level `event` tag)
-  - `my_run.entities`
-  - `my_run.quotes`
-  - `my_run.supersense`
-  - `my_run.book` (includes `agent/patient/poss/mod` lists per character)
-  - `my_run.book.html` (native BookNLP HTML)
+Assuming your raw input is:
+
+- `data/raw/46.txt`
+
+### 1) Split into chapters (and strip Gutenberg footer)
+
+```bash
+python src/step1_split_only.py --input data/raw/46.txt --book-id 46 --debug --log-level INFO
+```
+
+Outputs:
+- `data/books/46/chapters/chapter_000.txt` ... `chapter_004.txt`
+- `data/books/46/chapters/chapters.json`
+
+### 2) Run BookNLP per chapter (big model, full pipeline)
+
+```bash
+python run_booknlp_per_chapter.py --book-id 46 --model-size big --pipeline entity,quote,supersense,event,coref --log-level INFO
+```
+
+Outputs (one folder per chapter):
+- `data/booknlp_chapter_output/46/booknlp_46_chapter_0000/*`
+- ...
+- `data/booknlp_chapter_output/46/booknlp_46_chapter_0004/*`
+
+### 3) Derived JSON artefacts (no new NLP; reads BookNLP outputs only)
+
+Characters (counts + aliases), per chapter:
+
+```bash
+python src/step2_character_list_per_chapter.py --book-id 46
+```
+
+Predicates between character pairs (unordered), per chapter:
+
+```bash
+python src/step3_predicates_between_characters.py --book-id 46
+```
+
+Concatenated co-occurrence sentences for every possible unordered character pair, per chapter:
+
+```bash
+python src/step4_sentences_by_character_pair.py --book-id 46
+```
+
+## Notes
+
+- This repo ignores `data/**` by default in git, except `data/raw/46.txt` as a reference input.
+- BookNLP is CPU by default; first run is slower due to model downloads.
 
 ### Generate listings HTML (read-only)
 
