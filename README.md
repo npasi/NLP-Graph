@@ -18,30 +18,17 @@ For each selected book the pipeline:
 
 ---
 
-## Project layout
+## Project layout (this repo)
 
 ```
 book_graph_pipeline/
 ├── data/
-│   ├── litbank/                  # cloned LitBank repository
-│   ├── raw/                      # full book .txt cached from Gutenberg
-│   ├── tmp/                      # scratch files for BookNLP (cleaned up)
-│   ├── booknlp_output/           # per-chapter BookNLP artefacts (re-used on reruns)
-│   └── graphs/
-│       ├── chapters/
-│       │   ├── <slug>.pkl              # list[nx.Graph], one per chapter
-│       │   └── <slug>_metadata.json    # per-chapter stats
-│       └── gold/
-│           └── <slug>_gold.pkl         # single nx.Graph from LitBank gold
-├── src/
-│   ├── litbank_parser.py
-│   ├── downloader.py
-│   ├── chapter_splitter.py
-│   ├── graph_builder.py
-│   ├── gold_graph_builder.py
-│   └── pipeline.py
-├── notebooks/
-│   └── explore_graphs.ipynb
+│   ├── raw/                      # put your input full-book .txt here (optional)
+│   ├── booknlp_only_output/      # BookNLP outputs for full-book runs (local cache)
+│   ├── booknlp_output/           # other BookNLP caches (local cache)
+│   └── books/                    # optional per-book assets (kept local)
+├── script validati/              # validated scripts (kept in repo)
+├── src/                          # code (runners + extractors)
 ├── requirements.txt
 └── README.md
 ```
@@ -72,6 +59,54 @@ BookNLP pulls ~1–2 GB of model weights the first time it runs.
 > smart quotes or em dashes. ``-X utf8`` makes ``open()`` default to
 > UTF-8 and sidesteps the problem entirely. The pipeline warns if the
 > flag is missing.
+
+### Run BookNLP on a full book (classic outputs)
+
+Put a text file in `data/raw/` (or pass any path), then run:
+
+```powershell
+python -X utf8 -m src.run_booknlp_only --input data/raw/<your_book>.txt --run-id my_run --model-size big
+```
+
+This writes native BookNLP artefacts under:
+
+- `data/booknlp_only_output/my_run/`
+  - `my_run.tokens` (includes token-level `event` tag)
+  - `my_run.entities`
+  - `my_run.quotes`
+  - `my_run.supersense`
+  - `my_run.book` (includes `agent/patient/poss/mod` lists per character)
+  - `my_run.book.html` (native BookNLP HTML)
+
+### Generate listings HTML (read-only)
+
+```powershell
+python -m src.booknlp_listings_html --run-dir data/booknlp_only_output/my_run --run-id my_run
+```
+
+Produces:
+
+- `data/booknlp_only_output/my_run/my_run.book.listings.html`
+
+### Extract (agent, predicate, patient) triplets
+
+```powershell
+python -m src.booknlp_event_triplets --run-dir data/booknlp_only_output/my_run --run-id my_run
+```
+
+Produces:
+
+- `my_run.event_triplets.tsv`
+- `my_run.event_triplets.jsonl`
+
+### About data/ in git
+
+This repo keeps the same folder structure, but **does not commit** heavy/replicable caches.
+Empty `data/*` folders are tracked via `.gitkeep`.
+
+### Legacy pipeline notes
+
+The README below contains older notes from a larger pipeline version. The current repo focuses on the BookNLP runners and graph-ready outputs above.
 
 ### End-to-end on every LitBank book
 

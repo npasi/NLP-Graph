@@ -21,6 +21,12 @@ data/books/**/characters.json
 data/books/**/parse_split_report.json
 data/books/**/cleaned.txt
 
+# Keep empty folder structure
+!data/raw/.gitkeep
+!data/booknlp_only_output/.gitkeep
+!data/booknlp_output/.gitkeep
+!data/books/.gitkeep
+
 # OS / editor noise
 Thumbs.db
 Desktop.ini
