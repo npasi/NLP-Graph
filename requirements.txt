@@ -1,0 +1,29 @@
+# Core
+requests>=2.31.0
+tqdm>=4.66.0
+pandas>=2.0.0
+numpy>=1.24.0
+setuptools>=70.0.0
+
+# NLP
+# BookNLP brings in spaCy + a transformer backbone (see README for model setup).
+booknlp>=1.0.7.1
+spacy>=3.5.0
+vaderSentiment>=3.3.2
+
+# Graphs
+networkx>=3.1
+
+# Interactive HTML graphs
+pyvis>=0.3.2
+
+# LitBank acquisition
+# git is invoked via subprocess, gitpython is an optional convenience.
+gitpython>=3.1.40
+
+# Notebook / viz
+matplotlib>=3.7.0
+jupyter>=1.0.0
+
+# LLM (DeepSeek API via OpenAI-compatible SDK)
+openai>=1.0.0

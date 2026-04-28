@@ -1,0 +1,65 @@
+Repo summary (local workspace)
+==============================
+
+This folder contains a compact BookNLP-based workflow for full-book analysis
+and graph-oriented extraction.
+
+What you can do (main outputs)
+-----------------------------
+
+1) Run "classic" BookNLP on a full book (.txt) with all tasks enabled:
+   - tokens (POS + dependencies + token-level event tag)
+   - entities (mentions + COREF cluster ids)
+   - quotes (speaker attribution)
+   - supersense (WordNet supersense labels)
+   - book (JSON with characters + agent/patient/poss/mod lists)
+   - native BookNLP HTML
+
+2) Generate an additional HTML listing page (read-only) that:
+   - lists all BookNLP characters with agent/patient/poss/mod lists
+   - shows event-tag counts from the tokens file
+   - embeds a preview of extracted event triplets (if present)
+
+3) Extract event triplets for graph building:
+   - (agent_character, predicate_lemma, patient_character) per verb event
+   - written as TSV + JSONL, derived from BookNLP native outputs only
+
+Key scripts (src/)
+-----------------
+
+- src/run_booknlp_only.py
+  Minimal runner for BookNLP on a single full-book .txt.
+  Writes BookNLP artefacts under:
+    data/booknlp_only_output/<run_id>/
+
+- src/booknlp_listings_html.py
+  Creates:
+    <run_id>.book.listings.html
+  from BookNLP native outputs:
+    <run_id>.book + <run_id>.tokens
+  and optional derived triplets:
+    <run_id>.event_triplets.tsv/.jsonl
+
+- src/booknlp_event_triplets.py
+  Creates:
+    <run_id>.event_triplets.tsv
+    <run_id>.event_triplets.jsonl
+  by reading BookNLP native outputs:
+    <run_id>.tokens + <run_id>.entities + <run_id>.book
+
+- src/graph_builder.py
+  BookNLP wrapper with caching and Windows/transformers compatibility patches.
+
+Data layout (local, mostly cache)
+--------------------------------
+
+data/booknlp_only_output/<run_id>/  : BookNLP outputs for full-book runs
+data/booknlp_output/                : BookNLP cache for other runs (if present)
+data/raw/                           : raw downloaded books (optional)
+
+Git hygiene
+-----------
+
+.gitignore excludes large/replicable artefacts (venv, BookNLP caches, reports).
+Commit only code + small docs + validated scripts.
+

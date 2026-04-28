@@ -1,0 +1,31 @@
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Local caches / large derived artifacts (replicable)
+data/booknlp_output/
+data/booknlp_only_output/
+data/tmp/
+data/graphs/
+data/viz/
+data/reports/
+data/cleaned/
+data/chapters/
+data/books/**/edges/
+data/books/**/viz/
+data/books/**/bridge_merges.json
+data/books/**/llm_bridge_merges.json
+data/books/**/characters.json
+data/books/**/parse_split_report.json
+data/books/**/cleaned.txt
+
+# OS / editor noise
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Secrets
+.env
+*.key
