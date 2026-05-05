@@ -1,0 +1,953 @@
+======================================================================
+CHAPTER 3 - CHARACTER INTERACTIONS
+Total unique character pairs: 118
+======================================================================
+
+[PAIR 1] a man ◄──► poor fellow
+----------------------------------------------------------------------
+  • He lay, in the dark empty house, with not a man, a
+  • woman, or a child, to say that he was kind to me in this
+  • or that, and for the memory of one kind word I will be
+  • kind to him.
+
+[PAIR 2] Scrooge ◄──► a man
+----------------------------------------------------------------------
+  • He lay, in the dark empty house, with not a man, a
+  • woman, or a child, to say that he was kind to me in this
+  • or that, and for the memory of one kind word I will be
+  • kind to him.
+
+[PAIR 3] a man ◄──► this man
+----------------------------------------------------------------------
+  • He lay, in the dark empty house, with not a man, a
+  • woman, or a child, to say that he was kind to me in this
+  • or that, and for the memory of one kind word I will be
+  • kind to him.
+
+[PAIR 4] a mother ◄──► her husband
+----------------------------------------------------------------------
+  • She hurried
+  • to the door, and met her husband; a man whose face was
+  • careworn and depressed, though he was young.
+  • He sat down to the dinner that had been hoarding for
+  • him by the fire; and when she asked him faintly what news
+  • (which was not until after a long silence), he appeared
+  • embarrassed how to answer.
+  • she said, "or bad?"--to help him.
+  • "
+  • "If he relents," she said, amazed, "there is!
+  • "
+  • "He is past relenting," said her husband.
+  • "What the half-drunken woman whom I told you of last
+  • night, said to me, when I tried to see him and obtain a
+  • week's delay; and what I thought was a mere excuse to avoid
+  • me; turns out to have been quite true.
+
+[PAIR 5] Scrooge ◄──► a mother
+----------------------------------------------------------------------
+  • The Phantom spread its dark robe before him for a
+  • moment, like a wing; and withdrawing it, revealed a room
+  • by daylight, where a mother and her children were.
+
+[PAIR 6] a mother ◄──► some one
+----------------------------------------------------------------------
+  • She was expecting some one, and with anxious eagerness;
+  • for she walked up and down the room; started at every
+  • sound; looked out from the window; glanced at the clock;
+  • tried, but in vain, to work with her needle; and could hardly
+  • bear the voices of the children in their play.
+
+[PAIR 7] a mother ◄──► the children
+----------------------------------------------------------------------
+  • She was expecting some one, and with anxious eagerness;
+  • for she walked up and down the room; started at every
+  • sound; looked out from the window; glanced at the clock;
+  • tried, but in vain, to work with her needle; and could hardly
+  • bear the voices of the children in their play.
+
+[PAIR 8] The Phantom ◄──► a mother
+----------------------------------------------------------------------
+  • The Phantom spread its dark robe before him for a
+  • moment, like a wing; and withdrawing it, revealed a room
+  • by daylight, where a mother and her children were.
+
+[PAIR 9] a red - faced gentleman with a pendulous excrescence on the end of his nose , that shook like the gills of a turkey - cock ◄──► a woman
+----------------------------------------------------------------------
+  • Suppose we make up a party and volunteer?"
+  • "I don't mind going if a lunch is provided," observed the
+  • gentleman with the excrescence on his nose.
+
+[PAIR 10] a red - faced gentleman with a pendulous excrescence on the end of his nose , that shook like the gills of a turkey - cock ◄──► anybody
+----------------------------------------------------------------------
+  • "What has he done with his money?" asked a red-faced
+  • gentleman with a pendulous excrescence on the end of his
+  • nose, that shook like the gills of a turkey-cock.
+
+[PAIR 11] Hamlet 's Father ◄──► a woman
+----------------------------------------------------------------------
+  • When I come to think of it, I'm not at all sure that I wasn't
+  • his most particular friend; for we used to stop and speak
+  • whenever we met.
+
+[PAIR 12] another ◄──► anybody
+----------------------------------------------------------------------
+  • "
+  • "When did he die?" inquired another.
+
+[PAIR 13] Bob ◄──► any man
+----------------------------------------------------------------------
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+  • "On
+  • which," said Bob, "for he is the pleasantest-spoken gentleman
+  • you ever heard, I told him.
+
+[PAIR 14] Scrooge ◄──► any man
+----------------------------------------------------------------------
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+
+[PAIR 15] Man ◄──► anybody
+----------------------------------------------------------------------
+  • "I thought he'd never die.
+
+[PAIR 16] Bob ◄──► Christmas
+----------------------------------------------------------------------
+  • He left the room, and went up-stairs into the room above,
+  • which was lighted cheerfully, and hung with Christmas.
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 17] Bob ◄──► father
+----------------------------------------------------------------------
+  • Then the two young Cratchits got
+  • upon his knees and laid, each child a little cheek, against
+  • his face, as if they said, "Don't mind it, father.
+
+[PAIR 18] Bob ◄──► his wife
+----------------------------------------------------------------------
+  • You went to-day, then, Robert?" said his
+  • wife.
+  • "I wish you could have
+  • gone.
+
+[PAIR 19] Bob ◄──► my dear
+----------------------------------------------------------------------
+  • "Yes, my dear," returned Bob.
+  • "
+  • "Knew what, my dear?"
+  • "Why, that you were a good wife," replied Bob.
+  • "You would be surer of it, my dear," returned Bob, "if
+  • you saw and spoke to him.
+  • "It's just as likely as not," said Bob, "one of these days;
+  • though there's plenty of time for that, my dear.
+
+[PAIR 20] Bob ◄──► nobody
+----------------------------------------------------------------------
+  • They
+  • entered poor Bob Cratchit's house; the dwelling he had
+  • visited before; and found the mother and the children seated
+  • round the fire.
+  • "'And He took a child, and set him in the midst of
+  • them.'
+
+[PAIR 21] Bob ◄──► Peter
+----------------------------------------------------------------------
+  • Ah, poor Tiny Tim!
+  • "They're better now again," said Cratchit's wife.
+  • "
+  • "Knew what, my dear?"
+  • "Why, that you were a good wife," replied Bob.
+  • I shouldn't be at all surprised--
+  • mark what I say!--if he got Peter a better situation."
+  • "Only hear that, Peter," said Mrs. Cratchit.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+  • It really seemed as if he had known our
+  • Tiny Tim, and felt with us.
+  • "And I know," said Bob, "I know, my dears, that when
+  • we recollect how patient and how mild he was; although he
+  • was a little, little child; we shall not quarrel easily among
+  • ourselves, and forget poor Tiny Tim in doing it.
+
+[PAIR 22] Bob ◄──► poor fellow
+----------------------------------------------------------------------
+  • "'And He took a child, and set him in the midst of
+  • them.'
+
+[PAIR 23] Bob ◄──► Scrooge
+----------------------------------------------------------------------
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+  • 'Heartily sorry,' he said, 'for your good wife.
+  • If I
+  • can be of service to you in any way,' he said, giving me
+  • his card, 'that's where I live.
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+
+[PAIR 24] Bob ◄──► the children
+----------------------------------------------------------------------
+  • They
+  • entered poor Bob Cratchit's house; the dwelling he had
+  • visited before; and found the mother and the children seated
+  • round the fire.
+
+[PAIR 25] Bob ◄──► the girls
+----------------------------------------------------------------------
+  • He looked at the work upon the table, and
+  • praised the industry and speed of Mrs. Cratchit and the girls.
+
+[PAIR 26] Bob ◄──► The mother
+----------------------------------------------------------------------
+  • They
+  • entered poor Bob Cratchit's house; the dwelling he had
+  • visited before; and found the mother and the children seated
+  • round the fire.
+  • She hurried out to meet him; and little Bob in his comforter
+  • --he had need of it, poor fellow--came in.
+
+[PAIR 27] Bob ◄──► the two young Cratchits
+----------------------------------------------------------------------
+  • Then the two young Cratchits got
+  • upon his knees and laid, each child a little cheek, against
+  • his face, as if they said, "Don't mind it, father.
+  • Bob was very cheerful with them, and spoke pleasantly to
+  • all the family.
+  • They would be done long before Sunday, he said.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+
+[PAIR 28] Bob ◄──► Tiny Tim
+----------------------------------------------------------------------
+  • He looked at the work upon the table, and
+  • praised the industry and speed of Mrs. Cratchit and the girls.
+  • "
+  • "I'm sure he's a good soul!" said Mrs. Cratchit.
+  • "You would be surer of it, my dear," returned Bob, "if
+  • you saw and spoke to him.
+  • I shouldn't be at all surprised--
+  • mark what I say!--if he got Peter a better situation."
+  • "Only hear that, Peter," said Mrs. Cratchit.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+
+[PAIR 29] Bob ◄──► your father
+----------------------------------------------------------------------
+  • She hurried out to meet him; and little Bob in his comforter
+  • --he had need of it, poor fellow--came in.
+
+[PAIR 30] Bob ◄──► Everybody
+----------------------------------------------------------------------
+  • "I hope they
+  • do.
+
+[PAIR 31] Bob ◄──► the Ghost
+----------------------------------------------------------------------
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 32] Bob ◄──► the lads
+----------------------------------------------------------------------
+  • "And I know," said Bob, "I know, my dears, that when
+  • we recollect how patient and how mild he was; although he
+  • was a little, little child; we shall not quarrel easily among
+  • ourselves, and forget poor Tiny Tim in doing it.
+
+[PAIR 33] Bob ◄──► the two apprentices
+----------------------------------------------------------------------
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 34] Bob ◄──► your good wife
+----------------------------------------------------------------------
+  • 'Heartily sorry,' he said, 'for your good wife.
+
+[PAIR 35] Christmas ◄──► Scrooge
+----------------------------------------------------------------------
+  • "Before I draw nearer to that stone to which you point,"
+  • said Scrooge, "answer me one question.
+
+[PAIR 36] Christmas ◄──► the Ghost
+----------------------------------------------------------------------
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 37] Christmas ◄──► the two apprentices
+----------------------------------------------------------------------
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 38] each other ◄──► every idiot who goes about with ' Merry Christmas ' on his lips
+----------------------------------------------------------------------
+  • But she had scarcely entered, when another woman,
+  • similarly laden, came in too; and she was closely followed by
+  • a man in faded black, who was no less startled by the sight
+  • of them, than they had been upon the recognition of each
+  • other.
+
+[PAIR 39] each other ◄──► innumerable people
+----------------------------------------------------------------------
+  • But she had scarcely entered, when another woman,
+  • similarly laden, came in too; and she was closely followed by
+  • a man in faded black, who was no less startled by the sight
+  • of them, than they had been upon the recognition of each
+  • other.
+
+[PAIR 40] each other ◄──► the Ghost
+----------------------------------------------------------------------
+  • We're not going to pick holes in
+  • each other's coats, I suppose?"
+  • "No, indeed!" said Mrs. Dilber and the man together.
+
+[PAIR 41] The man ◄──► each other
+----------------------------------------------------------------------
+  • We're not going to pick holes in
+  • each other's coats, I suppose?"
+  • "No, indeed!" said Mrs. Dilber and the man together.
+
+[PAIR 42] every idiot who goes about with ' Merry Christmas ' on his lips ◄──► innumerable people
+----------------------------------------------------------------------
+  • But she had scarcely entered, when another woman,
+  • similarly laden, came in too; and she was closely followed by
+  • a man in faded black, who was no less startled by the sight
+  • of them, than they had been upon the recognition of each
+  • other.
+
+[PAIR 43] Marley ◄──► every idiot who goes about with ' Merry Christmas ' on his lips
+----------------------------------------------------------------------
+  • If we haven't all three met
+  • here without meaning it!"
+  • "You couldn't have met in a better place," said old Joe,
+  • removing his pipe from his mouth.
+
+[PAIR 44] Everybody ◄──► Peter
+----------------------------------------------------------------------
+  • "Everybody knows that!" said Peter.
+
+[PAIR 45] Peter ◄──► father
+----------------------------------------------------------------------
+  • But however
+  • and whenever we part from one another, I am sure we
+  • shall none of us forget poor Tiny Tim--shall we--or this
+  • first parting that there was among us?"
+  • "Never, father!"
+
+[PAIR 46] father ◄──► the lads
+----------------------------------------------------------------------
+  • But however
+  • and whenever we part from one another, I am sure we
+  • shall none of us forget poor Tiny Tim--shall we--or this
+  • first parting that there was among us?"
+  • "Never, father!"
+
+[PAIR 47] father ◄──► the two young Cratchits
+----------------------------------------------------------------------
+  • Then the two young Cratchits got
+  • upon his knees and laid, each child a little cheek, against
+  • his face, as if they said, "Don't mind it, father.
+
+[PAIR 48] Fred ◄──► innumerable people
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+
+[PAIR 49] Fred ◄──► Scrooge
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+
+[PAIR 50] Fred ◄──► this man
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+
+[PAIR 51] her husband ◄──► nobody
+----------------------------------------------------------------------
+  • "
+  • The Ghost conducted him through several streets familiar
+  • to his feet; and as they went along, Scrooge looked here and
+  • there to find himself, but nowhere was he to be seen.
+
+[PAIR 52] Scrooge ◄──► her husband
+----------------------------------------------------------------------
+  • "
+  • The Ghost conducted him through several streets familiar
+  • to his feet; and as they went along, Scrooge looked here and
+  • there to find himself, but nowhere was he to be seen.
+
+[PAIR 53] her husband ◄──► the Ghost
+----------------------------------------------------------------------
+  • The only emotion that the
+  • Ghost could show him, caused by the event, was one of
+  • pleasure.
+  • "
+  • The Ghost conducted him through several streets familiar
+  • to his feet; and as they went along, Scrooge looked here and
+  • there to find himself, but nowhere was he to be seen.
+
+[PAIR 54] Scrooge ◄──► innumerable people
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+
+[PAIR 55] innumerable people ◄──► this man
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+
+[PAIR 56] Marley ◄──► the first woman
+----------------------------------------------------------------------
+  • "And now undo my bundle, Joe," said the first woman.
+  • "What do you call this?" said Joe.
+  • "Bed-curtains!"
+  • "You don't mean to say you took 'em down, rings and
+  • all, with him lying there?" said Joe.
+
+[PAIR 57] Marley ◄──► the Ghost
+----------------------------------------------------------------------
+  • "That's your account," said Joe, "and I wouldn't give
+  • another sixpence, if I was to be boiled for not doing it.
+  • It's a weakness of mine,
+  • and that's the way I ruin myself," said old Joe.
+
+[PAIR 58] Marley ◄──► the woman
+----------------------------------------------------------------------
+  • "Why not?"
+  • "You were born to make your fortune," said Joe, "and
+  • you'll certainly do it.
+  • "
+  • "I certainly shan't hold my hand, when I can get anything
+  • in it by reaching it out, for the sake of such a man as He
+  • was, I promise you, Joe," returned the woman coolly.
+  • "Whose else's do you think?" replied the woman.
+  • "Don't you be afraid of that," returned the woman.
+  • "What do you call wasting of it?" asked old Joe.
+
+[PAIR 59] Peter ◄──► mother
+----------------------------------------------------------------------
+  • "But I think he has walked a little slower than he used,
+  • these few last evenings, mother.
+
+[PAIR 60] mother ◄──► the girls
+----------------------------------------------------------------------
+  • They drew about the fire, and talked; the girls and mother
+  • working still.
+
+[PAIR 61] mother ◄──► your father
+----------------------------------------------------------------------
+  • "But I think he has walked a little slower than he used,
+  • these few last evenings, mother.
+
+[PAIR 62] Peter ◄──► my dear
+----------------------------------------------------------------------
+  • "
+  • "Knew what, my dear?"
+  • "Why, that you were a good wife," replied Bob.
+
+[PAIR 63] Tiny Tim ◄──► my dear
+----------------------------------------------------------------------
+  • "You would be surer of it, my dear," returned Bob, "if
+  • you saw and spoke to him.
+
+[PAIR 64] nobody ◄──► poor fellow
+----------------------------------------------------------------------
+  • "'And He took a child, and set him in the midst of
+  • them.'
+
+[PAIR 65] Scrooge ◄──► nobody
+----------------------------------------------------------------------
+  • "Let me see some tenderness connected with a death," said
+  • Scrooge; "or that dark chamber, Spirit, which we left just
+  • now, will be for ever present to me.
+  • "
+  • The Ghost conducted him through several streets familiar
+  • to his feet; and as they went along, Scrooge looked here and
+  • there to find himself, but nowhere was he to be seen.
+
+[PAIR 66] nobody ◄──► the children
+----------------------------------------------------------------------
+  • They
+  • entered poor Bob Cratchit's house; the dwelling he had
+  • visited before; and found the mother and the children seated
+  • round the fire.
+
+[PAIR 67] nobody ◄──► the Ghost
+----------------------------------------------------------------------
+  • "
+  • The Ghost conducted him through several streets familiar
+  • to his feet; and as they went along, Scrooge looked here and
+  • there to find himself, but nowhere was he to be seen.
+
+[PAIR 68] The mother ◄──► nobody
+----------------------------------------------------------------------
+  • They
+  • entered poor Bob Cratchit's house; the dwelling he had
+  • visited before; and found the mother and the children seated
+  • round the fire.
+
+[PAIR 69] nobody ◄──► the six young followers whose hearts they broke
+----------------------------------------------------------------------
+  • "It
+  • makes them weak by candle-light; and I wouldn't show weak
+  • eyes to your father when he comes home, for the world.
+
+[PAIR 70] nobody ◄──► your father
+----------------------------------------------------------------------
+  • "It
+  • makes them weak by candle-light; and I wouldn't show weak
+  • eyes to your father when he comes home, for the world.
+
+[PAIR 71] nobody ◄──► the Spirit
+----------------------------------------------------------------------
+  • You're not a skater, I
+  • suppose?"
+  • "No.
+
+[PAIR 72] Scrooge ◄──► one little knot of business men
+----------------------------------------------------------------------
+  • Observing that the hand was pointed to them, Scrooge
+  • advanced to listen to their talk.
+
+[PAIR 73] one little knot of business men ◄──► the Ghost
+----------------------------------------------------------------------
+  • The Spirit stopped beside one little knot of business men.
+  • The Spirit stopped beside one little knot of business men.
+
+[PAIR 74] The old man ◄──► our kith and kin
+----------------------------------------------------------------------
+  • While he did this, the woman who had already spoken
+  • threw her bundle on the floor, and sat down in a flaunting
+  • manner on a stool; crossing her elbows on her knees, and
+  • looking with a bold defiance at the other two.
+
+[PAIR 75] Scrooge ◄──► people
+----------------------------------------------------------------------
+  • What
+  • they wanted in the room of death, and why they were so
+  • restless and disturbed, Scrooge did not dare to think.
+
+[PAIR 76] Peter ◄──► some one
+----------------------------------------------------------------------
+  • "And then," cried one of the girls, "Peter will be keeping
+  • company with some one, and setting up for himself.
+
+[PAIR 77] Peter ◄──► the girls
+----------------------------------------------------------------------
+  • "And then," cried one of the girls, "Peter will be keeping
+  • company with some one, and setting up for himself.
+
+[PAIR 78] Peter ◄──► the two young Cratchits
+----------------------------------------------------------------------
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+
+[PAIR 79] Peter ◄──► Tiny Tim
+----------------------------------------------------------------------
+  • I shouldn't be at all surprised--
+  • mark what I say!--if he got Peter a better situation."
+  • "Only hear that, Peter," said Mrs. Cratchit.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+
+[PAIR 80] Peter ◄──► your father
+----------------------------------------------------------------------
+  • "But I think he has walked a little slower than he used,
+  • these few last evenings, mother.
+  • At last she said, and in a
+  • steady, cheerful voice, that only faltered once:
+  • "I have known him walk with--I have known him walk
+  • with Tiny Tim upon his shoulder, very fast indeed.
+
+[PAIR 81] Peter ◄──► the lads
+----------------------------------------------------------------------
+  • But however
+  • and whenever we part from one another, I am sure we
+  • shall none of us forget poor Tiny Tim--shall we--or this
+  • first parting that there was among us?"
+  • "Never, father!"
+  • "And I know," said Bob, "I know, my dears, that when
+  • we recollect how patient and how mild he was; although he
+  • was a little, little child; we shall not quarrel easily among
+  • ourselves, and forget poor Tiny Tim in doing it.
+
+[PAIR 82] Peter ◄──► The mother
+----------------------------------------------------------------------
+  • At last she said, and in a
+  • steady, cheerful voice, that only faltered once:
+  • "I have known him walk with--I have known him walk
+  • with Tiny Tim upon his shoulder, very fast indeed.
+
+[PAIR 83] Scrooge ◄──► poor fellow
+----------------------------------------------------------------------
+  • He lay, in the dark empty house, with not a man, a
+  • woman, or a child, to say that he was kind to me in this
+  • or that, and for the memory of one kind word I will be
+  • kind to him.
+
+[PAIR 84] poor fellow ◄──► this man
+----------------------------------------------------------------------
+  • He lay, in the dark empty house, with not a man, a
+  • woman, or a child, to say that he was kind to me in this
+  • or that, and for the memory of one kind word I will be
+  • kind to him.
+
+[PAIR 85] Scrooge ◄──► your good wife
+----------------------------------------------------------------------
+  • 'I am heartily sorry for it, Mr.
+  • Cratchit,' he said, 'and heartily sorry for your good wife.'
+  • 'Heartily sorry,' he said, 'for your good wife.
+
+[PAIR 86] Scrooge ◄──► Scrooge 's nephew
+----------------------------------------------------------------------
+  • Sitting in among the wares he dealt in, by a
+  • charcoal stove, made of old bricks, was a grey-haired rascal,
+  • nearly seventy years of age; who had screened himself from the
+  • cold air without, by a frousy curtaining of miscellaneous
+  • tatters, hung upon a line; and smoked his pipe in all the luxury
+  • of calm retirement.
+
+[PAIR 87] Scrooge ◄──► Spirit
+----------------------------------------------------------------------
+  • The Spirit paused a moment, as
+  • observing his condition, and giving him time to recover.
+  • he exclaimed, "I fear you more
+  • than any spectre I have seen.
+  • Will you not speak
+  • to me?"
+  • It gave him no reply.
+  • Scrooge knew the men, and looked towards the
+  • Spirit for an explanation.
+  • "I understand you," Scrooge returned, "and I would do
+  • it, if I could.
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+  • "Good Spirit," he pursued, as down upon the ground he
+  • fell before it: "Your nature intercedes for me, and pities
+  • me.
+  • The Spirit, stronger yet, repulsed him.
+
+[PAIR 88] Scrooge ◄──► the clerk
+----------------------------------------------------------------------
+  • But there they were, in the heart of it; on
+  • 'Change, amongst the merchants; who hurried up and down,
+  • and chinked the money in their pockets, and conversed in
+  • groups, and looked at their watches, and trifled thoughtfully
+  • with their great gold seals; and so forth, as Scrooge had
+  • seen them often.
+
+[PAIR 89] Scrooge ◄──► the Ghost
+----------------------------------------------------------------------
+  • "
+  • The Ghost conducted him through several streets familiar
+  • to his feet; and as they went along, Scrooge looked here and
+  • there to find himself, but nowhere was he to be seen.
+  • He knew no more, for the Spirit neither
+  • spoke nor moved.
+  • "I am in the presence of the Ghost of Christmas Yet To
+  • Come?" said Scrooge.
+  • "You are about to show me shadows of the things that
+  • have not happened, but will happen in the time before us,"
+  • Scrooge pursued.
+  • Although well used to ghostly company by this time,
+  • Scrooge feared the silent shape so much that his legs trembled
+  • beneath him, and he found that he could hardly stand when
+  • he prepared to follow it.
+  • Scrooge was at first inclined to be surprised that the
+  • Spirit should attach importance to conversations apparently so
+  • trivial; but feeling assured that they must have some hidden
+  • purpose, he set himself to consider what it was likely to be.
+  • Indeed, the Spirit did not stay for anything,
+  • but went straight on, as to the end just now desired,
+  • until besought by Scrooge to tarry for a moment.
+
+[PAIR 90] Scrooge ◄──► the girls
+----------------------------------------------------------------------
+  • He looked about in that very place for his own image; but
+  • another man stood in his accustomed corner, and though the
+  • clock pointed to his usual time of day for being there, he
+  • saw no likeness of himself among the multitudes that poured
+  • in through the Porch.
+
+[PAIR 91] Scrooge ◄──► the merchants
+----------------------------------------------------------------------
+  • But there they were, in the heart of it; on
+  • 'Change, amongst the merchants; who hurried up and down,
+  • and chinked the money in their pockets, and conversed in
+  • groups, and looked at their watches, and trifled thoughtfully
+  • with their great gold seals; and so forth, as Scrooge had
+  • seen them often.
+
+[PAIR 92] Scrooge ◄──► The old man
+----------------------------------------------------------------------
+  • As they sat
+  • grouped about their spoil, in the scanty light afforded by
+  • the old man's lamp, he viewed them with a detestation and
+  • disgust, which could hardly have been greater, though they
+  • had been obscene demons, marketing the corpse itself.
+
+[PAIR 93] Scrooge ◄──► The Phantom
+----------------------------------------------------------------------
+  • The Phantom moved away as it had come towards him.
+  • Scrooge followed in the shadow of its dress, which bore him
+  • up, he thought, and carried him along.
+  • Scrooge glanced towards the Phantom.
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+  • The Phantom spread its dark robe before him for a
+  • moment, like a wing; and withdrawing it, revealed a room
+  • by daylight, where a mother and her children were.
+  • He joined it once again, and wondering why and whither
+  • he had gone, accompanied it until they reached an iron gate.
+  • The Phantom was
+  • exactly as it had been, but he dreaded that he saw new
+  • meaning in its solemn shape.
+  • Holding up his hands in a last prayer to have his fate
+  • reversed, he saw an alteration in the Phantom's hood and dress.
+
+[PAIR 94] Scrooge ◄──► the two apprentices
+----------------------------------------------------------------------
+  • "Spectre," said Scrooge, "something informs me that our
+  • parting moment is at hand.
+  • "This court," said Scrooge, "through which we hurry now,
+  • is where my place of occupation is, and has been for a length
+  • of time.
+
+[PAIR 95] Scrooge ◄──► these men
+----------------------------------------------------------------------
+  • He knew these men, also, perfectly.
+  • He had made a point
+  • always of standing well in their esteem: in a business point
+  • of view, that is; strictly in a business point of view.
+  • Scrooge was at first inclined to be surprised that the
+  • Spirit should attach importance to conversations apparently so
+  • trivial; but feeling assured that they must have some hidden
+  • purpose, he set himself to consider what it was likely to be.
+  • They could scarcely be supposed to have any bearing on the
+  • death of Jacob, his old partner, for that was Past, and this
+  • Ghost's province was the Future.
+  • But nothing doubting that to whomsoever they
+  • applied they had some latent moral for his own improvement,
+  • he resolved to treasure up every word he heard,
+  • and everything he saw; and especially to observe the
+  • shadow of himself when it appeared.
+
+[PAIR 96] Scrooge ◄──► this man
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+  • He
+  • thought, if this man could be raised up now, what would be
+  • his foremost thoughts?
+  • He lay, in the dark empty house, with not a man, a
+  • woman, or a child, to say that he was kind to me in this
+  • or that, and for the memory of one kind word I will be
+  • kind to him.
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+
+[PAIR 97] Scrooge ◄──► this Spirit
+----------------------------------------------------------------------
+  • When
+  • it came near him, Scrooge bent down upon his knee; for in
+  • the very air through which this Spirit moved it seemed to
+  • scatter gloom and mystery.
+
+[PAIR 98] The man ◄──► sir
+----------------------------------------------------------------------
+  • If he had been, he'd have had somebody to look
+  • after him when he was struck with Death, instead of lying
+  • gasping out his last there, alone by himself.
+
+[PAIR 99] some one ◄──► the children
+----------------------------------------------------------------------
+  • She was expecting some one, and with anxious eagerness;
+  • for she walked up and down the room; started at every
+  • sound; looked out from the window; glanced at the clock;
+  • tried, but in vain, to work with her needle; and could hardly
+  • bear the voices of the children in their play.
+
+[PAIR 100] some one ◄──► the girls
+----------------------------------------------------------------------
+  • "And then," cried one of the girls, "Peter will be keeping
+  • company with some one, and setting up for himself.
+
+[PAIR 101] Spirit ◄──► The Phantom
+----------------------------------------------------------------------
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+
+[PAIR 102] Spirit ◄──► this man
+----------------------------------------------------------------------
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+
+[PAIR 103] Spirit ◄──► the second
+----------------------------------------------------------------------
+  • "Old Scratch has got his own at
+  • last, hey?"
+  • "So I am told," returned the second.
+
+[PAIR 104] The mother ◄──► the children
+----------------------------------------------------------------------
+  • They
+  • entered poor Bob Cratchit's house; the dwelling he had
+  • visited before; and found the mother and the children seated
+  • round the fire.
+
+[PAIR 105] the children ◄──► this man
+----------------------------------------------------------------------
+  • The children's faces, hushed and clustered round to hear what
+  • they so little understood, were brighter; and it was a happier
+  • house for this man's death!
+
+[PAIR 106] the clerk ◄──► the merchants
+----------------------------------------------------------------------
+  • But there they were, in the heart of it; on
+  • 'Change, amongst the merchants; who hurried up and down,
+  • and chinked the money in their pockets, and conversed in
+  • groups, and looked at their watches, and trifled thoughtfully
+  • with their great gold seals; and so forth, as Scrooge had
+  • seen them often.
+
+[PAIR 107] the gentlemen ◄──► the woman
+----------------------------------------------------------------------
+  • But the gallantry of her friends would not allow of this;
+  • and the man in faded black, mounting the breach first,
+  • produced his plunder.
+
+[PAIR 108] the Ghost ◄──► the six young followers whose hearts they broke
+----------------------------------------------------------------------
+  • The boy must have read them out, as he
+  • and the Spirit crossed the threshold.
+
+[PAIR 109] the Ghost ◄──► these men
+----------------------------------------------------------------------
+  • Scrooge was at first inclined to be surprised that the
+  • Spirit should attach importance to conversations apparently so
+  • trivial; but feeling assured that they must have some hidden
+  • purpose, he set himself to consider what it was likely to be.
+
+[PAIR 110] the Ghost ◄──► the two apprentices
+----------------------------------------------------------------------
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 111] The man ◄──► the Ghost
+----------------------------------------------------------------------
+  • We're not going to pick holes in
+  • each other's coats, I suppose?"
+  • "No, indeed!" said Mrs. Dilber and the man together.
+
+[PAIR 112] the Ghost ◄──► the woman
+----------------------------------------------------------------------
+  • What odds, Mrs. Dilber?" said the
+  • woman.
+  • "
+  • "I wish it was a little heavier judgment," replied the
+  • woman; "and it should have been, you may depend upon it,
+  • if I could have laid my hands on anything else.
+
+[PAIR 113] Tiny Tim ◄──► the girls
+----------------------------------------------------------------------
+  • He looked at the work upon the table, and
+  • praised the industry and speed of Mrs. Cratchit and the girls.
+
+[PAIR 114] The man ◄──► the woman
+----------------------------------------------------------------------
+  • "If he wanted to keep 'em after he was dead, a wicked old
+  • screw," pursued the woman, "why wasn't he natural in his
+  • lifetime?
+
+[PAIR 115] The mother ◄──► your father
+----------------------------------------------------------------------
+  • At last she said, and in a
+  • steady, cheerful voice, that only faltered once:
+  • "I have known him walk with--I have known him walk
+  • with Tiny Tim upon his shoulder, very fast indeed.
+  • "But he was very light to carry," she resumed, intent upon
+  • her work, "and his father loved him so, that it was no
+  • trouble: no trouble.
+  • She hurried out to meet him; and little Bob in his comforter
+  • --he had need of it, poor fellow--came in.
+
+[PAIR 116] The Phantom ◄──► this man
+----------------------------------------------------------------------
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+
+[PAIR 117] the six young followers whose hearts they broke ◄──► your father
+----------------------------------------------------------------------
+  • "It
+  • makes them weak by candle-light; and I wouldn't show weak
+  • eyes to your father when he comes home, for the world.
+
+[PAIR 118] Tiny Tim ◄──► the two young Cratchits
+----------------------------------------------------------------------
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.

@@ -17,8 +17,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from src.graph_builder import BookNLPGraphBuilder
-from src.utils.io import ensure_dir, write_json
+from graph_builder import BookNLPGraphBuilder
+from utils.io import ensure_dir, write_json
 
 logger = logging.getLogger(__name__)
 

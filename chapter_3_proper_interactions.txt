@@ -1,0 +1,129 @@
+======================================================================
+CHAPTER 3 - PROPER NAME INTERACTIONS
+Total unique proper name pairs: 11
+======================================================================
+
+[PAIR 1] Bob ◄──► Christmas
+----------------------------------------------------------------------
+  • He left the room, and went up-stairs into the room above,
+  • which was lighted cheerfully, and hung with Christmas.
+  • Tell me what man that was whom we saw lying dead?"
+  • The Ghost of Christmas Yet To Come conveyed him, as
+  • before--though at a different time, he thought: indeed, there
+  • seemed no order in these latter visions, save that they were
+  • in the Future--into the resorts of business men, but showed
+  • him not himself.
+
+[PAIR 2] Bob ◄──► Peter
+----------------------------------------------------------------------
+  • Ah, poor Tiny Tim!
+  • "They're better now again," said Cratchit's wife.
+  • "
+  • "Knew what, my dear?"
+  • "Why, that you were a good wife," replied Bob.
+  • I shouldn't be at all surprised--
+  • mark what I say!--if he got Peter a better situation."
+  • "Only hear that, Peter," said Mrs. Cratchit.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+  • It really seemed as if he had known our
+  • Tiny Tim, and felt with us.
+  • "And I know," said Bob, "I know, my dears, that when
+  • we recollect how patient and how mild he was; although he
+  • was a little, little child; we shall not quarrel easily among
+  • ourselves, and forget poor Tiny Tim in doing it.
+
+[PAIR 3] Bob ◄──► Scrooge
+----------------------------------------------------------------------
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+  • 'Heartily sorry,' he said, 'for your good wife.
+  • If I
+  • can be of service to you in any way,' he said, giving me
+  • his card, 'that's where I live.
+  • Bob told them of the extraordinary kindness
+  • of Mr. Scrooge's nephew, whom he had scarcely seen but
+  • once, and who, meeting him in the street that day, and seeing
+  • that he looked a little--"just a little down you know," said
+  • Bob, inquired what had happened to distress him.
+
+[PAIR 4] Bob ◄──► Tiny Tim
+----------------------------------------------------------------------
+  • He looked at the work upon the table, and
+  • praised the industry and speed of Mrs. Cratchit and the girls.
+  • "
+  • "I'm sure he's a good soul!" said Mrs. Cratchit.
+  • "You would be surer of it, my dear," returned Bob, "if
+  • you saw and spoke to him.
+  • I shouldn't be at all surprised--
+  • mark what I say!--if he got Peter a better situation."
+  • "Only hear that, Peter," said Mrs. Cratchit.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+
+[PAIR 5] Bob ◄──► Everybody
+----------------------------------------------------------------------
+  • "I hope they
+  • do.
+
+[PAIR 6] Christmas ◄──► Scrooge
+----------------------------------------------------------------------
+  • "Before I draw nearer to that stone to which you point,"
+  • said Scrooge, "answer me one question.
+
+[PAIR 7] Everybody ◄──► Peter
+----------------------------------------------------------------------
+  • "Everybody knows that!" said Peter.
+
+[PAIR 8] Fred ◄──► Scrooge
+----------------------------------------------------------------------
+  • Scrooge and the Phantom came into the presence of this
+  • man, just as a woman with a heavy bundle slunk into the
+  • shop.
+
+[PAIR 9] Peter ◄──► Tiny Tim
+----------------------------------------------------------------------
+  • I shouldn't be at all surprised--
+  • mark what I say!--if he got Peter a better situation."
+  • "Only hear that, Peter," said Mrs. Cratchit.
+  • "I am very happy," said little Bob, "I am very happy!"
+  • Mrs. Cratchit kissed him, his daughters kissed him, the
+  • two young Cratchits kissed him, and Peter and himself shook
+  • hands.
+
+[PAIR 10] Scrooge ◄──► Scrooge 's nephew
+----------------------------------------------------------------------
+  • Sitting in among the wares he dealt in, by a
+  • charcoal stove, made of old bricks, was a grey-haired rascal,
+  • nearly seventy years of age; who had screened himself from the
+  • cold air without, by a frousy curtaining of miscellaneous
+  • tatters, hung upon a line; and smoked his pipe in all the luxury
+  • of calm retirement.
+
+[PAIR 11] Scrooge ◄──► Spirit
+----------------------------------------------------------------------
+  • The Spirit paused a moment, as
+  • observing his condition, and giving him time to recover.
+  • he exclaimed, "I fear you more
+  • than any spectre I have seen.
+  • Will you not speak
+  • to me?"
+  • It gave him no reply.
+  • Scrooge knew the men, and looked towards the
+  • Spirit for an explanation.
+  • "I understand you," Scrooge returned, "and I would do
+  • it, if I could.
+  • "If there is any person in the town, who feels emotion
+  • caused by this man's death," said Scrooge quite agonised,
+  • "show that person to me, Spirit, I beseech you!"
+  • "Good Spirit," he pursued, as down upon the ground he
+  • fell before it: "Your nature intercedes for me, and pities
+  • me.
+  • The Spirit, stronger yet, repulsed him.

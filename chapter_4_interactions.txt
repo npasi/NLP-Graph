@@ -1,0 +1,314 @@
+======================================================================
+CHAPTER 4 - CHARACTER INTERACTIONS
+Total unique character pairs: 40
+======================================================================
+
+[PAIR 1] Scrooge ◄──► a boy
+----------------------------------------------------------------------
+  • Shaving was not an easy task, for his hand continued to
+  • shake very much; and shaving requires attention, even when
+  • you don't dance while you are at it.
+
+[PAIR 2] Scrooge ◄──► every one
+----------------------------------------------------------------------
+  • The people were by this time pouring forth,
+  • as he had seen them with the Ghost of Christmas Present;
+  • and walking with his hands behind him, Scrooge regarded
+  • every one with a delighted smile.
+
+[PAIR 3] The people ◄──► every one
+----------------------------------------------------------------------
+  • The people were by this time pouring forth,
+  • as he had seen them with the Ghost of Christmas Present;
+  • and walking with his hands behind him, Scrooge regarded
+  • every one with a delighted smile.
+
+[PAIR 4] Scrooge ◄──► his niece
+----------------------------------------------------------------------
+  • Dear heart alive, how his niece by marriage started!
+  • Scrooge had forgotten, for the moment, about her sitting
+  • in the corner with the footstool, or he wouldn't have done
+  • it, on any account.
+  • His niece looked just the same.
+
+[PAIR 5] Marley ◄──► Scrooge
+----------------------------------------------------------------------
+  • "Fred!" said Scrooge.
+  • Will you let me in, Fred?"
+  • Let him in!
+  • Scrooge sat with his
+  • door wide open, that he might see him come into the Tank.
+
+[PAIR 6] Marley ◄──► Spirit
+----------------------------------------------------------------------
+  • If he could only be there first, and catch Bob
+  • Cratchit coming late!
+
+[PAIR 7] my dear ◄──► one another
+----------------------------------------------------------------------
+  • "My dear Mr. Scrooge, are you serious?"
+  • "If you please," said Scrooge.
+
+[PAIR 8] Scrooge ◄──► my dear
+----------------------------------------------------------------------
+  • "My dear Mr. Scrooge, are you serious?"
+  • "If you please," said Scrooge.
+  • "Is your master at home, my dear?" said Scrooge to the
+  • girl.
+  • "I'll go in here, my dear.
+
+[PAIR 9] my dear ◄──► the gentlemen
+----------------------------------------------------------------------
+  • "Is your master at home, my dear?" said Scrooge to the
+  • girl.
+
+[PAIR 10] my dear ◄──► the girl
+----------------------------------------------------------------------
+  • "Is your master at home, my dear?" said Scrooge to the
+  • girl.
+
+[PAIR 11] my dear ◄──► the second
+----------------------------------------------------------------------
+  • "My dear Mr. Scrooge, are you serious?"
+  • "If you please," said Scrooge.
+
+[PAIR 12] My dear sir ◄──► one another
+----------------------------------------------------------------------
+  • "My dear sir," said Scrooge, quickening his pace, and
+  • taking the old gentleman by both his hands.
+  • Will you do me that favour?"
+  • "My dear sir," said the other, shaking hands with him.
+
+[PAIR 13] My dear sir ◄──► Scrooge
+----------------------------------------------------------------------
+  • "My dear sir," said Scrooge, quickening his pace, and
+  • taking the old gentleman by both his hands.
+  • Will you do me that favour?"
+  • "My dear sir," said the other, shaking hands with him.
+
+[PAIR 14] My dear sir ◄──► the other
+----------------------------------------------------------------------
+  • Will you do me that favour?"
+  • "My dear sir," said the other, shaking hands with him.
+
+[PAIR 15] Scrooge ◄──► my fine fellow
+----------------------------------------------------------------------
+  • "What's to-day, my fine fellow?" said Scrooge.
+
+[PAIR 16] Spirit ◄──► my fine fellow
+----------------------------------------------------------------------
+  • Hallo, my fine fellow!"
+  • "Hallo!" returned the boy.
+
+[PAIR 17] my fine fellow ◄──► the boy
+----------------------------------------------------------------------
+  • Hallo, my fine fellow!"
+  • "Hallo!" returned the boy.
+
+[PAIR 18] Scrooge ◄──► one another
+----------------------------------------------------------------------
+  • "My dear sir," said Scrooge, quickening his pace, and
+  • taking the old gentleman by both his hands.
+  • A merry Christmas to you, sir!"
+  • "Mr. Scrooge?"
+  • "Yes," said Scrooge.
+  • "That is my name, and I fear it
+  • may not be pleasant to you.
+  • And will you have the goodness"--here Scrooge whispered in
+  • his ear.
+  • "My dear Mr. Scrooge, are you serious?"
+  • "If you please," said Scrooge.
+  • Will you do me that favour?"
+  • "My dear sir," said the other, shaking hands with him.
+  • "I don't know what to say to such munifi--"
+  • "Don't say anything, please," retorted Scrooge.
+  • "I am much obliged to you.
+
+[PAIR 19] one another ◄──► sir
+----------------------------------------------------------------------
+  • A merry Christmas to you, sir!"
+  • "Mr. Scrooge?"
+  • "Yes," said Scrooge.
+
+[PAIR 20] one another ◄──► the other
+----------------------------------------------------------------------
+  • Will you do me that favour?"
+  • "My dear sir," said the other, shaking hands with him.
+
+[PAIR 21] one another ◄──► the second
+----------------------------------------------------------------------
+  • "My dear Mr. Scrooge, are you serious?"
+  • "If you please," said Scrooge.
+
+[PAIR 22] Spirit ◄──► our kith and kin
+----------------------------------------------------------------------
+  • And so, as Tiny Tim
+  • observed, God bless Us, Every One!
+
+[PAIR 23] Poor boy ◄──► Scrooge
+----------------------------------------------------------------------
+  • Some people laughed to see the alteration in him,
+  • but he let them laugh, and little heeded them; for he was
+  • wise enough to know that nothing ever happened on this
+  • globe, for good, at which some people did not have their fill
+  • of laughter in the outset; and knowing that such as these
+  • would be blind anyway, he thought it quite as well that they
+  • should wrinkle up their eyes in grins, as have the malady in
+  • less attractive forms.
+
+[PAIR 24] Scrooge ◄──► sir
+----------------------------------------------------------------------
+  • He looked so irresistibly
+  • pleasant, in a word, that three or four good-humoured fellows
+  • said, "Good morning, sir!
+  • A merry Christmas to you, sir!"
+  • "Mr. Scrooge?"
+  • "Yes," said Scrooge.
+  • "Yes, sir."
+  • "Where is he, my love?" said Scrooge.
+  • "What do you mean by coming
+  • here at this time of day?"
+  • "I am very sorry, sir," said Bob.
+
+[PAIR 25] Scrooge ◄──► Spirit
+----------------------------------------------------------------------
+  • He did it all, and
+  • infinitely more; and to Tiny Tim, who did NOT die, he was
+  • a second father.
+  • "I'll send it to Bob Cratchit's!"
+  • "What do you mean by coming
+  • here at this time of day?"
+  • "I am very sorry, sir," said Bob.
+  • "
+  • "Now, I'll tell you what, my friend," said Scrooge, "I
+  • am not going to stand this sort of thing any longer.
+  • And
+  • therefore," he continued, leaping from his stool, and giving
+  • Bob such a dig in the waistcoat that he staggered back into
+  • the Tank again; "and therefore I am about to raise your
+  • salary!"
+  • Bob trembled, and got a little nearer to the ruler.
+  • He
+  • had a momentary idea of knocking Scrooge down with it,
+  • holding him, and calling to the people in the court for help
+  • and a strait-waistcoat.
+  • "A merry Christmas, Bob!" said Scrooge, with an earnestness
+  • that could not be mistaken, as he clapped him on the
+  • back.
+  • "A merrier Christmas, Bob, my good fellow, than I
+  • have given you, for many a year!
+  • Make up the fires, and buy another
+  • coal-scuttle before you dot another i, Bob Cratchit!"
+  • Scrooge was better than his word.
+
+[PAIR 26] Scrooge ◄──► the boy
+----------------------------------------------------------------------
+  • "
+  • The chuckle with which he said this, and the chuckle with
+  • which he paid for the Turkey, and the chuckle with which
+  • he paid for the cab, and the chuckle with which he recompensed
+  • the boy, were only to be exceeded by the chuckle
+  • with which he sat down breathless in his chair again, and
+  • chuckled till he cried.
+
+[PAIR 27] Scrooge ◄──► the clerk
+----------------------------------------------------------------------
+  • cried Scrooge, calling downward to a
+  • boy in Sunday clothes, who perhaps had loitered in to look
+  • about him.
+
+[PAIR 28] Scrooge ◄──► the gentlemen
+----------------------------------------------------------------------
+  • "Is your master at home, my dear?" said Scrooge to the
+  • girl.
+  • "Yes, sir."
+  • "Where is he, my love?" said Scrooge.
+  • He knows me," said Scrooge, with his hand
+  • already on the dining-room lock.
+
+[PAIR 29] Scrooge ◄──► the girl
+----------------------------------------------------------------------
+  • "Is your master at home, my dear?" said Scrooge to the
+  • girl.
+  • I'll
+  • show you up-stairs, if you please."
+  • "Thank'ee.
+
+[PAIR 30] Scrooge ◄──► the other
+----------------------------------------------------------------------
+  • Will you do me that favour?"
+  • "My dear sir," said the other, shaking hands with him.
+
+[PAIR 31] Scrooge ◄──► the people
+----------------------------------------------------------------------
+  • As he stood there, waiting his arrival, the knocker
+  • caught his eye.
+
+[PAIR 32] Scrooge ◄──► The people
+----------------------------------------------------------------------
+  • The people were by this time pouring forth,
+  • as he had seen them with the Ghost of Christmas Present;
+  • and walking with his hands behind him, Scrooge regarded
+  • every one with a delighted smile.
+  • He went to church, and walked about the streets, and
+  • watched the people hurrying to and fro, and patted children
+  • on the head, and questioned beggars, and looked down into
+  • the kitchens of houses, and up to the windows, and found
+  • that everything could yield him pleasure.
+
+[PAIR 33] Scrooge ◄──► The Phantom
+----------------------------------------------------------------------
+  • He had no further intercourse with Spirits, but lived upon
+  • the Total Abstinence Principle, ever afterwards; and it was
+  • always said of him, that he knew how to keep Christmas
+  • well, if any man alive possessed the knowledge.
+
+[PAIR 34] Scrooge ◄──► the second
+----------------------------------------------------------------------
+  • "My dear Mr. Scrooge, are you serious?"
+  • "If you please," said Scrooge.
+
+[PAIR 35] Scrooge ◄──► these men
+----------------------------------------------------------------------
+  • He had not gone far, when coming on towards him he
+  • beheld the portly gentleman, who had walked into his
+  • counting-house the day before, and said, "Scrooge and Marley's, I
+  • believe?"
+  • He had not gone far, when coming on towards him he
+  • beheld the portly gentleman, who had walked into his
+  • counting-house the day before, and said, "Scrooge and Marley's, I
+  • believe?"
+
+[PAIR 36] Spirit ◄──► sir
+----------------------------------------------------------------------
+  • "What do you mean by coming
+  • here at this time of day?"
+  • "I am very sorry, sir," said Bob.
+  • "
+  • "It's only once a year, sir," pleaded Bob, appearing from
+  • the Tank.
+  • I was making rather
+  • merry yesterday, sir.
+
+[PAIR 37] sir ◄──► the gentlemen
+----------------------------------------------------------------------
+  • "Yes, sir."
+  • "Where is he, my love?" said Scrooge.
+  • "He's in the dining-room, sir, along with mistress.
+
+[PAIR 38] Spirit ◄──► the boy
+----------------------------------------------------------------------
+  • Hallo, my fine fellow!"
+  • "Hallo!" returned the boy.
+
+[PAIR 39] the boy ◄──► the man with the large chin
+----------------------------------------------------------------------
+  • Come back with the man, and
+  • I'll give you a shilling.
+  • Come back with him in less than
+  • five minutes and I'll give you half-a-crown!"
+
+[PAIR 40] the gentlemen ◄──► the girl
+----------------------------------------------------------------------
+  • "Is your master at home, my dear?" said Scrooge to the
+  • girl.

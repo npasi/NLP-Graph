@@ -41,7 +41,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 import networkx as nx
 import pandas as pd
 
-from src.relation_scorer import EdgeScores, RelationScorer, polarity_color_label
+from relation_scorer import EdgeScores, RelationScorer, polarity_color_label
 
 logger = logging.getLogger(__name__)
 

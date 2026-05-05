@@ -37,7 +37,7 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import pandas as pd
 
-from src.relation_lexicon import LexiconHit, RelationLexicon
+from relation_lexicon import LexiconHit, RelationLexicon
 
 logger = logging.getLogger(__name__)
 
