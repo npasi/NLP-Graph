@@ -1,0 +1,135 @@
+======================================================================
+CHAPTER 1 - PROPER NAME ALIAS-MERGED INTERACTIONS
+Total unique proper name pairs: 5
+======================================================================
+
+[PAIR 1] Dick ◄──► Ghost
+----------------------------------------------------------------------
+  • "Dick Wilkins, to be sure!" said Scrooge to the Ghost.
+  • It was not until now, when the
+  • bright faces of his former self and Dick were turned from
+  • them, that he remembered the Ghost, and became conscious
+  • that it was looking full upon him, while the light upon its
+  • head burnt very clear.
+
+[PAIR 2] Dick ◄──► Scrooge
+----------------------------------------------------------------------
+  • Dick!"
+  • Scrooge's former self, now grown a young man, came briskly
+  • in, accompanied by his fellow-'prentice.
+  • "Dick Wilkins, to be sure!" said Scrooge to the Ghost.
+  • It was not until now, when the
+  • bright faces of his former self and Dick were turned from
+  • them, that he remembered the Ghost, and became conscious
+  • that it was looking full upon him, while the light upon its
+  • head burnt very clear.
+
+[PAIR 3] Ghost ◄──► Scrooge
+----------------------------------------------------------------------
+  • Every time he resolved
+  • within himself, after mature inquiry, that it was all a dream, his
+  • mind flew back again, like a strong spring released, to its first
+  • position, and presented the same problem to be worked all through,
+  • "Was it a dream or not?"
+  • Scrooge lay in this state until the chime had gone three quarters
+  • more, when he remembered, on a sudden, that the Ghost had warned
+  • him of a visitation when the bell tolled one.
+  • "Your welfare!" said the Ghost.
+  • "And what is
+  • that upon your cheek?"
+  • Scrooge muttered, with an unusual catching in his voice,
+  • that it was a pimple; and begged the Ghost to lead him
+  • where he would.
+  • They went, the Ghost and Scrooge, across the hall, to a
+  • door at the back of the house.
+  • Scrooge looked at the Ghost, and with a mournful shaking of
+  • his head, glanced anxiously towards the door.
+  • "Dick Wilkins, to be sure!" said Scrooge to the Ghost.
+  • It was not until now, when the
+  • bright faces of his former self and Dick were turned from
+  • them, that he remembered the Ghost, and became conscious
+  • that it was looking full upon him, while the light upon its
+  • head burnt very clear.
+  • His former self turned down the lamps as he gave utterance
+  • to the wish; and Scrooge and the Ghost again stood side by
+  • side in the open air.
+  • "
+  • "I told you these were shadows of the things that have
+  • been," said the Ghost.
+  • "What!" exclaimed the Ghost, "would you so soon put out,
+  • with worldly hands, the light I give?
+  • "
+  • The Ghost smiled thoughtfully, and waved its hand:
+  • saying as it did so, "Let us see another Christmas!"
+  • Scrooge's former self grew larger at the words, and the
+  • room became a little darker and more dirty.
+  • The Ghost stopped at a certain warehouse door, and asked
+  • Scrooge if he knew it.
+  • He turned upon the Ghost, and seeing that it looked upon
+  • him with a face, in which in some strange way there were
+  • fragments of all the faces it had shown him, wrestled with it.
+  • In the struggle, if that can be called a struggle in which
+  • the Ghost with no visible resistance on its own part was
+  • undisturbed by any effort of its adversary, Scrooge observed
+  • that its light was burning high and bright; and dimly
+  • connecting that with its influence over him, he seized the
+  • extinguisher-cap, and by a sudden action pressed it down
+  • upon its head.
+
+[PAIR 4] Old Fezziwig ◄──► Scrooge
+----------------------------------------------------------------------
+  • Bless his heart; it's Fezziwig
+  • alive again!"
+  • He rubbed his
+  • hands; adjusted his capacious waistcoat; laughed all over
+  • himself, from his shoes to his organ of benevolence; and
+  • called out in a comfortable, oily, rich, fat, jovial voice:
+  • "Yo ho, there!
+
+[PAIR 5] Scrooge ◄──► Spirit
+----------------------------------------------------------------------
+  • The Spirit signed to him to listen to the two apprentices,
+  • who were pouring out their hearts in praise of Fezziwig:
+  • and when he had done so, said,
+  • "Why!
+  • The Spirit must have heard
+  • him thinking, for it said immediately:
+  • "Your reclamation, then.
+  • "
+  • It put out its strong hand as it spoke, and clasped him
+  • gently by the arm.
+  • "Rise! and walk with me!"
+  • It would have been in vain for Scrooge to plead that the
+  • weather and the hour were not adapted to pedestrian purposes;
+  • that bed was warm, and the thermometer a long way below
+  • freezing; that he was clad but lightly in his slippers,
+  • dressing-gown, and nightcap; and that he had a cold upon him at
+  • that time.
+  • The Spirit gazed upon him mildly.
+  • The Spirit touched him on the arm, and pointed to his
+  • younger self, intent upon his reading.
+  • I will not
+  • gainsay it, Spirit.
+  • "
+  • He felt the Spirit's glance, and stopped.
+  • "Spirit!" said Scrooge, "show me no more!
+  • "
+  • "Spirit!" said Scrooge in a broken voice, "remove me
+  • from this place.
+  • "Are you the Spirit, sir, whose coming was foretold to
+  • me?" asked Scrooge.
+  • "
+  • Scrooge reverently disclaimed all intention to offend
+  • or any knowledge of having wilfully "bonneted" the Spirit at
+  • any period of his life.
+  • He rose: but finding that the Spirit
+  • made towards the window, clasped his robe in supplication.
+  • "Bear but a touch of my hand there," said the Spirit,
+  • laying it upon his heart, "and you shall be upheld in more
+  • than this!"
+  • The Spirit signed to him to listen to the two apprentices,
+  • who were pouring out their hearts in praise of Fezziwig:
+  • and when he had done so, said,
+  • "Why!
+  • He has spent but a few pounds of
+  • your mortal money: three or four perhaps.
