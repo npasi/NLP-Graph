@@ -6,11 +6,13 @@ looks like a progression of chapter numbers. Supported formats:
 
 1. ``CHAPTER I`` / ``Chapter 1`` / ``CHAPTER ONE``
    (+ ``BOOK``, ``PART``, ``VOLUME``, ``SECTION`` variants).
-2. ``I`` / ``II`` / ``III`` — bare Roman numerals on their own line
+2. ALL CAPS literary titles on their own line, preceded by a blank line
+   (e.g. *Dr. Jekyll and Mr. Hyde*: ``STORY OF THE DOOR``).
+3. ``I`` / ``II`` / ``III`` — bare Roman numerals on their own line
    (*The Turn of the Screw*).
-3. ``01 My Early Home`` — numeric prefix + inline title
+4. ``01 My Early Home`` — numeric prefix + inline title
    (*Black Beauty*).
-4. ``1`` / ``2`` / ``3`` — bare arabic numerals on their own line.
+5. ``1`` / ``2`` / ``3`` — bare arabic numerals on their own line.
 
 Each record returned is a plain ``dict`` with the schema the pipeline
 expects::
@@ -26,13 +28,20 @@ expects::
 
 Robustness features:
 
+* The text is clipped to the span between the Gutenberg ``*** START OF
+  … ***`` and ``*** END OF … ***`` markers before detection, so license
+  sections (``SECTION 1``, ``GENERAL TERMS OF USE``, …) are never seen
+  by any detector.
+* Gutenberg boilerplate lines and title-page metadata lines are filtered
+  from the ALL CAPS detector.
 * A **table of contents** at the front of the book is detected and
   dropped (headings in the first ~5% of the text with a tiny body).
 * Duplicate chapter numbers (TOC + body) are merged: we keep the
   occurrence with the longest body.
 * Detector output is **validated for progression** (numbers monotone +
   small gaps) so we don't mistake e.g. a single in-line "Part I" for a
-  full chapter scheme.
+  full chapter scheme.  ALL CAPS headings use a body-length heuristic
+  instead because they carry no numeric sequence.
 
 If no detector yields a valid set of headings, the whole text is
 returned as a single chapter titled ``"Full text"``.
@@ -52,6 +61,7 @@ TOC_ZONE_FRAC = 0.05
 TOC_BODY_MAX_TOKENS = 500
 MIN_HEADINGS_FOR_VALID_SCHEME = 3
 MIN_PROGRESSION_RATIO = 0.6
+ALLCAPS_MIN_AVG_BODY = 50  # all-caps chapters must have avg body ≥ 50 words
 
 
 _SPELLED_NUMBERS = {
@@ -112,6 +122,94 @@ _SPELLED_NUMBERS = {
 _ROMAN_RE = re.compile(r"^[IVXLCDM]+$")
 _ARABIC_RE = re.compile(r"^\d+$")
 
+# ── Gutenberg structural markers ─────────────────────────────────────────────
+
+_GUTENBERG_START_RE = re.compile(
+    r"^\*{3}\s*START\s+OF\s+(?:THE\s+)?PROJECT\s+GUTENBERG[^\r\n]*\*{3}[ \t]*$",
+    re.MULTILINE | re.IGNORECASE,
+)
+_GUTENBERG_END_RE = re.compile(
+    r"^\*{3}\s*END\s+OF\s+(?:THE\s+)?PROJECT\s+GUTENBERG[^\r\n]*\*{3}[ \t]*$",
+    re.MULTILINE | re.IGNORECASE,
+)
+
+
+def _find_book_bounds(text: str) -> Tuple[int, int]:
+    """Return (start, end) of the actual book content.
+
+    Clips away the Project Gutenberg preamble (before the START marker)
+    and the license footer (after the END marker).  If markers are absent
+    the whole text is returned.
+    """
+    start = 0
+    end = len(text)
+    m = _GUTENBERG_START_RE.search(text)
+    if m:
+        start = m.end()
+    m = _GUTENBERG_END_RE.search(text)
+    if m:
+        end = m.start()
+    return start, end
+
+
+# ── ALL CAPS detector patterns ───────────────────────────────────────────────
+
+# Matches a standalone line that is entirely upper-case with common punctuation,
+# contains 2–10 words, and at most 80 characters of content.
+_ALLCAPS_HEADING_RE = re.compile(
+    r"(?m)^[ \t]*"
+    r"(?P<title>[A-Z][A-Z0-9’'.\-&,]*"
+    r"(?:[ \t]+[A-Z0-9’'.\-&,]+){1,9})"
+    r"[ \t]*$"
+)
+
+# Lines that are Gutenberg boilerplate even when the text is not clipped.
+_ALLCAPS_BOILERPLATE_RE = re.compile(
+    r"^(?:"
+    r"PROJECT\s+GUTENBERG|"
+    r"GENERAL\s+TERMS?\s+OF\s+USE|"
+    r"SECTION\s+\d|"
+    r"(?:FULL\s+)?LICEN[SC]E|"
+    r"DONATIONS?|"
+    r"INFORMATION\s+ABOUT|"
+    r"PREAMBLE|"
+    r"DISCLAIMER|"
+    r"LIMITATION\s+ON|"
+    r"INDEMNITY|"
+    r"WARRANTY|"
+    r"TRADEMARK"
+    r")",
+    re.IGNORECASE,
+)
+
+# Lines that are title-page metadata.
+_ALLCAPS_METADATA_RE = re.compile(
+    r"^(?:"
+    r"BY\b|"
+    r"TRANSLATED\s+BY|"
+    r"EDITED\s+BY|"
+    r"ILLUSTRATED?\s+BY|"
+    r"WITH\s+(?:AN?\s+)?(?:INTRODUCTION|PREFACE)|"
+    r"DEDICATION|"
+    r"DEDICATED\s+TO|"
+    r"PRODUCED\s+BY"
+    r")",
+    re.IGNORECASE,
+)
+
+
+def _has_blank_line_before(text: str, pos: int) -> bool:
+    """True if *pos* is preceded by a blank line or by only whitespace.
+
+    The "only whitespace" branch handles the first chapter heading in a book,
+    which may appear at or near position 0 of the clipped book text.
+    """
+    segment = text[max(0, pos - 300): pos]
+    return bool(re.search(r"\n\s*\n\s*$", segment)) or not segment.strip()
+
+
+# ── Number helpers ────────────────────────────────────────────────────────────
+
 
 def _roman_to_int(roman: str) -> Optional[int]:
     values = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
@@ -161,6 +259,8 @@ def _parse_number(token: str) -> Optional[int]:
     return _spelled_to_int(token)
 
 
+# ── Heading detector regexes ──────────────────────────────────────────────────
+
 _SECTION_WORDS = (
     r"CHAPTER|Chapter|chapter|"
     r"BOOK|Book|book|"
@@ -183,7 +283,7 @@ _WORD_HEADING_RE = re.compile(
     [ \t.:]+
     (?:THE[ \t]+)?
     (?P<num>[A-Za-z0-9\-]+)
-    (?:[ \t.:\-\u2013\u2014]+
+    (?:[ \t.:\-–—]+
        (?P<title>[^\r\n]{0,80}))?
     [ \t.\r]*
     $
@@ -211,11 +311,46 @@ def _detect_word_headings(text: str) -> List[HeadingRec]:
                 "end": m.end(),
                 "num": num_val,
                 "num_text": m.group("num").strip(),
-                "title": (m.group("title") or "").strip(" .:-\u2013\u2014\t"),
+                "title": (m.group("title") or "").strip(" .:-–—\t"),
                 "raw": m.group(0).strip(),
                 "word": m.group("word"),
             }
         )
+    return out
+
+
+def _detect_allcaps_headings(text: str) -> List[HeadingRec]:
+    """Detect ALL CAPS literary chapter headings with no numeric sequence.
+
+    Returns headings with sequential ``num`` values (1, 2, …) and
+    ``word = "allcaps"`` so that ``_format_title`` can output the raw
+    title instead of ``Chapter N: …``.
+    """
+    out: List[HeadingRec] = []
+    for m in _ALLCAPS_HEADING_RE.finditer(text):
+        title = m.group("title").strip()
+        if len(title.split()) < 2:
+            continue
+        if _ALLCAPS_BOILERPLATE_RE.match(title):
+            continue
+        if _ALLCAPS_METADATA_RE.match(title):
+            continue
+        if not _has_blank_line_before(text, m.start()):
+            continue
+        out.append(
+            {
+                "start": m.start(),
+                "end": m.end(),
+                "num": 0,       # placeholder; filled below
+                "num_text": "",
+                "title": title,
+                "raw": title,
+                "word": "allcaps",
+            }
+        )
+    for i, h in enumerate(out):
+        h["num"] = i + 1
+        h["num_text"] = str(i + 1)
     return out
 
 
@@ -246,7 +381,7 @@ def _detect_number_titled(text: str) -> List[HeadingRec]:
             num_val = int(m.group("num"))
         except ValueError:
             continue
-        title = m.group("title").strip(" .:-\u2013\u2014\t")
+        title = m.group("title").strip(" .:-–—\t")
         if sum(1 for w in title.split() if w and w[0].islower()) > 2:
             continue
         out.append(
@@ -286,6 +421,7 @@ def _detect_number_only(text: str) -> List[HeadingRec]:
 
 _DETECTORS: List[Tuple[str, Callable[[str], List[HeadingRec]]]] = [
     ("word", _detect_word_headings),
+    ("allcaps", _detect_allcaps_headings),
     ("roman-only", _detect_roman_only),
     ("number-titled", _detect_number_titled),
     ("number-only", _detect_number_only),
@@ -340,6 +476,26 @@ def _looks_valid(headings: List[HeadingRec]) -> bool:
     return score >= MIN_PROGRESSION_RATIO
 
 
+def _looks_valid_allcaps(headings: List[HeadingRec], text: str) -> bool:
+    """Validate ALL CAPS headings by count and average body length.
+
+    ALL CAPS headings carry no numeric sequence, so progression scoring
+    does not apply.  Instead we require enough headings with substantial
+    bodies so we don't confuse a handful of bold section labels for real
+    chapters.
+    """
+    if len(headings) < MIN_HEADINGS_FOR_VALID_SCHEME:
+        return False
+    for i, h in enumerate(headings):
+        if "body_len" not in h:
+            body_end = int(headings[i + 1]["start"]) if i + 1 < len(headings) else len(text)
+            h["body_len"] = len(text[int(h["end"]): body_end].split())
+    avg_body = sum(int(h["body_len"]) for h in headings) / len(headings)
+    if avg_body < ALLCAPS_MIN_AVG_BODY:
+        return False
+    return True
+
+
 def _best_valid_subscheme(headings: List[HeadingRec]) -> List[HeadingRec]:
     """For the 'word' detector we may mix unrelated schemes (e.g. CHAPTER + SECTION).
 
@@ -368,6 +524,9 @@ def _best_valid_subscheme(headings: List[HeadingRec]) -> List[HeadingRec]:
 
 
 def _format_title(word: str, num_text: str, title: str) -> str:
+    if word == "allcaps":
+        # The title IS the chapter heading; no numeric prefix needed.
+        return title
     label = word.capitalize() if word else "Chapter"
     base = f"{label} {num_text}".strip()
     if title:
@@ -402,47 +561,52 @@ def _single_full_text_record(text: str) -> List[dict]:
 
 
 def split_into_chapters(text: str) -> List[dict]:
+    book_start, book_end = _find_book_bounds(text)
+    book_text = text[book_start:book_end]
+
     winner_name: Optional[str] = None
     winner_headings: List[HeadingRec] = []
 
     for name, detector in _DETECTORS:
-        raw = detector(text)
+        raw = detector(book_text)
         if len(raw) < MIN_HEADINGS_FOR_VALID_SCHEME:
             logger.debug("Detector %s: %d raw matches (skipped).", name, len(raw))
             continue
-        cleaned = _drop_toc_and_duplicates(text, raw)
+        cleaned = _drop_toc_and_duplicates(book_text, raw)
         if name == "word":
             cleaned = _best_valid_subscheme(cleaned) or cleaned
-        if not _looks_valid(cleaned):
+        if name == "allcaps":
+            valid = _looks_valid_allcaps(cleaned, book_text)
+        else:
+            valid = _looks_valid(cleaned)
+        if not valid:
             logger.debug(
-                "Detector %s rejected: %d headings, score %.2f.",
+                "Detector %s rejected: %d headings.",
                 name,
                 len(cleaned),
-                _progression_score(cleaned),
             )
             continue
 
         if winner_name is None or len(cleaned) >= 2 * len(winner_headings):
             logger.info(
-                "Splitter detector '%s' now leading: %d headings, progression score %.2f.",
+                "Splitter detector '%s' now leading: %d headings.",
                 name,
                 len(cleaned),
-                _progression_score(cleaned),
             )
             winner_name = name
             winner_headings = cleaned
 
     if not winner_headings:
         logger.warning("No valid chapter scheme found — returning whole text as 1 chapter.")
-        return _single_full_text_record(text)
+        return _single_full_text_record(book_text)
 
     logger.info("Final splitter choice: detector '%s' with %d chapters.", winner_name, len(winner_headings))
 
     chapters: List[dict] = []
     for i, h in enumerate(winner_headings):
         body_start = int(h["end"])
-        body_end = int(winner_headings[i + 1]["start"]) if i + 1 < len(winner_headings) else len(text)
-        body = text[body_start:body_end].strip()
+        body_end = int(winner_headings[i + 1]["start"]) if i + 1 < len(winner_headings) else len(book_text)
+        body = book_text[body_start:body_end].strip()
         chapters.append(_make_record(i, h, body))
 
     for ch in chapters:
@@ -452,18 +616,25 @@ def split_into_chapters(text: str) -> List[dict]:
 
 
 def split_into_chapters_with_debug(text: str) -> Tuple[List[dict], dict]:
-    debug: dict = {"detectors": []}
+    book_start, book_end = _find_book_bounds(text)
+    book_text = text[book_start:book_end]
+
+    debug: dict = {"detectors": [], "book_bounds": {"start": book_start, "end": book_end}}
     winner_name: Optional[str] = None
     winner_headings: List[HeadingRec] = []
 
     for name, detector in _DETECTORS:
-        raw = detector(text)
-        cleaned = _drop_toc_and_duplicates(text, raw) if raw else []
+        raw = detector(book_text)
+        cleaned = _drop_toc_and_duplicates(book_text, raw) if raw else []
         subscheme = _best_valid_subscheme(cleaned) if (name == "word" and cleaned) else []
         if subscheme:
             cleaned = subscheme
-        prog = _progression_score(cleaned) if cleaned else 0.0
-        valid = _looks_valid(cleaned) if cleaned else False
+        if name == "allcaps":
+            valid = _looks_valid_allcaps(cleaned, book_text) if cleaned else False
+            prog = 1.0 if valid else 0.0
+        else:
+            prog = _progression_score(cleaned) if cleaned else 0.0
+            valid = _looks_valid(cleaned) if cleaned else False
         debug["detectors"].append(
             {
                 "name": name,
@@ -485,17 +656,16 @@ def split_into_chapters_with_debug(text: str) -> Tuple[List[dict], dict]:
 
     if not winner_headings:
         debug["fallback"] = "single_chapter"
-        return _single_full_text_record(text), debug
+        return _single_full_text_record(book_text), debug
 
     chapters: List[dict] = []
     for i, h in enumerate(winner_headings):
         body_start = int(h["end"])
-        body_end = int(winner_headings[i + 1]["start"]) if i + 1 < len(winner_headings) else len(text)
-        body = text[body_start:body_end].strip()
+        body_end = int(winner_headings[i + 1]["start"]) if i + 1 < len(winner_headings) else len(book_text)
+        body = book_text[body_start:body_end].strip()
         chapters.append(_make_record(i, h, body))
 
     return chapters, debug
 
 
 __all__ = ["split_into_chapters", "split_into_chapters_with_debug"]
-
