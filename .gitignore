@@ -4,18 +4,27 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# Local caches / large derived artifacts (replicable)
-# Ignore ALL data by default (keep raw/46.txt only)
+# Ignore all generated data by default; keep stable inputs/config below
 data/**
 
-# Keep this one reference raw file
-!data/raw/46.txt
+# Stable inputs: raw texts, alias configs, model weights
+!data/raw/
+!data/raw/**
+!data/aliases/
+!data/aliases/**
+!data/booknlp_models/
+!data/booknlp_models/**
 
-# Keep empty folder structure markers (if present)
+# Legacy folder structure markers
 !data/raw/.gitkeep
 !data/booknlp_only_output/.gitkeep
 !data/booknlp_output/.gitkeep
 !data/books/.gitkeep
+
+# Run-based outputs, caches, and archives (all generated)
+outputs/**
+cache/**
+archive/**
 
 # OS / editor noise
 Thumbs.db
