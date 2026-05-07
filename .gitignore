@@ -4,24 +4,10 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# Ignore all generated data by default; keep stable inputs/config below
+# All data/ contents are generated or large corpus files — never commit
 data/**
 
-# Stable inputs: raw texts, alias configs, model weights
-!data/raw/
-!data/raw/**
-!data/aliases/
-!data/aliases/**
-!data/booknlp_models/
-!data/booknlp_models/**
-
-# Legacy folder structure markers
-!data/raw/.gitkeep
-!data/booknlp_only_output/.gitkeep
-!data/booknlp_output/.gitkeep
-!data/books/.gitkeep
-
-# Run-based outputs, caches, and archives (all generated)
+# All run outputs, caches, and archives are generated
 outputs/**
 cache/**
 archive/**

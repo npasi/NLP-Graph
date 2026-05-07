@@ -19,19 +19,17 @@ def run(cmd: list[str]) -> None:
         raise RuntimeError(f"Command failed: {' '.join(cmd)}")
 
 
-def ensure_alias_file(book_id: str) -> Path:
-    alias_dir = Path("data/aliases")
-    alias_dir.mkdir(parents=True, exist_ok=True)
-    alias_path = alias_dir / f"{book_id}.json"
+def find_alias_file(book_id: str) -> Path | None:
+    """Return path to alias file if it exists, or None.
 
-    if not alias_path.exists():
-        logger.info("Creating empty alias file: %s", alias_path)
-        alias_path.write_text(
-            '{\n  "aliases": {},\n  "chapter_aliases": {}\n}\n',
-            encoding="utf-8"
-        )
-
-    return alias_path
+    Never creates a file — data/aliases/ is curator-managed input, not
+    generated output.
+    """
+    alias_path = Path("data/aliases") / f"{book_id}.json"
+    if alias_path.exists():
+        return alias_path
+    logger.debug("No alias file found for %s — running without aliases.", book_id)
+    return None
 
 
 def main():
@@ -75,14 +73,21 @@ def main():
         logger.info("Legacy mode: outputs under data/")
 
     # ------------------------------------------------------------------ #
-    # Gutenberg cleaning (writes alongside input; not run-specific)
+    # Gutenberg cleaning
+    # In run mode: write to the run's cache dir to avoid polluting data/raw/.
+    # In legacy mode: write alongside the input file (historic behavior).
     # ------------------------------------------------------------------ #
-    clean_path = input_path.parent / f"{input_path.stem}_clean.txt"
+    if paths.run_dir is not None:
+        clean_dir = paths.run_dir / "cache" / "cleaned_texts"
+        clean_dir.mkdir(parents=True, exist_ok=True)
+        clean_path = clean_dir / f"{input_path.stem}_clean.txt"
+    else:
+        clean_path = input_path.parent / f"{input_path.stem}_clean.txt"
     logger.info("Cleaning Gutenberg text...")
     cleaned_input = clean_gutenberg_text(input_path, clean_path)
     logger.info("Using cleaned file: %s", cleaned_input)
 
-    alias_file = ensure_alias_file(args.book_id)
+    alias_file = find_alias_file(args.book_id)
 
     pipeline_error: str | None = None
 
@@ -118,9 +123,10 @@ def main():
         identity_cmd = [
             "python", "-m", "src.step2b_character_identity",
             "--book-id", args.book_id,
-            "--alias-file", str(alias_file),
             "--log-level", args.log_level,
         ]
+        if alias_file is not None:
+            identity_cmd += ["--alias-file", str(alias_file)]
         if paths.run_dir is not None:
             identity_cmd += ["--booknlp-root", str(paths.booknlp_book_dir)]
         run(identity_cmd)
