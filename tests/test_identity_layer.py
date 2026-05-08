@@ -518,7 +518,7 @@ class TestStep4bNoEmptyPairs(unittest.TestCase):
 
             mapping = {"0": {"1": "char_scrooge", "2": "char_fred",
                              "3": "char_bob_cratchit"}}
-            result  = build_normalized_pair_evidence(
+            result, _diag = build_normalized_pair_evidence(
                 booknlp_root=root, full_mapping=mapping, include_empty=False,
             )
             ch0 = result.get("0", {})

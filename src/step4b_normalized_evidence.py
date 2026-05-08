@@ -1,8 +1,9 @@
 """Build normalized pair evidence from BookNLP outputs + canonical character mapping.
 
 Evidence types:
-  DIRECT_EVENT  – predicate with subject/object both canonical chars (from step3b)
-  CO_PRESENCE   – two canonical chars in the same sentence (weaker, confidence 0.25)
+  DIRECT_EVENT      – predicate with subject/object both canonical chars (from step3b)
+  CO_PRESENCE       – two canonical chars in the same sentence (confidence 0.25)
+                    OR both observed anywhere in the same chapter (confidence 0.15)
 
   TODO: DIALOGUE / QUOTE_ABOUT from .quotes — needs char_id → canonical mapping;
         left as TODO to avoid blocking the pipeline on edge cases.
@@ -20,6 +21,7 @@ import argparse
 import json
 import logging
 from collections import defaultdict
+from itertools import combinations
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
@@ -64,7 +66,7 @@ def _sent_to_canonicals(
     run_dir: Path,
     coref_map: Dict[str, str],
 ) -> Dict[int, Set[str]]:
-    """sentence_id → set of canonical_ids present."""
+    """sentence_id → set of canonical_ids present (sentence-level co-presence)."""
     ent_files = sorted(run_dir.glob("*.entities"))
     tok_files = sorted(run_dir.glob("*.tokens"))
     if not ent_files or not tok_files:
@@ -104,6 +106,39 @@ def _sent_to_canonicals(
     return sent2canons
 
 
+def _chapter_canonical_chars(
+    run_dir: Path,
+    coref_map: Dict[str, str],
+) -> Dict[str, Dict[str, Any]]:
+    """Return info for every canonical character observed anywhere in this chapter.
+
+    Returns:
+        {canonical_id: {"mentions": int, "samples": [str]}}
+    """
+    ent_files = sorted(run_dir.glob("*.entities"))
+    if not ent_files:
+        return {}
+
+    _, ent_rows = _read_tsv(ent_files[0])
+
+    info: Dict[str, Dict[str, Any]] = {}
+    for r in ent_rows:
+        if len(r) < 3:
+            continue
+        canon = coref_map.get(str(r[0]))
+        if not canon:
+            continue
+        if canon not in info:
+            info[canon] = {"mentions": 0, "samples": []}
+        info[canon]["mentions"] += 1
+        # Collect up to 3 text samples from the "text" column (index 5).
+        if len(r) > 5 and len(info[canon]["samples"]) < 3:
+            sample = r[5].strip()
+            if sample and sample not in info[canon]["samples"]:
+                info[canon]["samples"].append(sample)
+    return info
+
+
 def _sent_text_index(
     run_dir: Path,
     chapter_txt: Optional[Path],
@@ -140,6 +175,7 @@ def _co_presence_evidence(
     coref_map: Dict[str, str],
     chapter_txt: Optional[Path],
 ) -> Dict[str, List[Dict[str, Any]]]:
+    """Generate sentence-level CO_PRESENCE evidence (two chars in same sentence)."""
     sent2canons  = _sent_to_canonicals(run_dir, coref_map)
     sent2text    = _sent_text_index(run_dir, chapter_txt)
     by_pair: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
@@ -163,21 +199,55 @@ def _co_presence_evidence(
     return dict(by_pair)
 
 
+def _chapter_co_presence_evidence(
+    char_info: Dict[str, Dict[str, Any]],
+    existing_pair_keys: Set[str],
+    chapter_id: int,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Generate one chapter-level CO_PRESENCE item per pair not already in existing_pair_keys.
+
+    This covers the case where two canonical characters appear in the same chapter
+    but never in the same sentence (e.g. Heart of Darkness narrative style).
+    """
+    canon_ids = sorted(char_info.keys())
+    by_pair: Dict[str, List[Dict[str, Any]]] = {}
+
+    for a, b in combinations(canon_ids, 2):
+        pk = f"{a}||{b}"
+        if pk in existing_pair_keys:
+            continue  # already covered by sentence-level or direct evidence
+        by_pair[pk] = [{
+            "evidence_type":       "CO_PRESENCE",
+            "sentence_id":         None,
+            "text":                "",
+            "involved_characters": [a, b],
+            "predicate":           None,
+            "confidence":          0.15,
+            "scope":               "chapter",
+        }]
+
+    return by_pair
+
+
 def build_normalized_pair_evidence(
     booknlp_root:    Path,
     full_mapping:    Dict[str, Dict[str, str]],
     chapters_root:   Optional[Path]  = None,
     include_empty:   bool            = False,
     all_canon_ids:   Optional[List[str]] = None,
-) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
+) -> Tuple[Dict[str, Dict[str, List[Dict[str, Any]]]], Dict[str, Dict[str, Any]]]:
     """
-    Returns {chapter_id_str: {pair_key: [evidence_dicts]}}.
+    Returns (result, diagnostics).
+
+    result: {chapter_id_str: {pair_key: [evidence_dicts]}}
+    diagnostics: {chapter_id_str: per-chapter diagnostic dict}
 
     pair_key = "canon_id_a||canon_id_b"  (alphabetically sorted).
     Empty pairs are only emitted when include_empty=True (NOT_OBSERVED label).
     """
     ev_evidence = _load_event_evidence(booknlp_root)
     result: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
+    diagnostics: Dict[str, Dict[str, Any]] = {}
 
     for run_dir in sorted(
         (p for p in booknlp_root.iterdir() if p.is_dir()), key=lambda p: p.name
@@ -195,7 +265,18 @@ def build_normalized_pair_evidence(
                 chapter_txt = cand
 
         direct_ev = ev_evidence.get(ch_str, {})
-        co_ev     = _co_presence_evidence(run_dir, coref_map, chapter_txt)
+
+        # Sentence-level CO_PRESENCE (existing behaviour).
+        sent_co_ev = _co_presence_evidence(run_dir, coref_map, chapter_txt)
+
+        # Chapter-level: collect all canonical chars observed in this chapter.
+        char_info = _chapter_canonical_chars(run_dir, coref_map)
+
+        # Chapter-level CO_PRESENCE for pairs not covered by sentence-level evidence.
+        existing_covered = set(direct_ev) | set(sent_co_ev)
+        chap_co_ev = _chapter_co_presence_evidence(char_info, existing_covered, ch_id)
+
+        co_ev = {**sent_co_ev, **chap_co_ev}
 
         all_pairs: Set[str] = set(direct_ev) | set(co_ev)
         if include_empty and all_canon_ids:
@@ -222,11 +303,41 @@ def build_normalized_pair_evidence(
             chapter_out[pk] = items
 
         result[ch_str] = chapter_out
+
+        # Diagnostics for this chapter.
+        n_chars = len(char_info)
+        candidate_pairs = n_chars * (n_chars - 1) // 2
+        reason_if_zero = None
+        if n_chars < 2:
+            reason_if_zero = "fewer_than_two_canonical_characters"
+
+        diagnostics[ch_str] = {
+            "canonical_characters_observed": n_chars,
+            "canonical_mentions": sum(v["mentions"] for v in char_info.values()),
+            "candidate_pairs": candidate_pairs,
+            "pairs_written": len(chapter_out),
+            "direct_event_pairs": len(direct_ev),
+            "sentence_co_presence_pairs": len(sent_co_ev),
+            "chapter_co_presence_pairs": len(chap_co_ev),
+            "reason_if_zero": reason_if_zero,
+            "characters": [
+                {
+                    "canonical_id": cid,
+                    "mentions": info["mentions"],
+                    "samples": info["samples"],
+                }
+                for cid, info in sorted(
+                    char_info.items(), key=lambda x: -x[1]["mentions"]
+                )
+            ],
+        }
+
         logger.info(
-            "Chapter %d: %d pairs  (direct=%d co_presence=%d)",
-            ch_id, len(chapter_out), len(direct_ev), len(co_ev),
+            "Chapter %d: %d pairs  (direct=%d sent_co_presence=%d chap_co_presence=%d canonical_chars=%d)",
+            ch_id, len(chapter_out), len(direct_ev), len(sent_co_ev), len(chap_co_ev), n_chars,
         )
-    return result
+
+    return result, diagnostics
 
 
 def _build_arg_parser() -> argparse.ArgumentParser:
@@ -266,16 +377,21 @@ def main(argv: Optional[List[str]] = None) -> None:
         if cr.exists():
             chapters_root = cr
 
-    result = build_normalized_pair_evidence(
+    result, diagnostics = build_normalized_pair_evidence(
         booknlp_root=root,
         full_mapping=full_mapping,
         chapters_root=chapters_root,
         include_empty=args.include_empty,
         all_canon_ids=canon_ids if args.include_empty else None,
     )
+
     out = Path(args.output) if args.output else root / "normalized_pair_evidence_by_chapter.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     logger.info("Wrote %d chapters to %s", len(result), out)
+
+    diag_out = root / "co_presence_diagnostics_by_chapter.json"
+    diag_out.write_text(json.dumps(diagnostics, ensure_ascii=False, indent=2), encoding="utf-8")
+    logger.info("Wrote diagnostics to %s", diag_out)
 
 
 if __name__ == "__main__":
