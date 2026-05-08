@@ -1,8 +1,12 @@
 """CLI wrapper for the Character Identity Layer.
 
 Usage:
+    # Fully automatic (default):
     python -m src.step2b_character_identity --book-id 46
+
+    # Human-refined (requires explicit alias file):
     python -m src.step2b_character_identity --book-id the_trial \\
+        --identity-mode human_refined \\
         --alias-file data/aliases/the_trial.json --log-level INFO
 """
 
@@ -16,6 +20,8 @@ from typing import List, Optional
 
 from src.character_identity_layer import CharacterIdentityLayer
 from src.utils.io import data_dir
+
+IDENTITY_MODES = ("auto_conservative", "human_refined")
 
 
 def _default_booknlp_root(book_id: str) -> Path:
@@ -33,8 +39,15 @@ def _build_arg_parser() -> argparse.ArgumentParser:
              "(default: data/booknlp_chapter_output/<book-id>/).",
     )
     p.add_argument(
+        "--identity-mode",
+        default="auto_conservative",
+        choices=IDENTITY_MODES,
+        help="auto_conservative (default): fully automatic, no alias file used. "
+             "human_refined: requires --alias-file.",
+    )
+    p.add_argument(
         "--alias-file", default=None,
-        help="Path to alias JSON file (e.g. data/aliases/46.json).",
+        help="Path to alias JSON file. Only valid with --identity-mode human_refined.",
     )
     p.add_argument(
         "--log-level", default="INFO",
@@ -52,6 +65,14 @@ def main(argv: Optional[List[str]] = None) -> None:
     )
     log = logging.getLogger(__name__)
 
+    # Validate identity mode / alias file combination first (before filesystem checks).
+    if args.identity_mode == "human_refined" and not args.alias_file:
+        raise ValueError("--identity-mode human_refined requires --alias-file")
+    if args.identity_mode == "auto_conservative" and args.alias_file:
+        raise ValueError(
+            "Manual alias files are only allowed with --identity-mode human_refined"
+        )
+
     book_id = str(args.book_id)
     booknlp_root = (
         Path(args.booknlp_root) if args.booknlp_root else _default_booknlp_root(book_id)
@@ -68,7 +89,11 @@ def main(argv: Optional[List[str]] = None) -> None:
         if not alias_file.exists():
             raise FileNotFoundError(f"Alias file not found: {alias_file}")
 
-    layer = CharacterIdentityLayer(booknlp_root=booknlp_root, alias_file=alias_file)
+    layer = CharacterIdentityLayer(
+        booknlp_root=booknlp_root,
+        alias_file=alias_file,
+        identity_mode=args.identity_mode,
+    )
     report = layer.run()
     log.info("Report:\n%s", json.dumps(report, indent=2))
 

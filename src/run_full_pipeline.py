@@ -11,6 +11,8 @@ from src.utils.manifest import make_book_entry, write_manifest
 
 logger = logging.getLogger(__name__)
 
+IDENTITY_MODES = ("auto_conservative", "human_refined")
+
 
 def run(cmd: list[str]) -> None:
     logger.info("Running: %s", " ".join(cmd))
@@ -19,17 +21,22 @@ def run(cmd: list[str]) -> None:
         raise RuntimeError(f"Command failed: {' '.join(cmd)}")
 
 
-def find_alias_file(book_id: str) -> Path | None:
-    """Return path to alias file if it exists, or None.
-
-    Never creates a file — data/aliases/ is curator-managed input, not
-    generated output.
-    """
-    alias_path = Path("data/aliases") / f"{book_id}.json"
-    if alias_path.exists():
-        return alias_path
-    logger.debug("No alias file found for %s — running without aliases.", book_id)
-    return None
+def _validate_identity_args(identity_mode: str, alias_file: str | None) -> None:
+    """Enforce strict rules between identity mode and alias file."""
+    if identity_mode == "auto_conservative" and alias_file is not None:
+        raise SystemExit(
+            "Error: Manual alias files are only allowed with "
+            "--identity-mode human_refined.\n"
+            "Remove --alias-file or switch to --identity-mode human_refined."
+        )
+    if identity_mode == "human_refined" and alias_file is None:
+        raise SystemExit(
+            "Error: --identity-mode human_refined requires --alias-file <path>."
+        )
+    if identity_mode == "human_refined" and alias_file is not None:
+        p = Path(alias_file)
+        if not p.exists():
+            raise SystemExit(f"Error: Alias file not found: {p}")
 
 
 def main():
@@ -51,9 +58,25 @@ def main():
              "Outputs go to <output-root>/<run-id>/. "
              "Omit to use legacy data/ layout.",
     )
+    parser.add_argument(
+        "--identity-mode",
+        default="auto_conservative",
+        choices=IDENTITY_MODES,
+        help="auto_conservative (default): fully automatic, no alias file used. "
+             "human_refined: requires --alias-file; activates manual curator aliases.",
+    )
+    parser.add_argument(
+        "--alias-file",
+        default=None,
+        help="Path to manual alias JSON file. "
+             "Only valid with --identity-mode human_refined.",
+    )
 
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging, args.log_level))
+
+    # Validate identity mode / alias file combination immediately.
+    _validate_identity_args(args.identity_mode, args.alias_file)
 
     input_path = Path(args.input)
     if not input_path.exists():
@@ -66,11 +89,14 @@ def main():
     )
 
     if paths.run_dir is not None:
-        logger.info("Run mode: outputs under %s", paths.run_dir)
+        logger.info(
+            "Run mode: outputs under %s  [identity_mode=%s]",
+            paths.run_dir, args.identity_mode,
+        )
         paths.run_dir.mkdir(parents=True, exist_ok=True)
         paths.logs_dir.mkdir(parents=True, exist_ok=True)
     else:
-        logger.info("Legacy mode: outputs under data/")
+        logger.info("Legacy mode: outputs under data/  [identity_mode=%s]", args.identity_mode)
 
     # ------------------------------------------------------------------ #
     # Gutenberg cleaning
@@ -86,8 +112,6 @@ def main():
     logger.info("Cleaning Gutenberg text...")
     cleaned_input = clean_gutenberg_text(input_path, clean_path)
     logger.info("Using cleaned file: %s", cleaned_input)
-
-    alias_file = find_alias_file(args.book_id)
 
     pipeline_error: str | None = None
 
@@ -123,10 +147,11 @@ def main():
         identity_cmd = [
             "python", "-m", "src.step2b_character_identity",
             "--book-id", args.book_id,
+            "--identity-mode", args.identity_mode,
             "--log-level", args.log_level,
         ]
-        if alias_file is not None:
-            identity_cmd += ["--alias-file", str(alias_file)]
+        if args.alias_file is not None:
+            identity_cmd += ["--alias-file", args.alias_file]
         if paths.run_dir is not None:
             identity_cmd += ["--booknlp-root", str(paths.booknlp_book_dir)]
         run(identity_cmd)
@@ -213,7 +238,7 @@ def main():
             ]
         run(quality_cmd)
 
-        # ---- Step 11: suggest aliases -------------------------------- #
+        # ---- Step 11: suggest aliases (diagnostic only) -------------- #
         aliases_cmd = [
             "python", "-m", "src.suggest_aliases",
             "--book-id", args.book_id,
@@ -262,10 +287,17 @@ def main():
             book_id=args.book_id,
             input_path=str(input_path),
             paths=paths,
+            identity_mode=args.identity_mode,
+            manual_alias_file=args.alias_file,
             status=status,
             error=pipeline_error,
         )
-        manifest_path = write_manifest(paths.run_dir, args.run_id, entry)
+        manifest_path = write_manifest(
+            paths.run_dir,
+            args.run_id,
+            entry,
+            identity_mode=args.identity_mode,
+        )
         logger.info("Manifest written to %s", manifest_path)
 
     if pipeline_error:

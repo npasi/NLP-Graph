@@ -42,7 +42,7 @@ Pick a descriptive, unique name:
 RUN_ID=run_2026_05_07_eval_v1
 ```
 
-### 2. Run the pipeline for one book
+### 2. Run the pipeline (fully automatic — default)
 
 ```bash
 python -m src.run_full_pipeline \
@@ -65,8 +65,8 @@ outputs/runs/$RUN_ID/
   manifest.json
 ```
 
-The `manifest.json` records the run ID, git branch/commit, input path,
-and the status of each processed book.
+The `manifest.json` records the run ID, git branch/commit, identity mode,
+input path, and the status of each processed book.
 
 ### 3. Generate evaluation summary
 
@@ -94,13 +94,73 @@ Nothing is deleted. To undo, move directories back from the archive.
 
 ---
 
+## Identity modes
+
+The pipeline has two explicit identity modes controlled by `--identity-mode`.
+
+### Default: `auto_conservative` (no manual input required)
+
+```bash
+python -m src.run_full_pipeline \
+  --input data/raw/<file>.txt \
+  --book-id <book_id> \
+  --output-root outputs/runs \
+  --run-id <run_id>
+```
+
+- Fully automatic. No alias file is read, even if one exists in `data/aliases/`.
+- `alias_suggestions.json` is written as a **diagnostic-only** file. It is
+  never applied to the graph automatically.
+- REVIEW and ambiguous entities are excluded from the graph by design.
+- `identity_report.json` and `manifest.json` record
+  `identity_mode: "auto_conservative"` and `manual_aliases_used: false`.
+
+This is the main experimental setting for reproducible evaluation.
+
+### Optional: `human_refined` (explicit manual override)
+
+```bash
+python -m src.run_full_pipeline \
+  --input data/raw/<file>.txt \
+  --book-id <book_id> \
+  --output-root outputs/runs \
+  --run-id <run_id>_human_refined \
+  --identity-mode human_refined \
+  --alias-file data/aliases/<book_id>.json
+```
+
+- Requires `--alias-file`. The pipeline will fail immediately without it.
+- Uses manual curator aliases to promote REVIEW / role clusters that would
+  otherwise be excluded.
+- Useful as an upper-bound or ablation against the automatic setting.
+- `identity_report.json` and `manifest.json` record
+  `identity_mode: "human_refined"` and `manual_aliases_used: true`.
+
+**Rule:** passing `--alias-file` without `--identity-mode human_refined` is
+an error. The pipeline fails with a clear message.
+
+### Alias suggestions workflow
+
+After any automatic run, inspect the diagnostic suggestions:
+
+```
+outputs/runs/<run_id>/reports/<book_id>/alias_suggestions.json
+```
+
+This file has `diagnostic_only: true` and `applied_to_graph: false`.
+To act on a suggestion:
+1. Copy relevant entries into `data/aliases/<book_id>.json`.
+2. Re-run with `--identity-mode human_refined --alias-file data/aliases/<book_id>.json`.
+
+---
+
 ## Directory layout
 
 | Directory | Role | Committed? |
 |-----------|------|------------|
-| `data/raw/` | Raw input `.txt` files | Yes |
-| `data/aliases/` | Per-book alias JSON config | Yes |
-| `data/booknlp_models/` | Downloaded model weights | Yes |
+| `data/raw/` | Raw input `.txt` files | No (gitignored) |
+| `data/aliases/` | Per-book alias JSON config (curator input) | No (gitignored) |
+| `data/booknlp_models/` | Downloaded model weights | No (gitignored) |
 | `data/books/` … `data/ml/` | Legacy generated outputs | No |
 | `outputs/runs/<run_id>/` | Run-based generated outputs | No |
 | `cache/` | Cleaned text cache | No |
@@ -117,7 +177,7 @@ defaults; new path arguments are optional overrides.
 |------|--------|-------------------|
 | Chapter splitting | `src/step1_split_only.py` | `--books-root` |
 | BookNLP per chapter | `run_booknlp_per_chapter.py` | `--chapters-dir`, `--output-root` |
-| Character identity | `src/step2b_character_identity.py` | `--booknlp-root` |
+| Character identity | `src/step2b_character_identity.py` | `--booknlp-root`, `--identity-mode`, `--alias-file` |
 | Normalized predicates | `src/step3b_normalized_predicates.py` | `--booknlp-root` |
 | Normalized evidence | `src/step4b_normalized_evidence.py` | `--booknlp-root`, `--chapters-root` |
 | Build graphs | `src/build_normalized_graphs.py` | `--booknlp-root`, `--graphs-dir` |
@@ -133,8 +193,9 @@ defaults; new path arguments are optional overrides.
 
 ## Notes
 
-- `data/raw`, `data/aliases`, and `data/booknlp_models` are **stable inputs**
-  and are never touched by cleanup or archive scripts.
+- `data/raw`, `data/aliases`, and `data/booknlp_models` are curator-managed
+  inputs. They are gitignored (not committed) but never touched by cleanup
+  or archive scripts.
 - Generated outputs (`data/books`, `data/reports`, etc.) are gitignored.
   Use run mode to keep experiments separated.
 - Manual cleanup should use `scripts/archive_old_outputs.sh`, not `rm -rf`.

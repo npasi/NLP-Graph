@@ -219,13 +219,13 @@ def build_suggestions(characters: list[dict[str, Any]], threshold: float) -> lis
     return suggestions
 
 
-def main() -> None:
+def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Suggest alias merges for canonical characters.")
     parser.add_argument("--book-id", required=True)
     parser.add_argument("--booknlp-root", default=None)
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--threshold", type=float, default=0.72)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     booknlp_root = Path(args.booknlp_root) if args.booknlp_root else (
         Path("data") / "booknlp_chapter_output" / args.book_id
@@ -239,9 +239,15 @@ def main() -> None:
 
     out = {
         "book_id": args.book_id,
+        "diagnostic_only": True,
+        "applied_to_graph": False,
+        "note": (
+            "These suggestions are diagnostic only. They are never applied automatically. "
+            "To use them, copy relevant entries into data/aliases/<book_id>.json and "
+            "re-run with --identity-mode human_refined --alias-file <path>."
+        ),
         "threshold": args.threshold,
         "suggestion_count": len(suggestions),
-        "note": "Suggestions are review-only. They do not modify aliases automatically.",
         "suggestions": suggestions,
     }
 

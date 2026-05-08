@@ -552,5 +552,190 @@ class TestCLIHelp(unittest.TestCase):
     def test_graphs_help(self):     self._help("src.build_normalized_graphs")
 
 
+# ---------------------------------------------------------------------------
+# Identity mode tests
+# ---------------------------------------------------------------------------
+
+class TestIdentityMode(unittest.TestCase):
+    """Verify identity mode metadata is recorded and alias file rules are enforced."""
+
+    def _make_booknlp_root(self, tmp: Path, book_id: str = "testbook") -> Path:
+        """Create a minimal booknlp root with one chapter."""
+        root = tmp / "booknlp_chapter_output" / book_id
+        _make_run_dir(root, book_id, 0, [_char(1, ["Alice"], count=10)])
+        return root
+
+    def test_auto_conservative_no_alias_identity_report(self):
+        """auto_conservative with no alias file records correct metadata."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_booknlp_root(Path(tmp))
+            layer = CharacterIdentityLayer(
+                booknlp_root=root, alias_file=None, identity_mode="auto_conservative"
+            )
+            report = layer.run()
+
+        self.assertEqual(report["identity_mode"], "auto_conservative")
+        self.assertFalse(report["manual_aliases_used"])
+        self.assertIsNone(report["manual_alias_file"])
+        self.assertIn("review_policy", report)
+
+    def test_human_refined_with_alias_identity_report(self):
+        """human_refined with an alias file records correct metadata."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_booknlp_root(Path(tmp))
+            alias_path = Path(tmp) / "aliases.json"
+            alias_path.write_text(
+                '{"aliases": {}, "chapter_aliases": {}}', encoding="utf-8"
+            )
+            layer = CharacterIdentityLayer(
+                booknlp_root=root,
+                alias_file=alias_path,
+                identity_mode="human_refined",
+            )
+            report = layer.run()
+
+        self.assertEqual(report["identity_mode"], "human_refined")
+        self.assertTrue(report["manual_aliases_used"])
+        self.assertIsNotNone(report["manual_alias_file"])
+
+    def test_auto_conservative_ignores_existing_alias_file(self):
+        """auto_conservative must not load aliases even if an alias file exists
+        on disk — the caller is responsible for not passing alias_file=None."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_booknlp_root(Path(tmp))
+            # Simulate a data/aliases/<book>.json that exists but should not be used.
+            alias_path = Path(tmp) / "data" / "aliases" / "testbook.json"
+            alias_path.parent.mkdir(parents=True, exist_ok=True)
+            alias_path.write_text(
+                '{"aliases": {"alice": "Alice"}, "chapter_aliases": {}}',
+                encoding="utf-8",
+            )
+            # auto_conservative: alias_file=None → no aliases loaded.
+            layer = CharacterIdentityLayer(
+                booknlp_root=root, alias_file=None, identity_mode="auto_conservative"
+            )
+            report = layer.run()
+
+        self.assertFalse(report["manual_aliases_used"])
+        self.assertIsNone(report["manual_alias_file"])
+
+    def test_step2b_auto_conservative_rejects_alias_file_arg(self):
+        """step2b CLI: auto_conservative + --alias-file raises ValueError."""
+        import src.step2b_character_identity as s2b
+        with self.assertRaises((ValueError, SystemExit)):
+            s2b.main([
+                "--book-id", "x",
+                "--identity-mode", "auto_conservative",
+                "--alias-file", "some/path.json",
+            ])
+
+    def test_step2b_human_refined_requires_alias_file(self):
+        """step2b CLI: human_refined without --alias-file raises ValueError."""
+        import src.step2b_character_identity as s2b
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_booknlp_root(Path(tmp))
+            with self.assertRaises((ValueError, SystemExit)):
+                s2b.main([
+                    "--book-id", "testbook",
+                    "--booknlp-root", str(root),
+                    "--identity-mode", "human_refined",
+                ])
+
+    def test_step2b_human_refined_with_alias_file_accepted(self):
+        """step2b CLI: human_refined + valid --alias-file completes without error."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_booknlp_root(Path(tmp))
+            alias_path = Path(tmp) / "aliases.json"
+            alias_path.write_text(
+                '{"aliases": {}, "chapter_aliases": {}}', encoding="utf-8"
+            )
+            import src.step2b_character_identity as s2b
+            # Should not raise.
+            s2b.main([
+                "--book-id", "testbook",
+                "--booknlp-root", str(root),
+                "--identity-mode", "human_refined",
+                "--alias-file", str(alias_path),
+            ])
+
+    def test_identity_report_written_to_disk(self):
+        """identity_report.json on disk includes the new metadata fields."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._make_booknlp_root(Path(tmp))
+            layer = CharacterIdentityLayer(
+                booknlp_root=root, alias_file=None, identity_mode="auto_conservative"
+            )
+            layer.run()
+            report = json.loads((root / "identity_report.json").read_text())
+
+        self.assertEqual(report["identity_mode"], "auto_conservative")
+        self.assertFalse(report["manual_aliases_used"])
+        self.assertIsNone(report["manual_alias_file"])
+        self.assertIn("review_policy", report)
+
+    def test_manifest_identity_fields(self):
+        """make_book_entry includes identity_mode, manual_aliases_used,
+        manual_alias_file."""
+        from src.utils.manifest import make_book_entry
+        from src.utils.output_paths import OutputPaths
+
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = OutputPaths("mybook", output_root=tmp, run_id="r1")
+            entry = make_book_entry(
+                book_id="mybook",
+                input_path="data/raw/x.txt",
+                paths=paths,
+                identity_mode="auto_conservative",
+                manual_alias_file=None,
+            )
+
+        self.assertEqual(entry["identity_mode"], "auto_conservative")
+        self.assertFalse(entry["manual_aliases_used"])
+        self.assertIsNone(entry["manual_alias_file"])
+
+    def test_manifest_human_refined_fields(self):
+        """make_book_entry records human_refined metadata correctly."""
+        from src.utils.manifest import make_book_entry
+        from src.utils.output_paths import OutputPaths
+
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = OutputPaths("mybook", output_root=tmp, run_id="r1")
+            entry = make_book_entry(
+                book_id="mybook",
+                input_path="data/raw/x.txt",
+                paths=paths,
+                identity_mode="human_refined",
+                manual_alias_file="data/aliases/mybook.json",
+            )
+
+        self.assertEqual(entry["identity_mode"], "human_refined")
+        self.assertTrue(entry["manual_aliases_used"])
+        self.assertEqual(entry["manual_alias_file"], "data/aliases/mybook.json")
+
+    def test_alias_suggestions_diagnostic_fields(self):
+        """alias_suggestions.json contains diagnostic_only=true and applied_to_graph=false."""
+        import src.suggest_aliases as sa
+        from src.utils.io import write_json
+
+        with tempfile.TemporaryDirectory() as tmp:
+            # Minimal booknlp root with canonical_characters.json
+            booknlp_root = Path(tmp) / "booknlp"
+            booknlp_root.mkdir()
+            write_json(booknlp_root / "canonical_characters.json", [])
+            out_dir = Path(tmp) / "reports"
+            out_dir.mkdir()
+
+            sa.main([
+                "--book-id", "testbook",
+                "--booknlp-root", str(booknlp_root),
+                "--output-dir", str(out_dir),
+            ])
+
+            result = json.loads((out_dir / "alias_suggestions.json").read_text())
+
+        self.assertTrue(result["diagnostic_only"])
+        self.assertFalse(result["applied_to_graph"])
+
+
 if __name__ == "__main__":
     unittest.main()

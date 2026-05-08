@@ -27,7 +27,7 @@ def _git_info() -> tuple[str, str]:
         return "unknown", "unknown"
 
 
-def _new_manifest(run_id: str) -> dict:
+def _new_manifest(run_id: str, identity_mode: str = "auto_conservative") -> dict:
     branch, commit = _git_info()
     return {
         "run_id": run_id,
@@ -35,6 +35,7 @@ def _new_manifest(run_id: str) -> dict:
         "git_branch": branch,
         "git_commit": commit,
         "pipeline": "NLP-Graph",
+        "identity_mode": identity_mode,
         "books": [],
     }
 
@@ -43,6 +44,8 @@ def make_book_entry(
     book_id: str,
     input_path: str,
     paths: OutputPaths,
+    identity_mode: str = "auto_conservative",
+    manual_alias_file: str | None = None,
     status: str = "completed",
     error: str | None = None,
 ) -> dict:
@@ -50,6 +53,9 @@ def make_book_entry(
         "book_id": book_id,
         "input": input_path,
         "status": status,
+        "identity_mode": identity_mode,
+        "manual_aliases_used": manual_alias_file is not None,
+        "manual_alias_file": manual_alias_file,
         "outputs": {
             "chapters": str(paths.book_chapters_dir),
             "booknlp": str(paths.booknlp_book_dir),
@@ -63,7 +69,12 @@ def make_book_entry(
     return entry
 
 
-def write_manifest(run_dir: Path, run_id: str, book_entry: dict) -> Path:
+def write_manifest(
+    run_dir: Path,
+    run_id: str,
+    book_entry: dict,
+    identity_mode: str = "auto_conservative",
+) -> Path:
     """Write or update manifest.json inside run_dir with the given book entry."""
     manifest_path = run_dir / "manifest.json"
 
@@ -71,9 +82,12 @@ def write_manifest(run_dir: Path, run_id: str, book_entry: dict) -> Path:
         try:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         except Exception:
-            manifest = _new_manifest(run_id)
+            manifest = _new_manifest(run_id, identity_mode)
     else:
-        manifest = _new_manifest(run_id)
+        manifest = _new_manifest(run_id, identity_mode)
+
+    # Keep run-level identity_mode in sync with the latest call.
+    manifest["identity_mode"] = identity_mode
 
     books: list[dict] = manifest.setdefault("books", [])
     for i, b in enumerate(books):

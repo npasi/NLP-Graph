@@ -437,9 +437,15 @@ def _decide_group_merge(
 class CharacterIdentityLayer:
     """Maps per-chapter BookNLP coref clusters to canonical characters."""
 
-    def __init__(self, booknlp_root: Path, alias_file: Optional[Path] = None) -> None:
+    def __init__(
+        self,
+        booknlp_root: Path,
+        alias_file: Optional[Path] = None,
+        identity_mode: str = "auto_conservative",
+    ) -> None:
         self.booknlp_root = Path(booknlp_root)
         self.alias_file = Path(alias_file) if alias_file else None
+        self.identity_mode = identity_mode
         self._global_aliases: Dict[str, str] = {}
         self._chapter_aliases: Dict[str, Dict[str, str]] = {}
 
@@ -662,6 +668,10 @@ class CharacterIdentityLayer:
 
         return {
             "book_id": self.booknlp_root.name,
+            "identity_mode": self.identity_mode,
+            "manual_aliases_used": self.alias_file is not None,
+            "manual_alias_file": str(self.alias_file) if self.alias_file else None,
+            "review_policy": "review_and_ambiguous_entities_excluded_from_graph_by_default",
             "local_clusters_read": len(all_clusters),
             "clusters_kept":       counts["AUTO_MERGE"] + counts["REVIEW"],
             "clusters_discarded":  counts["REJECT"] + counts["ABSTAIN"],
