@@ -37,27 +37,140 @@ COLUMNS = [
     "review_clusters",
     "total_pairs",
     "direct_event_pairs",
+    "dialogue_turn_pairs",
+    "quote_about_pairs",
+    "quote_evidence_pairs",
+    "strong_evidence_pairs",
     "co_presence_only_pairs",
     "direct_event_ratio",
     "co_presence_only_ratio",
+    "strong_evidence_ratio",
+    "quote_evidence_ratio",
+    "dialogue_turn_evidence",
+    "quote_about_evidence",
+    "strong_evidence_total",
     "max_nodes",
     "max_edges",
     "bert_examples",
     "bert_unique_pairs",
+    "bert_example_density",
     "warnings",
     "overall_status",
 ]
 
 
+def _load_score_stats(score_summary_path: Path, scored_path: Path) -> dict:
+    """Return quote/strong evidence stats from summary + scored files.
+
+    Reads pair counts from interaction_score_summary.json (already aggregated).
+    Reads per-evidence totals and quote_evidence_pairs from scored_pair_evidence_by_chapter.json.
+    Degrades gracefully if either file is absent or missing new fields.
+    """
+    stats: dict = {
+        "dialogue_turn_pairs": 0,
+        "quote_about_pairs": 0,
+        "quote_evidence_pairs": 0,
+        "strong_evidence_pairs": 0,
+        "dialogue_turn_evidence": 0,
+        "quote_about_evidence": 0,
+        "strong_evidence_total": 0,
+    }
+
+    if score_summary_path.exists():
+        try:
+            s = json.loads(score_summary_path.read_text(encoding="utf-8"))
+            stats["dialogue_turn_pairs"] = int(s.get("dialogue_turn_pairs", 0) or 0)
+            stats["quote_about_pairs"] = int(s.get("quote_about_pairs", 0) or 0)
+            stats["strong_evidence_pairs"] = int(s.get("strong_evidence_pairs", 0) or 0)
+        except Exception:
+            pass
+
+    if scored_path.exists():
+        try:
+            scored = json.loads(scored_path.read_text(encoding="utf-8"))
+            dt_ev = 0
+            qa_ev = 0
+            se_total = 0
+            qe_pairs = 0
+            dt_pairs = 0
+            qa_pairs = 0
+            strong_pairs = 0
+
+            for _chapter_id, pairs in scored.items():
+                for _pair_key, pair_score in pairs.items():
+                    dt = int(pair_score.get("dialogue_turn_count", 0) or 0)
+                    qa = int(pair_score.get("quote_about_count", 0) or 0)
+                    de = int(pair_score.get("direct_event_count", 0) or 0)
+                    strong = int(
+                        pair_score.get("strong_evidence_count", de + dt + qa) or 0
+                    )
+
+                    dt_ev += dt
+                    qa_ev += qa
+                    se_total += strong
+
+                    if dt > 0 or qa > 0:
+                        qe_pairs += 1
+                    if dt > 0:
+                        dt_pairs += 1
+                    if qa > 0:
+                        qa_pairs += 1
+                    if strong > 0:
+                        strong_pairs += 1
+
+            stats["dialogue_turn_evidence"] = dt_ev
+            stats["quote_about_evidence"] = qa_ev
+            stats["strong_evidence_total"] = se_total
+            stats["quote_evidence_pairs"] = qe_pairs
+
+            # Fall back to scored-computed values if summary lacked new fields
+            if stats["dialogue_turn_pairs"] == 0 and dt_pairs > 0:
+                stats["dialogue_turn_pairs"] = dt_pairs
+            if stats["quote_about_pairs"] == 0 and qa_pairs > 0:
+                stats["quote_about_pairs"] = qa_pairs
+            if stats["strong_evidence_pairs"] == 0 and strong_pairs > 0:
+                stats["strong_evidence_pairs"] = strong_pairs
+
+        except Exception:
+            pass
+
+    return stats
+
+
 def _status(row: dict) -> str:
     if not row["has_quality_report"]:
-        return "NOT_EVALUATED"
-    if row["chapter_count"] in (0, 1, ""):
-        return "FAIL_SPLIT_OR_MISSING"
-    if row["total_pairs"] == 0 or row["bert_examples"] == 0:
-        return "FAIL_GRAPH_OR_EVIDENCE"
-    if isinstance(row["direct_event_ratio"], float) and row["direct_event_ratio"] < 0.10:
-        return "BORDERLINE_LOW_DIRECT"
+        return "MISSING_REPORT"
+
+    total = row["total_pairs"]
+    if total == "" or total == 0:
+        return "FAIL_NO_PAIRS"
+
+    bert = row["bert_examples"]
+    if bert == "" or bert == 0:
+        return "FAIL_NO_BERT_EXAMPLES"
+
+    strong = int(row["strong_evidence_pairs"] or 0)
+    bert = int(bert or 0)
+    co_ratio = float(row["co_presence_only_ratio"] or 0.0)
+    strong_ratio = float(row["strong_evidence_ratio"] or 0.0)
+
+    # High co-presence: evaluate quality based on residual strong evidence
+    if co_ratio >= 0.75:
+        if strong >= 10 and bert >= 20:
+            return "EVALUABLE_CO_PRESENCE_HEAVY"
+        if strong >= 5 and bert > 0:
+            return "BORDERLINE_CO_PRESENCE_HEAVY"
+
+    # Low co-presence: standard strong-evidence tiers
+    if strong >= 20 and bert >= 50:
+        return "EVALUABLE_STRONG"
+    if strong >= 5 and bert >= 20:
+        return "EVALUABLE"
+
+    # Weak evidence floor
+    if strong < 5 or strong_ratio < 0.05:
+        return "BORDERLINE_WEAK_EVIDENCE"
+
     return "EVALUABLE"
 
 
@@ -66,6 +179,8 @@ def _build_row(
     quality_path: Path,
     bert_path: Path,
     chapters_path: Path,
+    score_summary_path: Path,
+    scored_path: Path,
 ) -> dict:
     row: dict = {col: "" for col in COLUMNS}
     row["book_id"] = book_id
@@ -104,6 +219,27 @@ def _build_row(
 
         row["warnings"] = " | ".join(q.get("warnings", []))
 
+    # Load quote/strong evidence stats
+    score_stats = _load_score_stats(score_summary_path, scored_path)
+    row["dialogue_turn_pairs"] = score_stats["dialogue_turn_pairs"]
+    row["quote_about_pairs"] = score_stats["quote_about_pairs"]
+    row["quote_evidence_pairs"] = score_stats["quote_evidence_pairs"]
+    row["strong_evidence_pairs"] = score_stats["strong_evidence_pairs"]
+    row["dialogue_turn_evidence"] = score_stats["dialogue_turn_evidence"]
+    row["quote_about_evidence"] = score_stats["quote_about_evidence"]
+    row["strong_evidence_total"] = score_stats["strong_evidence_total"]
+
+    total_pairs = int(row["total_pairs"] or 0)
+    strong_pairs = int(row["strong_evidence_pairs"] or 0)
+    qe_pairs = int(row["quote_evidence_pairs"] or 0)
+
+    row["strong_evidence_ratio"] = (
+        round(strong_pairs / total_pairs, 4) if total_pairs else 0.0
+    )
+    row["quote_evidence_ratio"] = (
+        round(qe_pairs / total_pairs, 4) if total_pairs else 0.0
+    )
+
     if bert_path.exists():
         try:
             b = json.loads(bert_path.read_text(encoding="utf-8"))
@@ -111,6 +247,11 @@ def _build_row(
             row["bert_unique_pairs"] = b.get("unique_pair_count", "")
         except Exception:
             pass
+
+    bert_examples = int(row["bert_examples"] or 0)
+    row["bert_example_density"] = (
+        round(bert_examples / strong_pairs, 4) if strong_pairs else 0.0
+    )
 
     row["overall_status"] = _status(row)
     return row
@@ -129,6 +270,7 @@ def run_legacy() -> None:
     reports_root = Path("data/reports")
     ml_root = Path("data/ml")
     books_root = Path("data/books")
+    booknlp_root = Path("data/booknlp_chapter_output")
     out = reports_root / "evaluation_summary.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
 
@@ -138,6 +280,8 @@ def run_legacy() -> None:
             quality_path=reports_root / book_id / "quality_report.json",
             bert_path=ml_root / book_id / "bert_relation_summary.json",
             chapters_path=books_root / book_id / "chapters" / "chapters.json",
+            score_summary_path=booknlp_root / book_id / "interaction_score_summary.json",
+            scored_path=booknlp_root / book_id / "scored_pair_evidence_by_chapter.json",
         )
         for book_id in LEGACY_BOOKS
     ]
@@ -150,6 +294,7 @@ def run_run_mode(run_dir: Path) -> None:
     reports_root = run_dir / "reports"
     ml_root = run_dir / "ml"
     books_root = run_dir / "books"
+    booknlp_root = run_dir / "booknlp_chapter_output"
     out = run_dir / "evaluation_summary.csv"
 
     book_ids: list[str] = []
@@ -166,6 +311,8 @@ def run_run_mode(run_dir: Path) -> None:
             quality_path=reports_root / book_id / "quality_report.json",
             bert_path=ml_root / book_id / "bert_relation_summary.json",
             chapters_path=books_root / book_id / "chapters" / "chapters.json",
+            score_summary_path=booknlp_root / book_id / "interaction_score_summary.json",
+            scored_path=booknlp_root / book_id / "scored_pair_evidence_by_chapter.json",
         )
         for book_id in book_ids
     ]
