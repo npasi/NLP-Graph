@@ -24,7 +24,7 @@ Promotion policy  (PRECISION > RECALL):
     review_role_candidate, ambiguous, narrator_candidate, group_candidate,
     generic_noise, abstract_noise.
 
-Decision types: AUTO_MERGE | REJECT | REVIEW | ABSTAIN
+Decision types: AUTO_MERGE | REJECT | REVIEW | ABSTAIN | NARRATOR_RECOVERY
 """
 
 from __future__ import annotations
@@ -85,6 +85,20 @@ _FIRST_PERSON_FORMS: Set[str] = {
     "i", "me", "my", "mine", "myself",
     "we", "us", "our", "ours", "ourselves",
 }
+
+# ---------------------------------------------------------------------------
+# Narrator recovery thresholds (identity_fix_v2)
+# ---------------------------------------------------------------------------
+
+# Minimum entity-mention count for a narrator_candidate cluster to be eligible for recovery.
+NARRATOR_CLUSTER_MIN_MENTIONS: int = 25
+
+# Minimum total narrator mentions (summed across eligible clusters) to trigger book-level recovery.
+NARRATOR_BOOK_MIN_TOTAL_MENTIONS: int = 50
+
+# Narrator clusters must appear in at least this many chapters for recovery.
+# Prevents triggering on first-person dialogue in otherwise third-person texts.
+NARRATOR_BOOK_MIN_CHAPTERS: int = 2
 
 _AGENT_NONHUMAN_WORDS: Set[str] = {
     "ghost", "spirit", "phantom", "spectre", "specter",
@@ -547,9 +561,9 @@ class CharacterIdentityLayer:
         all_clusters = self._read_all_clusters()
         logger.info("Read %d local clusters across all chapters.", len(all_clusters))
 
-        decisions, canon_chars, unresolved = self._resolve_identities(all_clusters)
+        decisions, canon_chars, unresolved, narrator_info = self._resolve_identities(all_clusters)
         mapping = self._build_mapping(decisions)
-        report  = self._build_report(all_clusters, decisions, canon_chars)
+        report  = self._build_report(all_clusters, decisions, canon_chars, narrator_info)
         self._write_outputs(canon_chars, mapping, decisions, unresolved, report)
 
         logger.info(
@@ -582,7 +596,7 @@ class CharacterIdentityLayer:
     # ------------------------------------------------------------------
     def _resolve_identities(
         self, all_clusters: List[LocalCluster]
-    ) -> Tuple[List[IdentityDecision], List[CanonicalCharacter], List[Dict[str, Any]]]:
+    ) -> Tuple[List[IdentityDecision], List[CanonicalCharacter], List[Dict[str, Any]], Dict[str, Any]]:
 
         decisions:    List[IdentityDecision]  = []
         canon_chars:  List[CanonicalCharacter] = []
@@ -592,6 +606,8 @@ class CharacterIdentityLayer:
         # ---- Phase 1: classify each cluster and decide fate ----
         # promotable: (cluster, resolved_name, alias_resolved)
         promotable: List[Tuple[LocalCluster, str, bool]] = []
+        # narrator_pending: narrator_candidate clusters deferred for narrator recovery
+        narrator_pending: List[LocalCluster] = []
 
         for cl in all_clusters:
             alias_name    = _resolve_alias(cl, self._global_aliases, self._chapter_aliases)
@@ -600,6 +616,9 @@ class CharacterIdentityLayer:
             if _qualifies_for_promotion(cl, alias_resolved):
                 resolved_name = alias_name if alias_name else cl.display_name
                 promotable.append((cl, resolved_name, alias_resolved))
+            elif cl.cluster_type == "narrator_candidate":
+                # Defer: narrator recovery (Phase 4) will decide whether to promote or ABSTAIN
+                narrator_pending.append(cl)
             else:
                 decision_str, reason = _non_promotable_decision(cl.cluster_type)
                 decisions.append(IdentityDecision(
@@ -740,14 +759,157 @@ class CharacterIdentityLayer:
                             ],
                         })
 
-        return decisions, canon_chars, unresolved
+        # ---- Phase 4: narrator recovery ----
+        narrator_info = self._narrator_recovery(
+            narrator_pending, all_clusters, decisions, canon_chars, unresolved, used_ids
+        )
+
+        return decisions, canon_chars, unresolved, narrator_info
+
+    # ------------------------------------------------------------------
+    def _narrator_recovery(
+        self,
+        narrator_pending: List[LocalCluster],
+        all_clusters: List[LocalCluster],
+        decisions: List[IdentityDecision],
+        canon_chars: List[CanonicalCharacter],
+        unresolved: List[Dict[str, Any]],
+        used_ids: Set[str],
+    ) -> Dict[str, Any]:
+        """Recover first-person narrator clusters into a canonical Narrator node.
+
+        Eligibility is chapter-aggregate: a chapter qualifies when the TOTAL mention count
+        of its narrator_candidate clusters reaches NARRATOR_CLUSTER_MIN_MENTIONS.  This
+        handles books where BookNLP splits the narrator across many small per-chapter
+        clusters instead of producing one dominant cluster.
+
+        Book-level gates: at least NARRATOR_BOOK_MIN_CHAPTERS qualified chapters AND at
+        least NARRATOR_BOOK_MIN_TOTAL_MENTIONS narrator mentions in total.
+
+        All narrator_candidate clusters belonging to a qualified chapter are mapped to the
+        Narrator canonical node.  Clusters from non-qualifying chapters are ABSTAIN'd.
+        """
+        reason_abstain = "narrator_candidate — first-person pronoun dominated"
+
+        # Group pending clusters by chapter
+        by_chapter: Dict[int, List[LocalCluster]] = defaultdict(list)
+        for cl in narrator_pending:
+            by_chapter[cl.chapter_id].append(cl)
+
+        # Determine which chapters have sufficient aggregate narrator mentions
+        dominated_chapters: Dict[int, List[LocalCluster]] = {}
+        for chapter_id, clusters in by_chapter.items():
+            chapter_total = sum(cl.mention_count for cl in clusters)
+            if chapter_total >= NARRATOR_CLUSTER_MIN_MENTIONS:
+                dominated_chapters[chapter_id] = clusters
+
+        # Clusters from non-dominated chapters → ABSTAIN (same as before this fix)
+        dominated_ids = {id(cl) for clusters in dominated_chapters.values() for cl in clusters}
+        for cl in narrator_pending:
+            if id(cl) not in dominated_ids:
+                decisions.append(IdentityDecision(
+                    chapter_id=cl.chapter_id,
+                    coref_id=cl.coref_id,
+                    surface=cl.display_name,
+                    target_canonical_id=None,
+                    decision="ABSTAIN",
+                    confidence=0.0,
+                    reasons=[reason_abstain],
+                ))
+                unresolved.append({
+                    "chapter_id":     cl.chapter_id,
+                    "local_coref_id": cl.coref_id,
+                    "surface":        cl.display_name,
+                    "type":           cl.cluster_type,
+                    "reason":         reason_abstain,
+                    "candidate_targets": [],
+                })
+
+        def _abstain_dominated(abort_reason: str) -> Dict[str, Any]:
+            for cl in narrator_pending:
+                if id(cl) in dominated_ids:
+                    decisions.append(IdentityDecision(
+                        chapter_id=cl.chapter_id, coref_id=cl.coref_id, surface=cl.display_name,
+                        target_canonical_id=None, decision="ABSTAIN", confidence=0.0,
+                        reasons=[reason_abstain],
+                    ))
+                    unresolved.append({
+                        "chapter_id": cl.chapter_id, "local_coref_id": cl.coref_id,
+                        "surface": cl.display_name, "type": cl.cluster_type,
+                        "reason": reason_abstain, "candidate_targets": [],
+                    })
+            return {"narrator_recovery_enabled": False, "reason": abort_reason}
+
+        if not dominated_chapters:
+            return _abstain_dominated("no chapters with sufficient narrator mentions")
+
+        total_narrator_mentions = sum(
+            cl.mention_count for clusters in dominated_chapters.values() for cl in clusters
+        )
+
+        if len(dominated_chapters) < NARRATOR_BOOK_MIN_CHAPTERS:
+            return _abstain_dominated(
+                f"narrator spans only {len(dominated_chapters)} dominated chapter(s) (min {NARRATOR_BOOK_MIN_CHAPTERS})"
+            )
+
+        if total_narrator_mentions < NARRATOR_BOOK_MIN_TOTAL_MENTIONS:
+            return _abstain_dominated(
+                f"total narrator mentions {total_narrator_mentions} < {NARRATOR_BOOK_MIN_TOTAL_MENTIONS}"
+            )
+
+        # Recovery is triggered: create one canonical Narrator node
+        eligible = [cl for clusters in dominated_chapters.values() for cl in clusters]
+        narrator_id = _make_canonical_id("Narrator", used_ids)
+        used_ids.add(narrator_id)
+
+        canon_chars.append(CanonicalCharacter(
+            canonical_id=narrator_id,
+            name="Narrator",
+            type="narrator_candidate",
+            aliases=["Narrator"],
+            source_clusters=[
+                {"chapter_id": cl.chapter_id, "coref_id": cl.coref_id}
+                for cl in sorted(eligible, key=lambda c: (c.chapter_id, c.coref_id))
+            ],
+            confidence=0.7,
+        ))
+
+        recovery_reasons = [
+            "narrator_recovery: chapter-aggregate first-person pronoun dominance",
+            "book-level first-person narration detected across multiple chapters",
+        ]
+        for cl in eligible:
+            decisions.append(IdentityDecision(
+                chapter_id=cl.chapter_id,
+                coref_id=cl.coref_id,
+                surface=cl.display_name,
+                target_canonical_id=narrator_id,
+                decision="NARRATOR_RECOVERY",
+                confidence=0.7,
+                reasons=recovery_reasons + [f"chapter_aggregate_mentions={sum(c.mention_count for c in by_chapter[cl.chapter_id])}"],
+            ))
+
+        logger.info(
+            "Narrator recovery: mapped %d clusters (%d total mentions) to %s across %d chapters.",
+            len(eligible), total_narrator_mentions, narrator_id, len(dominated_chapters),
+        )
+
+        return {
+            "narrator_recovery_enabled": True,
+            "narrator_canonical_id": narrator_id,
+            "narrator_clusters_recovered": len(eligible),
+            "narrator_mentions_recovered": total_narrator_mentions,
+            "narrator_chapters": sorted(dominated_chapters.keys()),
+            "narrator_policy": "dominant_first_person_pronoun_clusters",
+        }
 
     # ------------------------------------------------------------------
     def _build_mapping(self, decisions: List[IdentityDecision]) -> Dict[str, Dict[str, str]]:
-        """local_coref_to_character: only AUTO_MERGE / REVIEW with a target."""
+        """local_coref_to_character: AUTO_MERGE / REVIEW / NARRATOR_RECOVERY with a target."""
+        _mapped_decisions = {"AUTO_MERGE", "REVIEW", "NARRATOR_RECOVERY"}
         mapping: Dict[str, Dict[str, str]] = {}
         for d in decisions:
-            if d.target_canonical_id is None or d.decision not in ("AUTO_MERGE", "REVIEW"):
+            if d.target_canonical_id is None or d.decision not in _mapped_decisions:
                 continue
             mapping.setdefault(str(d.chapter_id), {})[d.coref_id] = d.target_canonical_id
         return mapping
@@ -758,8 +920,11 @@ class CharacterIdentityLayer:
         all_clusters: List[LocalCluster],
         decisions:    List[IdentityDecision],
         canon_chars:  List[CanonicalCharacter],
+        narrator_info: Dict[str, Any],
     ) -> Dict[str, Any]:
-        counts: Dict[str, int] = {k: 0 for k in ("AUTO_MERGE", "REJECT", "REVIEW", "ABSTAIN")}
+        counts: Dict[str, int] = {
+            k: 0 for k in ("AUTO_MERGE", "REJECT", "REVIEW", "ABSTAIN", "NARRATOR_RECOVERY")
+        }
         for d in decisions:
             counts[d.decision] = counts.get(d.decision, 0) + 1
 
@@ -772,6 +937,12 @@ class CharacterIdentityLayer:
             warnings.append(
                 f"{counts['REVIEW']} REVIEW clusters — check identity_decisions.json "
                 "and unresolved_entities.json"
+            )
+        if narrator_info.get("narrator_recovery_enabled"):
+            warnings.append(
+                f"Narrator recovery: {narrator_info['narrator_clusters_recovered']} clusters "
+                f"({narrator_info['narrator_mentions_recovered']} mentions) mapped to "
+                f"{narrator_info['narrator_canonical_id']}"
             )
 
         return {
@@ -787,6 +958,7 @@ class CharacterIdentityLayer:
             "decision_counts":     counts,
             "category_counts":     type_counts,
             "warnings":            warnings,
+            "narrator_recovery":   narrator_info,
         }
 
     # ------------------------------------------------------------------

@@ -914,5 +914,155 @@ class TestSubGroupReviewMerge(unittest.TestCase):
             self.assertTrue(chars, "Multi-word proper name should be kept even with 1 mention")
 
 
+# ---------------------------------------------------------------------------
+# Narrator recovery tests (identity_fix_v2)
+# ---------------------------------------------------------------------------
+
+def _narrator_char(cid: int, count: int) -> Dict[str, Any]:
+    """Build a pronoun-only character dominated by first-person forms."""
+    return {
+        "id": cid, "count": count,
+        "mentions": {
+            "proper":  [],
+            "common":  [],
+            "pronoun": [{"n": "I", "c": count}],
+        },
+        "g": {"inference": ""},
+    }
+
+
+class TestNarratorRecovery(unittest.TestCase):
+
+    def test_high_salience_creates_narrator_canonical(self):
+        """Two chapters with >=25 mentions each → char_narrator canonical created."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "book", 0, [_narrator_char(0, 100)])
+            _make_run_dir(root, "book", 1, [_narrator_char(0, 80)])
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            chars = load_canonical_characters(root)
+            narrator_chars = [c for c in chars if c["type"] == "narrator_candidate"]
+            self.assertEqual(len(narrator_chars), 1, f"Expected 1 narrator canonical, got {chars}")
+            self.assertEqual(narrator_chars[0]["name"], "Narrator")
+
+            self.assertTrue(report["narrator_recovery"]["narrator_recovery_enabled"])
+            self.assertEqual(report["narrator_recovery"]["narrator_clusters_recovered"], 2)
+            self.assertEqual(report["narrator_recovery"]["narrator_mentions_recovered"], 180)
+
+    def test_narrator_appears_in_coref_mapping(self):
+        """NARRATOR_RECOVERY decisions must appear in the local_coref_to_character mapping."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "book", 0, [_narrator_char(0, 60)])
+            _make_run_dir(root, "book", 1, [_narrator_char(0, 50)])
+            CharacterIdentityLayer(booknlp_root=root).run()
+
+            mapping = load_coref_mapping(root)
+            self.assertIn("0", mapping, "Chapter 0 should appear in mapping")
+            self.assertIn("1", mapping, "Chapter 1 should appear in mapping")
+            self.assertIn("0", mapping["0"], "coref_id=0 ch0 should be mapped")
+            self.assertIn("0", mapping["1"], "coref_id=0 ch1 should be mapped")
+
+    def test_low_frequency_narrator_stays_abstain(self):
+        """A single narrator cluster with count < 25 → ABSTAIN, no narrator canonical."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "book", 0, [_narrator_char(0, 10)])
+            _make_run_dir(root, "book", 1, [_narrator_char(0, 8)])
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            chars = load_canonical_characters(root)
+            self.assertFalse(chars, f"No canonical expected for low-count narrator: {chars}")
+            self.assertFalse(report["narrator_recovery"]["narrator_recovery_enabled"])
+
+    def test_single_chapter_narrator_not_recovered(self):
+        """Eligible clusters in only 1 chapter → ABSTAIN (fails min-chapters gate)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "book", 0, [_narrator_char(0, 200)])
+            # Only one chapter total — should not recover
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            chars = load_canonical_characters(root)
+            self.assertFalse(chars, f"Single-chapter narrator should not be recovered: {chars}")
+            self.assertFalse(report["narrator_recovery"]["narrator_recovery_enabled"])
+
+    def test_total_mentions_gate(self):
+        """Two chapters with 25+ mentions each but combined <50 total does not trigger recovery.
+
+        Uses counts of 26 + 24 = 50... actually that equals 50 which passes.
+        Use 25 + 1 = 26 < 50 to test gate: only one cluster passes per-cluster threshold.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            # ch0 cluster eligible (count=25), ch1 cluster NOT eligible (count=5)
+            # eligible total = 25 < NARRATOR_BOOK_MIN_TOTAL_MENTIONS(50) → should not recover
+            _make_run_dir(root, "book", 0, [_narrator_char(0, 25)])
+            _make_run_dir(root, "book", 1, [_narrator_char(0, 5)])
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            chars = load_canonical_characters(root)
+            self.assertFalse(chars, f"Total mentions gate should block recovery: {chars}")
+            self.assertFalse(report["narrator_recovery"]["narrator_recovery_enabled"])
+
+    def test_narrator_canonical_id_in_report(self):
+        """narrator_canonical_id in report should match the canonical in canonical_characters.json."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "book", 0, [_narrator_char(0, 100)])
+            _make_run_dir(root, "book", 1, [_narrator_char(0, 100)])
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            narrator_info = report["narrator_recovery"]
+            self.assertTrue(narrator_info["narrator_recovery_enabled"])
+
+            chars = load_canonical_characters(root)
+            ids = {c["canonical_id"] for c in chars}
+            self.assertIn(narrator_info["narrator_canonical_id"], ids)
+            self.assertEqual(narrator_info["narrator_policy"], "dominant_first_person_pronoun_clusters")
+
+    def test_second_person_pronoun_not_recovered(self):
+        """A cluster dominated by 'you/your' is generic_noise, not recovered as narrator."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            you_char = {
+                "id": 0, "count": 200,
+                "mentions": {
+                    "proper":  [],
+                    "common":  [],
+                    "pronoun": [{"n": "you", "c": 100}, {"n": "your", "c": 100}],
+                },
+                "g": {"inference": ""},
+            }
+            _make_run_dir(root, "book", 0, [you_char])
+            _make_run_dir(root, "book", 1, [you_char])
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            chars = load_canonical_characters(root)
+            self.assertFalse(chars, f"Second-person cluster should not produce a canonical: {chars}")
+            self.assertFalse(report["narrator_recovery"]["narrator_recovery_enabled"])
+
+    def test_named_characters_unaffected_by_narrator_recovery(self):
+        """Named characters in same book as narrator are not merged into the Narrator node."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "book", 0, [
+                _narrator_char(0, 100),
+                _char(1, ["Marlow"], count=30),
+            ])
+            _make_run_dir(root, "book", 1, [
+                _narrator_char(0, 80),
+                _char(1, ["Marlow"], count=25),
+            ])
+            report = CharacterIdentityLayer(booknlp_root=root).run()
+
+            chars = load_canonical_characters(root)
+            names = {c["name"] for c in chars}
+            self.assertIn("Narrator", names, "Narrator canonical should be created")
+            self.assertIn("Marlow", names, "Named character should remain separate")
+            self.assertEqual(len(chars), 2, f"Expected exactly 2 canonicals: {chars}")
+
+
 if __name__ == "__main__":
     unittest.main()
