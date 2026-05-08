@@ -43,7 +43,7 @@ def split_only(
     text = input_path.read_text(encoding="utf-8", errors="replace")
     bid = book_id or safe_slug(input_path.stem)
 
-    out_root = ensure_dir(data_dir() / "books" / bid / "chapters")
+    out_root = ensure_dir(data_dir() / "output" / "chapters" / bid)
     if write_debug:
         chapters, debug = split_into_chapters_with_debug(text)
     else:
@@ -87,7 +87,7 @@ def split_only(
 def _build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Chapter splitter ONLY (no parsing/cleaning).")
     p.add_argument("--input", required=True, help="Path to an already-prepared .txt file.")
-    p.add_argument("--book-id", default=None, help="Optional output folder name under data/books/<book-id>/")
+    p.add_argument("--book-id", default=None, help="Optional output folder name under data/output/chapters/<book-id>/")
     p.add_argument("--max-chapters", type=int, default=None)
     p.add_argument("--debug", action="store_true", help="Write split_debug.json with detector diagnostics.")
     p.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"])

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def _default_booknlp_root(book_id: str) -> Path:
-    return Path("NLP-Graph") / "data" / "booknlp_chapter_output" / str(book_id)
+    return Path("data") / "output" / "booknlp" / str(book_id)
 
 
 def _parse_chapter_id(run_dir_name: str) -> Optional[int]:

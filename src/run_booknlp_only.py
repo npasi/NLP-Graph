@@ -86,7 +86,7 @@ def run_booknlp_only(
 def _build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Run BookNLP on a full-book .txt (no splitting).")
     p.add_argument("--input", required=True, help="Path to a UTF-8 .txt file.")
-    p.add_argument("--output-root", default="data/booknlp_only_output", help="Where to cache BookNLP outputs.")
+    p.add_argument("--output-root", default="data/output/booknlp_full", help="Where to cache BookNLP outputs.")
     p.add_argument("--run-id", default=None, help="Run id / folder name (default: input filename stem).")
     p.add_argument("--model-size", choices=["small", "big"], default="big")
     p.add_argument("--top-k", type=int, default=25, help="How many top character clusters to keep in the summary.")

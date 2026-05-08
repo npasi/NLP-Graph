@@ -1,0 +1,159 @@
+NLP-Graph (BookNLP per-chapter pipeline) — Repo summary
+======================================================
+
+Branch: BRANCH-CON-I-RAGAZZI
+
+Goal
+----
+Given a raw book .txt, this repo produces:
+1) a chapter split (chapter_000.txt, chapter_001.txt, …)
+2) BookNLP outputs per chapter (tokens/entities/quotes/supersense/book/book.html)
+3) derived JSON artefacts built ONLY from BookNLP outputs (no extra NLP)
+
+The workflow is designed to be restartable: if an output exists, later runs
+skip that step.
+
+
+Repository structure
+--------------------
+
+Top level:
+- README.md
+  Main “how to run” documentation (end-to-end for book 46 + notes on caches).
+- requirements.txt
+  Python dependencies for BookNLP + helpers.
+- data/
+  Mostly local cache/output. Git ignores most heavy artefacts.
+
+Code:
+- src/
+  Main scripts (CLI modules).
+
+
+Data directories (what to put where)
+------------------------------------
+
+The repo expects / creates these folders under data/:
+
+- data/raw/
+  Put your input books here (e.g., data/raw/46.txt).
+
+- data/output/chapters/<book_id>/
+  Produced by splitting step. Contains:
+    - chapter_000.txt … chapter_00N.txt
+    - chapters.json (chapter metadata)
+
+- data/output/booknlp/<book_id>/
+  Produced by BookNLP per chapter. Contains one folder per chapter run:
+    - booknlp_<book_id>_chapter_0000/
+      - *.tokens / *.entities / *.quotes / *.supersense / *.book / *.book.html
+
+- data/models/
+  BookNLP model weights (downloaded automatically by run_booknlp_per_chapter.py).
+
+- data/hf_cache/  (optional but recommended)
+  HuggingFace cache directory. If you set HF_HOME / TRANSFORMERS_CACHE, downloads
+  stay inside the repo instead of your user profile.
+
+
+Entry points (what to run)
+--------------------------
+
+### A) Per-book, local: raw -> chapters -> BookNLP -> derived JSON
+
+1) Split a raw book into chapters (and optionally strip Gutenberg footer)
+
+    python src/step1_split_only.py --input data/raw/46.txt --book-id 46 --debug --log-level INFO
+
+Outputs:
+  data/output/chapters/46/chapter_000.txt … chapter_004.txt
+  data/output/chapters/46/chapters.json
+
+2) Run BookNLP per chapter (full pipeline)
+
+    python src/run_booknlp_per_chapter.py --book-id 46 --model-size big --pipeline entity,quote,supersense,event,coref --log-level INFO
+
+Outputs:
+  data/output/booknlp/46/booknlp_46_chapter_0000/*
+  …
+
+3) Derived artefacts (read BookNLP outputs only)
+
+Characters list per chapter:
+    python src/step2_character_list_per_chapter.py --book-id 46
+
+Predicates between character pairs per chapter:
+    python src/step3_predicates_between_characters.py --book-id 46
+
+Sentences for each character pair per chapter:
+    python src/step4_sentences_by_character_pair.py --book-id 46
+
+
+### B) Batch run over a train/val/test split (Colab / Drive style)
+
+src/run_pipeline_all_books.py runs:
+  split_dynamic → BookNLP per chapter → step2 → step4
+
+It expects a “data-root” structure like:
+  archive/corpus/     book .txt files
+  archive/csv/        GT .csv (used only to infer #chapters target)
+  splits/train_val_test.json
+  models/             BookNLP model weights
+  output/chapters/    chapter splits
+  output/booknlp/     BookNLP outputs
+
+Examples:
+  python src/run_pipeline_all_books.py --split train
+  python src/run_pipeline_all_books.py --split all
+
+
+Other utilities (optional)
+--------------------------
+
+- src/booknlp_event_triplets.py
+  Extract (agent, predicate, patient) triplets from BookNLP outputs.
+  (Uses .tokens + .entities + .book from a BookNLP run directory.)
+
+- src/booknlp_listings_html.py
+  Build a read-only HTML listing that summarizes BookNLP character clusters
+  and optionally previews the triplets file if present.
+
+- src/validate_chapter_alignment.py, src/build_split.py, src/split_dynamic.py
+  Helpers for splitting / checking alignment (used in the batch pipeline).
+
+
+What is “native BookNLP output” here?
+-------------------------------------
+
+For each chapter run_id (booknlp_<book_id>_chapter_000X), BookNLP writes:
+- *.tokens       tokenization + POS/dep + event tag column
+- *.entities     mention spans + COREF ids
+- *.quotes       quote attribution
+- *.supersense   supersense tagging
+- *.book         JSON with character clusters and role/event lists (agent/patient/poss/mod)
+- *.book.html    BookNLP’s native HTML summary
+
+
+Common pitfalls
+---------------
+
+1) First run is slow:
+   - downloads BookNLP model weights into data/models/
+   - downloads HuggingFace tokenizer/model caches (set HF_HOME to keep local)
+
+2) Windows + transformers:
+   - this repo includes compatibility patches in src/run_booknlp_per_chapter.py
+     to avoid Windows path issues in BookNLP.
+
+
+How to continue (suggested next steps)
+--------------------------------------
+
+If your next goal is relation graphs over time:
+- Treat each chapter as one timestep G_t.
+- Use step3/step4 outputs as supervision/evidence.
+- Evaluate with:
+  - edge Precision/Recall vs “predicate evidence”
+  - Hits@K / MRR for predicted relations
+  - stability/change metrics across chapters
+
