@@ -62,8 +62,10 @@ def dedupe_evidence(evidences: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def score_pair(evidences: list[dict[str, Any]]) -> dict[str, Any]:
     deduped = dedupe_evidence(evidences)
 
-    direct_events = [e for e in deduped if e.get("evidence_type") == "DIRECT_EVENT"]
-    co_presence = [e for e in deduped if e.get("evidence_type") == "CO_PRESENCE"]
+    direct_events   = [e for e in deduped if e.get("evidence_type") == "DIRECT_EVENT"]
+    dialogue_turns  = [e for e in deduped if e.get("evidence_type") == "DIALOGUE_TURN"]
+    quote_abouts    = [e for e in deduped if e.get("evidence_type") == "QUOTE_ABOUT"]
+    co_presence     = [e for e in deduped if e.get("evidence_type") == "CO_PRESENCE"]
 
     predicates = Counter(
         str(e.get("predicate"))
@@ -71,38 +73,57 @@ def score_pair(evidences: list[dict[str, Any]]) -> dict[str, Any]:
         if e.get("predicate")
     )
 
-    direct_event_count = len(direct_events)
-    co_presence_count = len(co_presence)
-    total_evidence_count = len(deduped)
+    direct_event_count  = len(direct_events)
+    dialogue_turn_count = len(dialogue_turns)
+    quote_about_count   = len(quote_abouts)
+    co_presence_count   = len(co_presence)
+    strong_evidence_count = direct_event_count + dialogue_turn_count + quote_about_count
+    quote_evidence_count  = dialogue_turn_count + quote_about_count
+    total_evidence_count  = len(deduped)
 
-    # Conservative interaction score:
-    # DIRECT_EVENT is strong evidence.
-    # CO_PRESENCE is weak scene-level evidence.
+    # Interaction score:
+    # DIRECT_EVENT   → strong (2.0)
+    # DIALOGUE_TURN  → strong (1.5)
+    # QUOTE_ABOUT    → moderate (1.0)
+    # CO_PRESENCE    → weak (0.25)
     interaction_score = (
-        2.0 * direct_event_count
+        2.0  * direct_event_count
+        + 1.5  * dialogue_turn_count
+        + 1.0  * quote_about_count
         + 0.25 * co_presence_count
     )
 
-    if direct_event_count >= 3:
+    if direct_event_count >= 3 or dialogue_turn_count >= 3 or strong_evidence_count >= 4:
         confidence = "high"
-    elif direct_event_count >= 1:
+    elif direct_event_count >= 1 or dialogue_turn_count >= 1 or quote_about_count >= 2:
         confidence = "medium"
-    elif co_presence_count >= 5:
+    elif quote_about_count >= 1 or co_presence_count >= 5:
         confidence = "low_medium"
     elif co_presence_count >= 1:
         confidence = "low"
     else:
         confidence = "none"
 
-    relation_type = "direct_interaction" if direct_event_count > 0 else "co_presence_only"
+    if direct_event_count > 0:
+        relation_type = "direct_interaction"
+    elif dialogue_turn_count > 0:
+        relation_type = "dialogue_interaction"
+    elif quote_about_count > 0:
+        relation_type = "quote_about_interaction"
+    else:
+        relation_type = "co_presence_only"
 
     return {
-        "direct_event_count": direct_event_count,
-        "co_presence_count": co_presence_count,
+        "direct_event_count":   direct_event_count,
+        "dialogue_turn_count":  dialogue_turn_count,
+        "quote_about_count":    quote_about_count,
+        "quote_evidence_count": quote_evidence_count,
+        "strong_evidence_count": strong_evidence_count,
+        "co_presence_count":    co_presence_count,
         "total_evidence_count": total_evidence_count,
-        "interaction_score": round(interaction_score, 4),
-        "confidence": confidence,
-        "relation_type": relation_type,
+        "interaction_score":    round(interaction_score, 4),
+        "confidence":           confidence,
+        "relation_type":        relation_type,
         "top_predicates": [
             {"predicate": p, "count": c}
             for p, c in predicates.most_common(10)
@@ -126,43 +147,55 @@ def score_all_chapters(evidence_by_chapter: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_summary(scored: dict[str, Any]) -> dict[str, Any]:
-    total_pairs = 0
-    direct_pairs = 0
-    co_only_pairs = 0
-    total_score = 0.0
+    total_pairs        = 0
+    direct_pairs       = 0
+    dialogue_pairs     = 0
+    quote_about_pairs  = 0
+    strong_pairs       = 0
+    co_only_pairs      = 0
+    total_score        = 0.0
 
     chapter_summaries: dict[str, Any] = {}
 
     for chapter_id, pairs in scored.items():
-        chapter_pairs = len(pairs)
-        chapter_direct = sum(
+        chapter_pairs       = len(pairs)
+        chapter_direct      = sum(1 for p in pairs.values() if p.get("direct_event_count", 0) > 0)
+        chapter_dialogue    = sum(1 for p in pairs.values() if p.get("dialogue_turn_count", 0) > 0)
+        chapter_quote_about = sum(1 for p in pairs.values() if p.get("quote_about_count", 0) > 0)
+        chapter_strong      = sum(1 for p in pairs.values() if p.get("strong_evidence_count", 0) > 0)
+        chapter_co_only     = sum(
             1 for p in pairs.values()
-            if p.get("direct_event_count", 0) > 0
-        )
-        chapter_co_only = sum(
-            1 for p in pairs.values()
-            if p.get("direct_event_count", 0) == 0 and p.get("co_presence_count", 0) > 0
+            if p.get("strong_evidence_count", 0) == 0 and p.get("co_presence_count", 0) > 0
         )
         chapter_score = sum(float(p.get("interaction_score", 0.0)) for p in pairs.values())
 
-        total_pairs += chapter_pairs
-        direct_pairs += chapter_direct
-        co_only_pairs += chapter_co_only
-        total_score += chapter_score
+        total_pairs       += chapter_pairs
+        direct_pairs      += chapter_direct
+        dialogue_pairs    += chapter_dialogue
+        quote_about_pairs += chapter_quote_about
+        strong_pairs      += chapter_strong
+        co_only_pairs     += chapter_co_only
+        total_score       += chapter_score
 
         chapter_summaries[chapter_id] = {
-            "pairs": chapter_pairs,
-            "direct_event_pairs": chapter_direct,
+            "pairs":               chapter_pairs,
+            "direct_event_pairs":  chapter_direct,
+            "dialogue_turn_pairs": chapter_dialogue,
+            "quote_about_pairs":   chapter_quote_about,
+            "strong_evidence_pairs": chapter_strong,
             "co_presence_only_pairs": chapter_co_only,
             "total_interaction_score": round(chapter_score, 4),
         }
 
     return {
-        "total_pairs": total_pairs,
-        "direct_event_pairs": direct_pairs,
+        "total_pairs":          total_pairs,
+        "direct_event_pairs":   direct_pairs,
+        "dialogue_turn_pairs":  dialogue_pairs,
+        "quote_about_pairs":    quote_about_pairs,
+        "strong_evidence_pairs": strong_pairs,
         "co_presence_only_pairs": co_only_pairs,
         "total_interaction_score": round(total_score, 4),
-        "chapters": chapter_summaries,
+        "chapters":             chapter_summaries,
     }
 
 

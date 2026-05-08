@@ -27,6 +27,7 @@ def make_warnings(
     review_count: int,
     total_pairs: int,
     direct_event_pairs: int,
+    strong_evidence_pairs: int,
     co_presence_only_pairs: int,
     graph_chapters: list[dict[str, Any]],
 ) -> list[str]:
@@ -58,12 +59,13 @@ def make_warnings(
         )
 
     if total_pairs > 0:
-        direct_ratio = direct_event_pairs / total_pairs
+        strong_ratio = strong_evidence_pairs / total_pairs
         co_only_ratio = co_presence_only_pairs / total_pairs
 
-        if direct_ratio < 0.15:
+        if strong_ratio < 0.15:
             warnings.append(
-                f"Low direct-event ratio ({direct_ratio:.2%}). Graph is mostly co-presence."
+                f"Low strong-evidence ratio ({strong_ratio:.2%}). "
+                "Graph is mostly co-presence (consider quote evidence or alias refinement)."
             )
 
         if co_only_ratio > 0.80:
@@ -132,12 +134,18 @@ def main() -> None:
     abstain_count = int(decision_counts.get("ABSTAIN", 0))
     reject_count = int(decision_counts.get("REJECT", 0))
 
-    total_pairs = int(score_summary.get("total_pairs", 0))
-    direct_event_pairs = int(score_summary.get("direct_event_pairs", 0))
+    total_pairs           = int(score_summary.get("total_pairs", 0))
+    direct_event_pairs    = int(score_summary.get("direct_event_pairs", 0))
+    dialogue_turn_pairs   = int(score_summary.get("dialogue_turn_pairs", 0))
+    quote_about_pairs     = int(score_summary.get("quote_about_pairs", 0))
+    strong_evidence_pairs = int(score_summary.get("strong_evidence_pairs", 0))
     co_presence_only_pairs = int(score_summary.get("co_presence_only_pairs", 0))
 
     direct_event_ratio = (
         direct_event_pairs / total_pairs if total_pairs else 0.0
+    )
+    strong_evidence_ratio = (
+        strong_evidence_pairs / total_pairs if total_pairs else 0.0
     )
     co_presence_only_ratio = (
         co_presence_only_pairs / total_pairs if total_pairs else 0.0
@@ -150,6 +158,7 @@ def main() -> None:
         review_count=review_count,
         total_pairs=total_pairs,
         direct_event_pairs=direct_event_pairs,
+        strong_evidence_pairs=strong_evidence_pairs,
         co_presence_only_pairs=co_presence_only_pairs,
         graph_chapters=graph_chapters,
     )
@@ -172,10 +181,14 @@ def main() -> None:
             "category_counts": identity_report.get("category_counts", {}),
         },
         "interactions": {
-            "total_pairs": total_pairs,
-            "direct_event_pairs": direct_event_pairs,
+            "total_pairs":           total_pairs,
+            "direct_event_pairs":    direct_event_pairs,
+            "dialogue_turn_pairs":   dialogue_turn_pairs,
+            "quote_about_pairs":     quote_about_pairs,
+            "strong_evidence_pairs": strong_evidence_pairs,
             "co_presence_only_pairs": co_presence_only_pairs,
-            "direct_event_ratio": round(direct_event_ratio, 4),
+            "direct_event_ratio":    round(direct_event_ratio, 4),
+            "strong_evidence_ratio": round(strong_evidence_ratio, 4),
             "co_presence_only_ratio": round(co_presence_only_ratio, 4),
             "total_interaction_score": score_summary.get("total_interaction_score", 0.0),
         },

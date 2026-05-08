@@ -79,8 +79,10 @@ def pair_sort_key(pair_key: str) -> tuple[str, str]:
 
 
 def summarize_evidence(evidences: list[dict[str, Any]]) -> dict[str, Any]:
-    direct = [e for e in evidences if e.get("evidence_type") == "DIRECT_EVENT"]
-    co = [e for e in evidences if e.get("evidence_type") == "CO_PRESENCE"]
+    direct         = [e for e in evidences if e.get("evidence_type") == "DIRECT_EVENT"]
+    dialogue_turns = [e for e in evidences if e.get("evidence_type") == "DIALOGUE_TURN"]
+    quote_abouts   = [e for e in evidences if e.get("evidence_type") == "QUOTE_ABOUT"]
+    co             = [e for e in evidences if e.get("evidence_type") == "CO_PRESENCE"]
 
     predicates = Counter(
         str(e.get("predicate"))
@@ -89,10 +91,12 @@ def summarize_evidence(evidences: list[dict[str, Any]]) -> dict[str, Any]:
     )
 
     return {
-        "direct_event_count": len(direct),
-        "co_presence_count": len(co),
+        "direct_event_count":   len(direct),
+        "dialogue_turn_count":  len(dialogue_turns),
+        "quote_about_count":    len(quote_abouts),
+        "co_presence_count":    len(co),
         "total_evidence_count": len(evidences),
-        "top_predicates": predicates.most_common(5),
+        "top_predicates":       predicates.most_common(5),
     }
 
 
@@ -139,10 +143,12 @@ def export_chapter(
 
         lines.append(f"[PAIR {i}] {a_name} {ARROW} {b_name}")
         lines.append(SUBSEP)
-        lines.append(f"  Direct events: {summary['direct_event_count']}")
-        lines.append(f"  Co-presence: {summary['co_presence_count']}")
-        lines.append(f"  Total evidence: {summary['total_evidence_count']}")
-        lines.append(f"  Top predicates: {format_predicates(summary['top_predicates'])}")
+        lines.append(f"  Direct events:   {summary['direct_event_count']}")
+        lines.append(f"  Dialogue turns:  {summary['dialogue_turn_count']}")
+        lines.append(f"  Quote-about:     {summary['quote_about_count']}")
+        lines.append(f"  Co-presence:     {summary['co_presence_count']}")
+        lines.append(f"  Total evidence:  {summary['total_evidence_count']}")
+        lines.append(f"  Top predicates:  {format_predicates(summary['top_predicates'])}")
         lines.append("")
 
         shown = evidences[:max_evidence_per_pair]

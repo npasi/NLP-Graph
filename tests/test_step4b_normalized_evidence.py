@@ -97,7 +97,7 @@ class TestCoPresenceWithoutDirectEvents(unittest.TestCase):
             )
             mapping = {"0": {"1": "char_a", "2": "char_b"}}
 
-            result, diag = build_normalized_pair_evidence(
+            result, diag, _qdiag = build_normalized_pair_evidence(
                 booknlp_root=root, full_mapping=mapping
             )
 
@@ -142,7 +142,7 @@ class TestCoPresenceWithoutDirectEvents(unittest.TestCase):
                 ],
             )
             mapping = {"0": {"1": "char_a", "2": "char_b"}}
-            result, _ = build_normalized_pair_evidence(
+            result, _, _qdiag = build_normalized_pair_evidence(
                 booknlp_root=root, full_mapping=mapping
             )
             ch0 = result.get("0", {})
@@ -175,7 +175,7 @@ class TestNoCoPresenceFewerThanTwoChars(unittest.TestCase):
             )
             mapping = {"0": {"1": "char_a"}}
 
-            result, diag = build_normalized_pair_evidence(
+            result, diag, _qdiag = build_normalized_pair_evidence(
                 booknlp_root=root, full_mapping=mapping
             )
 
@@ -213,7 +213,7 @@ class TestUnmappedEntitiesIgnored(unittest.TestCase):
             )
             mapping = {"0": {"1": "char_a"}}
 
-            result, diag = build_normalized_pair_evidence(
+            result, diag, _qdiag = build_normalized_pair_evidence(
                 booknlp_root=root, full_mapping=mapping
             )
 
@@ -268,7 +268,7 @@ class TestExistingDirectEventsPreserved(unittest.TestCase):
             )
             mapping = {"0": {"1": "char_a", "2": "char_b", "3": "char_c"}}
 
-            result, diag = build_normalized_pair_evidence(
+            result, diag, _qdiag = build_normalized_pair_evidence(
                 booknlp_root=root, full_mapping=mapping
             )
 
