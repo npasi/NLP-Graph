@@ -737,5 +737,182 @@ class TestIdentityMode(unittest.TestCase):
         self.assertFalse(result["applied_to_graph"])
 
 
+# ---------------------------------------------------------------------------
+# identity_fix_v1 — new tests for proper-name recovery, clean names, noise demotion
+# ---------------------------------------------------------------------------
+
+from src.character_identity_layer import (
+    clean_display_name,
+    _has_title_name_pattern,
+)
+
+
+class TestObviousNonPersonNamesRejected(unittest.TestCase):
+    """Non-person exclamations and commodity names must not become canonical."""
+
+    def _run_single(self, name: str, proper: bool = True) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            kwargs: Dict[str, Any] = {}
+            if proper:
+                kwargs["proper"] = [name]
+            else:
+                kwargs["common"] = [name]
+            _make_run_dir(root, "t", 0, [_char(1, **kwargs)])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            chars = load_canonical_characters(root)
+            names = [c["name"] for c in chars]
+            self.assertNotIn(name, names, f"{name!r} should not become a canonical character")
+
+    def test_ivory_not_canonical(self):
+        self._run_single("Ivory")
+
+    def test_good_god_not_canonical(self):
+        self._run_single("Good God")
+
+    def test_jove_not_canonical(self):
+        self._run_single("Jove")
+
+    def test_adieu_not_canonical(self):
+        self._run_single("Adieu")
+
+
+class TestCleanDisplayName(unittest.TestCase):
+    """clean_display_name strips leading articles and descriptive clauses."""
+
+    def test_strip_leading_a_mrs(self):
+        result = clean_display_name("a Mrs. Younge, who was some time ago governess")
+        self.assertEqual(result, "Mrs. Younge")
+
+    def test_strip_leading_the_before_title(self):
+        result = clean_display_name("the Mrs. Hudson")
+        self.assertEqual(result, "Mrs. Hudson")
+
+    def test_descriptive_clause_truncated(self):
+        result = clean_display_name("Lady Russell, who had known them all her life")
+        self.assertEqual(result, "Lady Russell")
+
+    def test_plain_name_unchanged(self):
+        result = clean_display_name("Elizabeth Bennet")
+        self.assertEqual(result, "Elizabeth Bennet")
+
+    def test_short_name_unchanged(self):
+        result = clean_display_name("Mr. Darcy")
+        self.assertEqual(result, "Mr. Darcy")
+
+
+class TestTitleNameInCommonNames(unittest.TestCase):
+    """Clusters with 'Mr./Mrs./Miss Name' in common_names → individual_candidate → promoted."""
+
+    def test_has_title_name_pattern_mr_darcy(self):
+        self.assertTrue(_has_title_name_pattern(["Mr. Darcy"]))
+
+    def test_has_title_name_pattern_miss_bennet(self):
+        self.assertTrue(_has_title_name_pattern(["Miss Bennet"]))
+
+    def test_has_title_name_pattern_false_for_plain_role(self):
+        self.assertFalse(_has_title_name_pattern(["the manager"]))
+
+    def test_has_title_name_pattern_false_for_plain_noun(self):
+        self.assertFalse(_has_title_name_pattern(["a businessman"]))
+
+    def test_common_name_title_name_promoted(self):
+        """A cluster with only 'Mr. Collins' as a common name should become canonical."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            # No proper names, only common "Mr. Collins"
+            _make_run_dir(root, "t", 0, [_char(1, proper=[], common=["Mr. Collins"])])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            chars = load_canonical_characters(root)
+            self.assertTrue(chars, "Mr. Collins cluster should be promoted")
+
+
+class TestSubGroupReviewMerge(unittest.TestCase):
+    """REVIEW sub-grouping: same title+surname merges across chapters; different titles stay separate."""
+
+    def test_miss_bennet_same_across_chapters(self):
+        """Miss Bennet in chapters 0 and 1 → same canonical character."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            # Ch0 has Mr.Bennet + Miss Bennet; Ch1 has Miss Bennet → gendered conflict → REVIEW
+            _make_run_dir(root, "t", 0, [
+                _char(1, ["Mr. Bennet"]),
+                _char(2, ["Miss Bennet"]),
+            ])
+            _make_run_dir(root, "t", 1, [_char(3, ["Miss Bennet"])])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            m = load_coref_mapping(root)
+            # Both Miss Bennet clusters should share the same canonical_id
+            self.assertEqual(m.get("0", {}).get("2"), m.get("1", {}).get("3"))
+
+    def test_mr_and_miss_bennet_separate(self):
+        """Mr. Bennet and Miss Bennet remain separate even with sub-grouping."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "t", 0, [
+                _char(1, ["Mr. Bennet"]),
+                _char(2, ["Miss Bennet"]),
+            ])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            m = load_coref_mapping(root).get("0", {})
+            self.assertNotEqual(m.get("1"), m.get("2"))
+
+    def test_mr_bennet_merged_across_chapters(self):
+        """Mr. Bennet in chapters 0 and 1 → same canonical even though REVIEW group."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "t", 0, [
+                _char(1, ["Mr. Bennet"]),
+                _char(2, ["Mrs. Bennet"]),
+            ])
+            _make_run_dir(root, "t", 1, [_char(3, ["Mr. Bennet"])])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            m = load_coref_mapping(root)
+            # Both Mr. Bennet clusters should share the same canonical_id
+            self.assertEqual(m.get("0", {}).get("1"), m.get("1", {}).get("3"))
+
+    def test_darcy_and_mr_darcy_merge(self):
+        """'Darcy' and 'Mr. Darcy' (no conflicting other candidate) → same canonical."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "t", 0, [_char(1, ["Darcy"])])
+            _make_run_dir(root, "t", 1, [_char(2, ["Mr. Darcy"])])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            m = load_coref_mapping(root)
+            # No gender conflict → AUTO_MERGE → same canonical
+            self.assertEqual(m.get("0", {}).get("1"), m.get("1", {}).get("2"))
+
+    def test_mr_and_mrs_bennet_still_separate_regression(self):
+        """Regression: Mr. Bennet and Mrs. Bennet must never merge."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "t", 0, [
+                _char(1, ["Mr. Bennet"]),
+                _char(2, ["Mrs. Bennet"]),
+            ])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            m = load_coref_mapping(root).get("0", {})
+            self.assertNotEqual(m.get("1"), m.get("2"))
+
+    def test_weak_singleton_not_promoted(self):
+        """A single-mention single-word individual_candidate with count=1 is not promoted."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            # count=1, single-word proper name (no title, not multi-word) → weak singleton guard
+            _make_run_dir(root, "t", 0, [_char(1, ["Perkins"], count=1)])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            chars = load_canonical_characters(root)
+            self.assertFalse(chars, f"Weak singleton should not be canonical: {chars}")
+
+    def test_multi_word_proper_name_kept_even_if_low_mention(self):
+        """A 2-word proper name with count=1 is kept (e.g. 'Albertus Magnus')."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _make_run_dir(root, "t", 0, [_char(1, ["Albertus Magnus"], count=1)])
+            CharacterIdentityLayer(booknlp_root=root).run()
+            chars = load_canonical_characters(root)
+            self.assertTrue(chars, "Multi-word proper name should be kept even with 1 mention")
+
+
 if __name__ == "__main__":
     unittest.main()

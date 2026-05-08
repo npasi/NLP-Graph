@@ -61,6 +61,10 @@ _ABSTRACT_NOISE_EXACT: Set[str] = {
     "fate", "fortune", "nature", "society", "time",
     "the lord", "the almighty", "the creator",
     "business", "sunday", "justice",
+    # Obvious exclamations, invocations, and commodity/abstract singles
+    "ivory", "adieu", "jove", "by jove", "good god", "good heavens",
+    "dear god", "good lord", "bless me", "gracious", "heavens",
+    "alas", "hallelujah", "encore", "farewell",
 }
 
 _GROUP_WORD_MARKERS: Set[str] = {
@@ -103,6 +107,31 @@ _GENDERED_OPPOSITE_PAIRS: List[Tuple[str, str]] = [
     ("mr.", "mrs."), ("mr.", "ms."), ("mr.", "miss"), ("sir", "lady"),
 ]
 
+
+# Regex: "Title Name" in common mentions — these are individually named characters
+# even when BookNLP classifies them as NOM rather than PROP.
+_TITLE_NAME_RE = re.compile(
+    r"^(mr\.?|mrs\.?|miss|ms\.?|sir|dr\.?|prof\.?|lord|lady|"
+    r"master|captain|colonel|general|rev\.?|père|mère|"
+    r"monsieur|madame|mme\.?|m\.)\s+\w",
+    re.IGNORECASE,
+)
+
+# Patterns that mark the start of a long descriptive relative clause
+_DESCRIPTIVE_CLAUSE_RE = re.compile(
+    r"\s*,\s*(who|which|that|whose)\b"
+    r"|\s+(who|which)\s+\w"
+    r"|,\s+(a|an|the)\s+\w+\s+(who|of|in|at|from)\b",
+    re.IGNORECASE,
+)
+
+# Leading "a / an / the" followed by a title word
+_LEADING_ARTICLE_RE = re.compile(
+    r"^(a|an|the)\s+(?=("
+    r"mr\.?|mrs\.?|miss|ms\.?|sir|dr\.?|prof\.?|lord|lady|"
+    r"master|captain|colonel|general|rev\.?)[\s\.])",
+    re.IGNORECASE,
+)
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -174,6 +203,32 @@ def _make_canonical_id(name: str, existing: Set[str]) -> str:
     return f"{cid}_{i}"
 
 
+def _has_title_name_pattern(names: List[str]) -> bool:
+    """True if any name matches 'Title Name' — even if classified as NOM by BookNLP."""
+    return any(_TITLE_NAME_RE.match(n.strip()) for n in names)
+
+
+def clean_display_name(name: str) -> str:
+    """Return a cleaner canonical name.
+
+    Strips leading articles before titles ('a Mrs.', 'an X') and truncates
+    at descriptive relative clauses (', who was…', ' which …').
+    """
+    s = name.strip()
+
+    # Strip leading "a/an/the" when immediately followed by a title
+    m = _LEADING_ARTICLE_RE.match(s)
+    if m:
+        s = s[m.end():].strip()
+
+    # Truncate at descriptive clause patterns, but only if the result is meaningful
+    mc = _DESCRIPTIVE_CLAUSE_RE.search(s)
+    if mc and mc.start() >= 4:
+        s = s[: mc.start()].strip().rstrip(".,;:'\"")
+
+    return s if s else name
+
+
 # ---------------------------------------------------------------------------
 # Cluster classification
 # ---------------------------------------------------------------------------
@@ -224,6 +279,11 @@ def classify_cluster(cl: LocalCluster) -> str:
     if cl.proper_names:
         return "agent_nonhuman" if _contains_nonhuman_marker(cl.proper_names) else "individual_candidate"
 
+    # Common-noun-only: if any mention matches "Title Name", treat as individual.
+    # BookNLP sometimes classifies "Mr. Darcy", "Miss Bennet" etc. as NOM rather than PROP.
+    if _has_title_name_pattern(cl.common_names):
+        return "individual_candidate"
+
     # Common-noun-only clusters
     if _contains_nonhuman_marker(cl.common_names):
         return "agent_nonhuman"
@@ -252,7 +312,7 @@ def _qualifies_for_promotion(cl: LocalCluster, alias_resolved: bool) -> bool:
     Rules (precision > recall — if uncertain, return False):
       - narrator_candidate:         NEVER promoted (not even via alias)
       - alias_resolved:             always promote (curator overrides everything)
-      - individual_candidate:       promote only if proper_names is non-empty
+      - individual_candidate:       promote if proper_names OR title+name in common_names
       - agent_nonhuman:             promote only if proper_names is non-empty
       - everything else:            DO NOT promote
 
@@ -266,7 +326,16 @@ def _qualifies_for_promotion(cl: LocalCluster, alias_resolved: bool) -> bool:
     if alias_resolved:
         return True
     if cl.cluster_type == "individual_candidate":
-        return bool(cl.proper_names)
+        has_proper = bool(cl.proper_names)
+        has_title_name = _has_title_name_pattern(cl.common_names)
+        if not has_proper and not has_title_name:
+            return False
+        # Weak-singleton guard: very low-mention clusters with no multi-word or
+        # title+name anchor are likely spurious BookNLP fragments.
+        if cl.mention_count <= 1 and not has_title_name:
+            if not any(len(n.split()) >= 2 for n in cl.proper_names):
+                return False
+        return True
     if cl.cluster_type == "agent_nonhuman":
         return bool(cl.proper_names)
     return False
@@ -406,6 +475,23 @@ def _gendered_title_conflict(ta: Optional[str], tb: Optional[str]) -> bool:
         (ta == p[0] and tb == p[1]) or (ta == p[1] and tb == p[0])
         for p in _GENDERED_OPPOSITE_PAIRS
     )
+
+
+def _sub_group_by_compatible_title(
+    members: List[Tuple["LocalCluster", str, bool]],
+) -> List[List[Tuple["LocalCluster", str, bool]]]:
+    """Sub-group promotable members by (title, normalised_base) for partial merging.
+
+    When _decide_group_merge returns REVIEW due to gendered title conflict, each
+    sub-group is kept together as one canonical instead of creating one canonical
+    per local cluster — e.g. all 'Miss Bennet' chapters → one canonical.
+    """
+    sub: Dict[Tuple[Optional[str], str], list] = defaultdict(list)
+    for cl, rname, alias_resolved in members:
+        base, title = _strip_title(rname)
+        key = (title, _norm(base) if base else _norm(rname))
+        sub[key].append((cl, rname, alias_resolved))
+    return list(sub.values())
 
 
 def _decide_group_merge(
@@ -564,7 +650,7 @@ class CharacterIdentityLayer:
                     ),
                 )
             best_base, _ = _strip_title(best_name_raw)
-            canonical_name = best_base or best_name_raw
+            canonical_name = clean_display_name(best_base or best_name_raw)
 
             type_votes = [cl.cluster_type for cl in group_clusters]
             dominant_type = max(set(type_votes), key=lambda t: type_votes.count(t))
@@ -596,41 +682,63 @@ class CharacterIdentityLayer:
                         reasons=reasons,
                     ))
 
-            else:  # REVIEW — one canonical per cluster, all flagged
-                for cl, rname, _ in members:
-                    ind_base, _ = _strip_title(rname)
-                    ind_name = ind_base or rname
-                    ind_id = _make_canonical_id(ind_name, used_ids)
-                    used_ids.add(ind_id)
-                    canon_chars.append(CanonicalCharacter(
-                        canonical_id=ind_id,
-                        name=ind_name,
-                        type=cl.cluster_type,
-                        aliases=sorted(set(cl.proper_names + cl.common_names)),
-                        source_clusters=[{"chapter_id": cl.chapter_id, "coref_id": cl.coref_id}],
-                        confidence=confidence,
-                    ))
-                    decisions.append(IdentityDecision(
-                        chapter_id=cl.chapter_id,
-                        coref_id=cl.coref_id,
-                        surface=cl.display_name,
-                        target_canonical_id=ind_id,
-                        decision="REVIEW",
-                        confidence=confidence,
-                        reasons=reasons,
-                    ))
-                    unresolved.append({
-                        "chapter_id":     cl.chapter_id,
-                        "local_coref_id": cl.coref_id,
-                        "surface":        cl.display_name,
-                        "type":           cl.cluster_type,
-                        "reason":         "; ".join(reasons),
-                        "candidate_targets": [
-                            _norm(_strip_title(m[1])[0] or m[1])
-                            for m in members
-                            if m[0] is not cl
-                        ],
+            else:  # REVIEW — sub-group by (title, base) to reduce canonical explosion
+                # e.g. all "Miss Bennet" chapters → one canonical, not one per chapter
+                sub_groups = _sub_group_by_compatible_title(members)
+                other_bases = [
+                    _norm(_strip_title(sub[0][1])[0] or sub[0][1])
+                    for sub in sub_groups
+                ]
+                for sub_members in sub_groups:
+                    sub_clusters = [m[0] for m in sub_members]
+                    # Keep the full title+name as the canonical name for REVIEW sub-groups
+                    sub_best_raw = max(
+                        (m[1] for m in sub_members),
+                        key=lambda n: sum(
+                            cl.mention_count for cl, rn, _ in sub_members if rn == n
+                        ),
+                    )
+                    sub_name = clean_display_name(sub_best_raw)
+                    sub_id = _make_canonical_id(sub_name, used_ids)
+                    used_ids.add(sub_id)
+                    sub_type_votes = [cl.cluster_type for cl in sub_clusters]
+                    sub_type = max(set(sub_type_votes), key=lambda t: sub_type_votes.count(t))
+                    sub_aliases = sorted({
+                        n for cl in sub_clusters
+                        for n in cl.proper_names + cl.common_names
                     })
+                    canon_chars.append(CanonicalCharacter(
+                        canonical_id=sub_id,
+                        name=sub_name,
+                        type=sub_type,
+                        aliases=sub_aliases,
+                        source_clusters=[
+                            {"chapter_id": cl.chapter_id, "coref_id": cl.coref_id}
+                            for cl in sub_clusters
+                        ],
+                        confidence=confidence,
+                    ))
+                    for cl in sub_clusters:
+                        decisions.append(IdentityDecision(
+                            chapter_id=cl.chapter_id,
+                            coref_id=cl.coref_id,
+                            surface=cl.display_name,
+                            target_canonical_id=sub_id,
+                            decision="REVIEW",
+                            confidence=confidence,
+                            reasons=reasons,
+                        ))
+                        unresolved.append({
+                            "chapter_id":     cl.chapter_id,
+                            "local_coref_id": cl.coref_id,
+                            "surface":        cl.display_name,
+                            "type":           cl.cluster_type,
+                            "reason":         "; ".join(reasons),
+                            "candidate_targets": [
+                                b for b in other_bases
+                                if b != _norm(_strip_title(sub_best_raw)[0] or sub_best_raw)
+                            ],
+                        })
 
         return decisions, canon_chars, unresolved
 
