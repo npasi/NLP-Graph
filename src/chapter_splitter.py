@@ -5,14 +5,18 @@ several detectors in priority order and keep the first one whose result
 looks like a progression of chapter numbers. Supported formats:
 
 1. ``CHAPTER I`` / ``Chapter 1`` / ``CHAPTER ONE``
-   (+ ``BOOK``, ``PART``, ``VOLUME``, ``SECTION`` variants).
-2. ALL CAPS literary titles on their own line, preceded by a blank line
+   (+ ``BOOK``, ``PART``, ``VOLUME``, ``SECTION``, ``LETTER``,
+    ``EPISODE``, ``ACT``, ``SCENE``, ``STAVE``, ``CANTO`` variants).
+2. Hierarchical containers (PART / BOOK / VOLUME / ACT) followed by
+   inner chapters (CHAPTER / SCENE / etc.).  Numbers may reset between
+   containers.  Produces "Part I - Chapter One" style titles.
+3. ALL CAPS literary titles on their own line, preceded by a blank line
    (e.g. *Dr. Jekyll and Mr. Hyde*: ``STORY OF THE DOOR``).
-3. ``I`` / ``II`` / ``III`` — bare Roman numerals on their own line
+4. ``I`` / ``II`` / ``III`` — bare Roman numerals on their own line
    (*The Turn of the Screw*).
-4. ``01 My Early Home`` — numeric prefix + inline title
+5. ``01 My Early Home`` — numeric prefix + inline title
    (*Black Beauty*).
-5. ``1`` / ``2`` / ``3`` — bare arabic numerals on their own line.
+6. ``1`` / ``2`` / ``3`` — bare arabic numerals on their own line.
 
 Each record returned is a plain ``dict`` with the schema the pipeline
 expects::
@@ -36,8 +40,13 @@ Robustness features:
   from the ALL CAPS detector.
 * A **table of contents** at the front of the book is detected and
   dropped (headings in the first ~5% of the text with a tiny body).
+  For container headings (PART / BOOK / VOLUME), the body is measured
+  as text to the *next container*, so a "Part I" at the start of real
+  content (with thousands of words under it) is never mistaken for a
+  TOC entry.
 * Duplicate chapter numbers (TOC + body) are merged: we keep the
   occurrence with the longest body.
+* Sections with zero words in their body are suppressed.
 * Detector output is **validated for progression** (numbers monotone +
   small gaps) so we don't mistake e.g. a single in-line "Part I" for a
   full chapter scheme.  ALL CAPS headings use a body-length heuristic
@@ -51,6 +60,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections import defaultdict
 from typing import Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -62,6 +72,18 @@ TOC_BODY_MAX_TOKENS = 500
 MIN_HEADINGS_FOR_VALID_SCHEME = 3
 MIN_PROGRESSION_RATIO = 0.6
 ALLCAPS_MIN_AVG_BODY = 50  # all-caps chapters must have avg body ≥ 50 words
+
+# Words that act as CONTAINERS for inner chapters (numbers may reset inside them).
+_CONTAINER_WORDS = frozenset({"PART", "BOOK", "VOLUME", "ACT"})
+
+# Hierarchy level for containers (lower number = higher in the hierarchy).
+# VOLUME > BOOK/PART > ACT.
+_CONTAINER_LEVEL: Dict[str, int] = {
+    "VOLUME": 1,
+    "BOOK": 2,
+    "PART": 2,
+    "ACT": 2,
+}
 
 
 _SPELLED_NUMBERS = {
@@ -156,11 +178,13 @@ def _find_book_bounds(text: str) -> Tuple[int, int]:
 
 # Matches a standalone line that is entirely upper-case with common punctuation,
 # contains 2–10 words, and at most 80 characters of content.
+# The character class includes both straight (U+0027) and curly (U+2018/U+2019)
+# apostrophes so that headings like "JEKYLL’S" in Gutenberg texts match.
 _ALLCAPS_HEADING_RE = re.compile(
-    r"(?m)^[ \t]*"
-    r"(?P<title>[A-Z][A-Z0-9’'.\-&,]*"
-    r"(?:[ \t]+[A-Z0-9’'.\-&,]+){1,9})"
-    r"[ \t]*$"
+    "(?m)^[ \\t]*"
+    "(?P<title>[A-Z][A-Z0-9''‘’.\\-&,]*"
+    "(?:[ \\t]+[A-Z0-9''‘’.\\-&,]+){1,9})"
+    "[ \\t]*$"
 )
 
 # Lines that are Gutenberg boilerplate even when the text is not clipped.
@@ -271,7 +295,8 @@ _SECTION_WORDS = (
     r"SCENE|Scene|scene|"
     r"STAVE|Stave|stave|"
     r"CANTO|Canto|canto|"
-    r"LETTER|Letter|letter"
+    r"LETTER|Letter|letter|"
+    r"EPISODE|Episode|episode"
 )
 
 _WORD_HEADING_RE = re.compile(
@@ -496,6 +521,26 @@ def _looks_valid_allcaps(headings: List[HeadingRec], text: str) -> bool:
     return True
 
 
+def _looks_valid_mixed(headings: List[HeadingRec]) -> bool:
+    """Validate a mixed-word-type heading sequence.
+
+    Accepts when the total count meets the minimum AND each word type is
+    internally strictly monotone by parsed number.  This handles books
+    that open with LETTER sections and continue with CHAPTER sections:
+    e.g. Letter I, Letter II, Chapter I, Chapter II, Chapter III.
+    """
+    if len(headings) < MIN_HEADINGS_FOR_VALID_SCHEME:
+        return False
+    by_type: Dict[str, List[int]] = defaultdict(list)
+    for h in headings:  # assumed sorted by start already
+        key = str(h.get("word", "")).upper()
+        by_type[key].append(int(h["num"]))
+    for nums in by_type.values():
+        if any(nums[i + 1] <= nums[i] for i in range(len(nums) - 1)):
+            return False
+    return True
+
+
 def _best_valid_subscheme(headings: List[HeadingRec]) -> List[HeadingRec]:
     """For the 'word' detector we may mix unrelated schemes (e.g. CHAPTER + SECTION).
 
@@ -536,9 +581,18 @@ def _format_title(word: str, num_text: str, title: str) -> str:
 
 def _make_record(chapter_id: int, heading: HeadingRec, body: str) -> dict:
     n_tokens = len(body.split())
+    # Use pre-computed composite title (set by nested detection).
+    if "_heading_label" in heading:
+        title = str(heading["_heading_label"])
+    else:
+        title = _format_title(
+            str(heading.get("word", "")),
+            str(heading["num_text"]),
+            str(heading.get("title", "")),
+        )
     return {
         "chapter_id": chapter_id,
-        "title": _format_title(str(heading.get("word", "")), str(heading["num_text"]), str(heading.get("title", ""))),
+        "title": title,
         "text": body,
         "num_tokens": n_tokens,
         "short": n_tokens < SHORT_CHAPTER_THRESHOLD,
@@ -560,10 +614,187 @@ def _single_full_text_record(text: str) -> List[dict]:
     ]
 
 
+# ── Nested container + chapter detection ─────────────────────────────────────
+
+
+def _try_nested_chapters(
+    text: str, raw_headings: List[HeadingRec]
+) -> Optional[List[HeadingRec]]:
+    """Detect hierarchical container + chapter structure.
+
+    Handles: PART I → Chapter One, VOLUME I → BOOK FIRST → CHAPTER I,
+    ACT I → SCENE I, and similar nested patterns where chapter numbers
+    reset within each container.
+
+    Returns a flat list of composite heading records (with ``_heading_label``
+    set to the combined "Part I - Chapter One" form), or ``None`` if no
+    valid nested structure is found.
+    """
+    if not raw_headings:
+        return None
+
+    toc_cutoff = int(len(text) * TOC_ZONE_FRAC)
+
+    # Annotate every heading with in_toc_zone.
+    hs: List[HeadingRec] = [dict(h) for h in raw_headings]
+    for h in hs:
+        h["in_toc_zone"] = int(h["start"]) < toc_cutoff
+        h["_is_container"] = str(h.get("word", "")).upper() in _CONTAINER_WORDS
+
+    # Compute body lengths differently for containers and leaves:
+    # - Container: text from this container end to the NEXT container start
+    #   (captures the full part/book/volume, not just the whitespace before
+    #   the first child chapter).
+    # - Leaf: text from this heading end to the next heading of any type.
+    containers_list = [h for h in hs if h["_is_container"]]
+
+    # Leaf body: next heading (any type)
+    for i, h in enumerate(hs):
+        body_end = int(hs[i + 1]["start"]) if i + 1 < len(hs) else len(text)
+        h["body_len"] = len(text[int(h["end"]):body_end].split())
+
+    # Container body: next container
+    for i, h in enumerate(containers_list):
+        next_cont = int(containers_list[i + 1]["start"]) if i + 1 < len(containers_list) else len(text)
+        h["container_body_len"] = len(text[int(h["end"]):next_cont].split())
+
+    # TOC filter:
+    # - Container: filter if in_toc_zone AND container_body_len < threshold
+    # - Leaf: filter if in_toc_zone AND body_len < threshold
+    def _is_toc(h: HeadingRec) -> bool:
+        if not h["in_toc_zone"]:
+            return False
+        if h["_is_container"]:
+            return h.get("container_body_len", 0) < TOC_BODY_MAX_TOKENS
+        return int(h["body_len"]) < TOC_BODY_MAX_TOKENS
+
+    non_toc = [h for h in hs if not _is_toc(h)]
+
+    containers = [h for h in non_toc if h["_is_container"]]
+    leaves = [h for h in non_toc if not h["_is_container"]]
+
+    if len(containers) < 2 or len(leaves) < MIN_HEADINGS_FOR_VALID_SCHEME:
+        return None
+
+    # Walk all non-TOC headings in document order, maintaining a context stack.
+    # Stack: list of (hierarchy_level, formatted_label, word_upper, num).
+    context_stack: List[Tuple[int, str, str, int]] = []
+    result: List[HeadingRec] = []
+
+    for h in sorted(non_toc, key=lambda x: int(x["start"])):
+        if h["_is_container"]:
+            word_upper = str(h.get("word", "")).upper()
+            level = _CONTAINER_LEVEL.get(word_upper, 2)
+            label = _format_title(
+                str(h["word"]), str(h["num_text"]), str(h.get("title", ""))
+            )
+            # Pop context entries at the same or deeper level.
+            context_stack = [
+                (l, lb, w, n) for l, lb, w, n in context_stack if l < level
+            ]
+            context_stack.append((level, label, word_upper, int(h["num"])))
+        else:
+            if not context_stack:
+                continue  # Chapter before any container — skip.
+            ctx_parts = [lb for _, lb, _, _ in context_stack]
+            ch_label = _format_title(
+                str(h["word"]), str(h["num_text"]), str(h.get("title", ""))
+            )
+            full_title = " - ".join(ctx_parts + [ch_label])
+            # Key used for reset detection: immediate parent word+num.
+            immediate_key = context_stack[-1][2] + str(context_stack[-1][3])
+            rec = dict(h)
+            rec["_heading_label"] = full_title
+            rec["_parent_key"] = immediate_key
+            result.append(rec)
+
+    if len(result) < MIN_HEADINGS_FOR_VALID_SCHEME:
+        return None
+
+    # Require that chapter numbers reset across at least two containers
+    # (same number appears under different parent keys).
+    nums_by_parent: Dict[str, set] = defaultdict(set)
+    for r in result:
+        nums_by_parent[str(r["_parent_key"])].add(int(r["num"]))
+
+    parent_sets = list(nums_by_parent.values())
+    has_reset = any(
+        parent_sets[i] & parent_sets[j]
+        for i in range(len(parent_sets))
+        for j in range(i + 1, len(parent_sets))
+    )
+
+    if not has_reset:
+        logger.debug("Nested structure found but no number reset; using standard detection.")
+        return None
+
+    logger.info(
+        "Nested structure detected: %d containers, %d composite sections.",
+        len(containers),
+        len(result),
+    )
+    return result
+
+
+# ── Chapter record builder ────────────────────────────────────────────────────
+
+
+def _build_chapters_from_headings(
+    headings: List[HeadingRec],
+    text: str,
+    suppress_empty: bool = True,
+) -> List[dict]:
+    """Build final chapter records from a heading list.
+
+    Sections with an empty body (zero tokens) are suppressed when
+    *suppress_empty* is True.  This removes spurious entries like letter
+    signatures ("HASTIE LANYON.") that the ALL CAPS detector picks up
+    but whose body is immediately followed by the next real heading.
+    """
+    raw: List[Tuple[HeadingRec, str]] = []
+    for i, h in enumerate(headings):
+        body_start = int(h["end"])
+        body_end = int(headings[i + 1]["start"]) if i + 1 < len(headings) else len(text)
+        body = text[body_start:body_end].strip()
+        raw.append((h, body))
+
+    if suppress_empty:
+        dropped = sum(1 for _, b in raw if not b.split())
+        if dropped:
+            logger.info("Suppressed %d zero-token section(s).", dropped)
+        raw = [(h, b) for h, b in raw if b.split()]
+
+    if not raw:
+        return _single_full_text_record(text)
+
+    chapters: List[dict] = []
+    for chapter_id, (h, body) in enumerate(raw):
+        rec = _make_record(chapter_id, h, body)
+        chapters.append(rec)
+        if rec["short"]:
+            logger.warning(
+                "Short chapter flagged: %s — only %d tokens.",
+                rec["title"],
+                rec["num_tokens"],
+            )
+    return chapters
+
+
+# ── Public API ────────────────────────────────────────────────────────────────
+
+
 def split_into_chapters(text: str) -> List[dict]:
     book_start, book_end = _find_book_bounds(text)
     book_text = text[book_start:book_end]
 
+    # ── 1. Try nested container + chapter detection ───────────────────────────
+    raw_word = _detect_word_headings(book_text)
+    if raw_word:
+        nested = _try_nested_chapters(book_text, raw_word)
+        if nested is not None:
+            return _build_chapters_from_headings(nested, book_text)
+
+    # ── 2. Standard detector cascade ─────────────────────────────────────────
     winner_name: Optional[str] = None
     winner_headings: List[HeadingRec] = []
 
@@ -574,24 +805,27 @@ def split_into_chapters(text: str) -> List[dict]:
             continue
         cleaned = _drop_toc_and_duplicates(book_text, raw)
         if name == "word":
-            cleaned = _best_valid_subscheme(cleaned) or cleaned
-        if name == "allcaps":
+            sub = _best_valid_subscheme(cleaned)
+            if sub:
+                cleaned = sub
+            # Fallback for mixed section-type books (e.g. LETTER + CHAPTER).
+            if not _looks_valid(cleaned) and _looks_valid_mixed(cleaned):
+                logger.info("Using mixed-word scheme: %d headings.", len(cleaned))
+                valid = True
+            else:
+                valid = _looks_valid(cleaned)
+        elif name == "allcaps":
             valid = _looks_valid_allcaps(cleaned, book_text)
         else:
             valid = _looks_valid(cleaned)
+
         if not valid:
-            logger.debug(
-                "Detector %s rejected: %d headings.",
-                name,
-                len(cleaned),
-            )
+            logger.debug("Detector %s rejected: %d headings.", name, len(cleaned))
             continue
 
         if winner_name is None or len(cleaned) >= 2 * len(winner_headings):
             logger.info(
-                "Splitter detector '%s' now leading: %d headings.",
-                name,
-                len(cleaned),
+                "Splitter detector '%s' now leading: %d headings.", name, len(cleaned)
             )
             winner_name = name
             winner_headings = cleaned
@@ -600,41 +834,62 @@ def split_into_chapters(text: str) -> List[dict]:
         logger.warning("No valid chapter scheme found — returning whole text as 1 chapter.")
         return _single_full_text_record(book_text)
 
-    logger.info("Final splitter choice: detector '%s' with %d chapters.", winner_name, len(winner_headings))
-
-    chapters: List[dict] = []
-    for i, h in enumerate(winner_headings):
-        body_start = int(h["end"])
-        body_end = int(winner_headings[i + 1]["start"]) if i + 1 < len(winner_headings) else len(book_text)
-        body = book_text[body_start:body_end].strip()
-        chapters.append(_make_record(i, h, body))
-
-    for ch in chapters:
-        if ch["short"]:
-            logger.warning("Short chapter flagged: %s — only %d tokens.", ch["title"], ch["num_tokens"])
-    return chapters
+    logger.info(
+        "Final splitter choice: detector '%s' with %d chapters.",
+        winner_name,
+        len(winner_headings),
+    )
+    return _build_chapters_from_headings(winner_headings, book_text)
 
 
 def split_into_chapters_with_debug(text: str) -> Tuple[List[dict], dict]:
     book_start, book_end = _find_book_bounds(text)
     book_text = text[book_start:book_end]
 
-    debug: dict = {"detectors": [], "book_bounds": {"start": book_start, "end": book_end}}
+    debug: dict = {
+        "detectors": [],
+        "book_bounds": {"start": book_start, "end": book_end},
+        "nested": {"attempted": False, "success": False, "sections": 0},
+    }
+
+    # ── 1. Try nested detection ───────────────────────────────────────────────
+    raw_word = _detect_word_headings(book_text)
+    debug["nested"]["attempted"] = bool(raw_word)
+    if raw_word:
+        nested = _try_nested_chapters(book_text, raw_word)
+        if nested is not None:
+            debug["nested"]["success"] = True
+            debug["nested"]["sections"] = len(nested)
+            debug["nested"]["sample_titles"] = [
+                str(h.get("_heading_label", "")) for h in nested[:5]
+            ]
+            debug["winner"] = {"name": "nested", "headings": len(nested)}
+            return _build_chapters_from_headings(nested, book_text), debug
+
+    # ── 2. Standard detector cascade ─────────────────────────────────────────
     winner_name: Optional[str] = None
     winner_headings: List[HeadingRec] = []
 
     for name, detector in _DETECTORS:
         raw = detector(book_text)
         cleaned = _drop_toc_and_duplicates(book_text, raw) if raw else []
-        subscheme = _best_valid_subscheme(cleaned) if (name == "word" and cleaned) else []
-        if subscheme:
-            cleaned = subscheme
-        if name == "allcaps":
+        if name == "word":
+            sub = _best_valid_subscheme(cleaned) if cleaned else []
+            if sub:
+                cleaned = sub
+            if not _looks_valid(cleaned) and _looks_valid_mixed(cleaned):
+                valid = True
+                prog = 1.0
+            else:
+                prog = _progression_score(cleaned) if cleaned else 0.0
+                valid = _looks_valid(cleaned) if cleaned else False
+        elif name == "allcaps":
             valid = _looks_valid_allcaps(cleaned, book_text) if cleaned else False
             prog = 1.0 if valid else 0.0
         else:
             prog = _progression_score(cleaned) if cleaned else 0.0
             valid = _looks_valid(cleaned) if cleaned else False
+
         debug["detectors"].append(
             {
                 "name": name,
@@ -658,14 +913,7 @@ def split_into_chapters_with_debug(text: str) -> Tuple[List[dict], dict]:
         debug["fallback"] = "single_chapter"
         return _single_full_text_record(book_text), debug
 
-    chapters: List[dict] = []
-    for i, h in enumerate(winner_headings):
-        body_start = int(h["end"])
-        body_end = int(winner_headings[i + 1]["start"]) if i + 1 < len(winner_headings) else len(book_text)
-        body = book_text[body_start:body_end].strip()
-        chapters.append(_make_record(i, h, body))
-
-    return chapters, debug
+    return _build_chapters_from_headings(winner_headings, book_text), debug
 
 
 __all__ = ["split_into_chapters", "split_into_chapters_with_debug"]
