@@ -1,0 +1,355 @@
+======================================================================
+CHAPTER 1 - PROPER NAME INTERACTIONS
+Total unique proper name pairs: 17
+======================================================================
+
+[PAIR 1] Marley ◄──► Marley
+----------------------------------------------------------------------
+  • "In life I was your partner, Jacob Marley."
+  • 
+  • "Can you--can you sit down?"
+
+[PAIR 2] Marley ◄──► Scrooge
+----------------------------------------------------------------------
+  • "Have I the pleasure
+  • of addressing Mr. Scrooge, or Mr. Marley?"
+  • 
+  • "Mr. Marley has been dead these seven years,"
+  • Scrooge replied.
+  • Let it also be
+  • borne in mind that Scrooge had not bestowed one
+  • thought on Marley, since his last mention of his
+  • seven years' dead partner that afternoon.
+  • And then
+  • let any man explain to me, if he can, how it happened
+  • that Scrooge, having his key in the lock of the door,
+  • saw in the knocker, without its undergoing any intermediate
+  • process of change--not a knocker, but Marley's face.
+  • It was not angry or ferocious, but looked
+  • at Scrooge as Marley used to look: with ghostly
+  • spectacles turned up on its ghostly forehead.
+  • He did pause, with a moment's irresolution, before
+  • he shut the door; and he did look cautiously behind
+  • it first, as if he half expected to be terrified with the
+  • sight of Marley's pigtail sticking out into the hall.
+  • There were Cains and Abels, Pharaoh's daughters;
+  • Queens of Sheba, Angelic messengers descending
+  • through the air on clouds like feather-beds, Abrahams,
+  • Belshazzars, Apostles putting off to sea in butter-boats,
+  • hundreds of figures to attract his thoughts;
+  • and yet that face of Marley, seven years dead, came
+  • like the ancient Prophet's rod, and swallowed up the
+  • whole.
+  • If each smooth tile had been a blank at first,
+  • with power to shape some picture on its surface from
+  • the disjointed fragments of his thoughts, there would
+  • have been a copy of old Marley's head on every one.
+  • The chain he drew was
+  • clasped about his middle.
+  • It was long, and wound
+  • about him like a tail; and it was made (for Scrooge
+  • observed it closely) of cash-boxes, keys, padlocks,
+  • ledgers, deeds, and heavy purses wrought in steel.
+  • His body was transparent; so that Scrooge, observing him,
+  • and looking through his waistcoat, could see
+  • the two buttons on his coat behind.
+  • Scrooge had often heard it said that Marley had no
+  • bowels, but he had never believed it until now.
+  • Though he
+  • looked the phantom through and through, and saw
+  • it standing before him; though he felt the chilling
+  • influence of its death-cold eyes; and marked the very
+  • texture of the folded kerchief bound about its head
+  • and chin, which wrapper he had not observed before;
+  • he was still incredulous, and fought against his senses.
+  • "What do you want with me?"
+  • 
+  • "Much!"--Marley's voice, no doubt about it.
+  • "Who are you?"
+  • 
+  • "Ask me who I was."
+  • "Who were you then?" said Scrooge, raising his
+  • voice.
+  • "In life I was your partner, Jacob Marley."
+  • 
+  • "Can you--can you sit down?"
+
+[PAIR 3] Marley ◄──► Scrooge
+----------------------------------------------------------------------
+  • Scrooge never painted out Old Marley's name.
+  • There it stood, years afterwards, above the warehouse
+  • door: Scrooge and Marley.
+  • The firm was known as
+  • Scrooge and Marley.
+  • Sometimes people new to the
+  • business called Scrooge Scrooge, and sometimes Marley,
+  • but he answered to both names.
+  • "Scrooge and Marley's, I believe," said one of the
+  • gentlemen, referring to his list.
+  • "In life I was your partner, Jacob Marley."
+  • 
+  • "Can you--can you sit down?"
+  • "Jacob," he said, imploringly.
+  • "Old Jacob Marley,
+  • tell me more.
+  • Speak comfort to me, Jacob!"
+  • 
+  • "I have none to give," the Ghost replied.
+  • "You must have been very slow about it, Jacob,"
+  • Scrooge observed, in a business-like manner, though
+  • with humility and deference.
+  • "But you were always a good man of business,
+  • Jacob," faltered Scrooge, who now began to apply this
+  • to himself.
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+  • Expect the first to-morrow,
+  • when the bell tolls One."
+  • 
+  • "Couldn't I take 'em all at once, and have it over,
+  • Jacob?" hinted Scrooge.
+  • When they were within two paces of each other,
+  • Marley's Ghost held up its hand, warning him to
+  • come no nearer.
+
+[PAIR 4] Marley ◄──► Thank'ee
+----------------------------------------------------------------------
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+
+[PAIR 5] Marley ◄──► the Ghost
+----------------------------------------------------------------------
+  • Speak comfort to me, Jacob!"
+  • 
+  • "I have none to give," the Ghost replied.
+  • "I am here to-night to warn you, that you
+  • have yet a chance and hope of escaping my fate.
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+  • "Without their visits," said the Ghost, "you cannot
+  • hope to shun the path I tread.
+  • Look to see
+  • me no more; and look that, for your own sake, you
+  • remember what has passed between us!"
+  • 
+  • When it had said these words, the spectre took its
+  • wrapper from the table, and bound it round its head,
+  • as before.
+
+[PAIR 6] Marley ◄──► the Ghost
+----------------------------------------------------------------------
+  • "How it is that I appear before you in a shape that
+  • you can see, I may not tell.
+  • I have sat invisible
+  • beside you many and many a day.
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+  • "Is that the chance and hope you mentioned,
+  • Jacob?"
+
+[PAIR 7] Scrooge ◄──► Scrooge 's nephew
+----------------------------------------------------------------------
+  • It was the voice of Scrooge's
+  • nephew, who came upon him so quickly that this was
+  • the first intimation he had of his approach.
+  • "Christmas a humbug, uncle!" said Scrooge's
+  • nephew.
+  • "You don't mean that, I am sure?"
+  • 
+  • "I do," said Scrooge.
+  • repeated Scrooge's nephew.
+  • "But why?" cried Scrooge's nephew.
+  • "
+  • 
+  • This lunatic, in letting Scrooge's nephew out, had
+  • let two other people in.
+
+[PAIR 8] Scrooge ◄──► Spirit
+----------------------------------------------------------------------
+  • At this the spirit raised a frightful cry, and shook
+  • its chain with such a dismal and appalling noise, that
+  • Scrooge held on tight to his chair, to save himself
+  • from falling in a swoon.
+  • But how much greater was
+  • his horror, when the phantom taking off the bandage
+  • round its head, as if it were too warm to wear indoors,
+  • its lower jaw dropped down upon its breast!
+
+[PAIR 9] Scrooge ◄──► Thank'ee
+----------------------------------------------------------------------
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+
+[PAIR 10] Scrooge ◄──► the Ghost
+----------------------------------------------------------------------
+  • "You don't believe in me," observed the Ghost.
+  • "What evidence would you have of my reality beyond that of
+  • your senses?"
+  • 
+  • "I don't know," said Scrooge.
+  • "Why do you doubt your senses?"
+  • 
+  • "Because," said Scrooge, "a little thing affects them.
+  • "Dreadful apparition, why do
+  • you trouble me?"
+  • 
+  • "Man of the worldly mind!"
+  • replied the Ghost, "do
+  • you believe in me or not?"
+  • 
+  • "I do," said Scrooge.
+  • But why do spirits
+  • walk the earth, and why do they come to me?"
+  • 
+  • "It is required of every man," the Ghost returned,
+  • "that the spirit within him should walk abroad among
+  • his fellowmen, and travel far and wide; and if that
+  • spirit goes not forth in life, it is condemned to do so
+  • after death.
+  • "Or would you know," pursued the Ghost, "the
+  • weight and length of the strong coil you bear yourself?
+  • Speak comfort to me, Jacob!"
+  • 
+  • "I have none to give," the Ghost replied.
+  • Nor
+  • can I tell you what I would.
+  • My spirit never walked
+  • beyond our counting-house--mark me!--in life my
+  • spirit never roved beyond the narrow limits of our
+  • money-changing hole; and weary journeys lie before
+  • me!"
+  • 
+  • It was a habit with Scrooge, whenever he became
+  • thoughtful, to put his hands in his breeches pockets.
+  • A
+  • chance and hope of my procuring, Ebenezer."
+  • 
+  • "You were always a good friend to me," said
+  • Scrooge.
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+  • Scrooge closed the window, and examined the door
+  • by which the Ghost had entered.
+  • And being,
+  • from the emotion he had undergone, or the fatigues
+  • of the day, or his glimpse of the Invisible World, or
+  • the dull conversation of the Ghost, or the lateness of
+  • the hour, much in need of repose; went straight to
+  • bed, without undressing, and fell asleep upon the
+  • instant.
+
+[PAIR 11] Scrooge ◄──► the Ghost
+----------------------------------------------------------------------
+  • Scrooge could not feel it
+  • himself, but this was clearly the case; for though the
+  • Ghost sat perfectly motionless, its hair, and skirts,
+  • and tassels, were still agitated as by the hot vapour
+  • from an oven.
+  • "You see this toothpick?" said Scrooge, returning
+  • quickly to the charge, for the reason just assigned;
+  • and wishing, though it were only for a second, to
+  • divert the vision's stony gaze from himself.
+  • "You are not looking at it," said Scrooge.
+  • "Tell
+  • me why?"
+  • 
+  • "I wear the chain I forged in life," replied the Ghost.
+  • Pondering on what the Ghost had said, he did so now,
+  • but without lifting up his eyes, or getting off his
+  • knees.
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+
+[PAIR 12] Scrooge ◄──► THE SPIRITS THE Phantom
+----------------------------------------------------------------------
+  • But why do spirits
+  • walk the earth, and why do they come to me?"
+  • 
+  • "It is required of every man," the Ghost returned,
+  • "that the spirit within him should walk abroad among
+  • his fellowmen, and travel far and wide; and if that
+  • spirit goes not forth in life, it is condemned to do so
+  • after death.
+
+[PAIR 13] Spirit ◄──► the good Saint Dunstan
+----------------------------------------------------------------------
+  • If the good Saint Dunstan had but nipped
+  • the Evil Spirit's nose with a touch of such weather
+  • as that, instead of using his familiar weapons, then
+  • indeed he would have roared to lusty purpose.
+
+[PAIR 14] Thank'ee ◄──► the Ghost
+----------------------------------------------------------------------
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+
+[PAIR 15] Thank'ee ◄──► the Ghost
+----------------------------------------------------------------------
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+
+[PAIR 16] the Ghost ◄──► the Ghost
+----------------------------------------------------------------------
+  • "Thank'ee!"
+  • 
+  • "You will be haunted," resumed the Ghost, "by
+  • Three Spirits."
+  • 
+  • Scrooge's countenance fell almost as low as the
+  • Ghost's had done.
+
+[PAIR 17] the Ghost ◄──► THE SPIRITS THE Phantom
+----------------------------------------------------------------------
+  • But why do spirits
+  • walk the earth, and why do they come to me?"
+  • 
+  • "It is required of every man," the Ghost returned,
+  • "that the spirit within him should walk abroad among
+  • his fellowmen, and travel far and wide; and if that
+  • spirit goes not forth in life, it is condemned to do so
+  • after death.

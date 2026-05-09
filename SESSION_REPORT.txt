@@ -1,0 +1,83 @@
+SESSION CHANGES REPORT
+=====================
+
+Date: 9 maggio 2026
+Repository: NLP-Graph
+Session Focus: Character interaction extraction from "A Christmas Carol" using BookNLP
+
+CHANGES MADE:
+=============
+
+1. **Modified src/step4_sentences_by_character_pair.py**:
+   - Updated _extract_sentences_by_pair_for_book() to store sentence data as dicts with "text" and "sentence_id" instead of plain strings.
+   - This enables precise byte-range matching for chapter assignment.
+   - Updated return types for extract_sentences_by_pair_for_book() and extract_sentences_by_pair_by_book().
+
+2. **Created src/split_full_book_to_chapters.py**:
+   - New script to split full-book character interactions into per-chapter files.
+   - Parses chapter boundaries from full text by finding "STAVE" headers.
+   - Uses sentence_id to match sentences to chapters based on byte positions.
+   - Initially output JSON format, then modified to output readable text format.
+
+3. **Updated split_full_book_to_chapters.py output format**:
+   - Changed from JSON to text format matching the specified template.
+   - Added _format_chapter_text() function for proper formatting.
+   - Outputs .txt files with headers, pair counts, and bullet-pointed sentences.
+
+4. **Generated new output files**:
+   - Regenerated sentences_by_pair_full_book.json with sentence_id included.
+   - Created chapter_1_interactions.txt through chapter_5_interactions.txt in results_christmas_carol/chapters/
+   - Each file contains properly formatted character pair interactions per chapter.
+
+5. **Repository cleanup**:
+   - Removed old per-chapter .txt files (chapter_0_interactions.txt, etc.) from results_christmas_carol/
+   - Kept the new chapter files in results_christmas_carol/chapters/
+   - Retained sentences_by_pair_full_book.json as source data
+   - Maintained all source code changes for future use
+
+TECHNICAL IMPROVEMENTS:
+=======================
+
+- **Better Coreference**: Switched from per-chapter to full-book BookNLP processing for improved character alias resolution.
+- **Accurate Chapter Assignment**: Sentences assigned to chapters using byte positions rather than approximate text matching.
+- **Readable Output**: Text format with clear structure, pair counting, and formatted sentences.
+- **Data Integrity**: Sentence IDs ensure no loss of precision in chapter splitting.
+
+FILES MODIFIED:
+===============
+
+- src/step4_sentences_by_character_pair.py
+- src/split_full_book_to_chapters.py (new file)
+
+FILES GENERATED:
+================
+
+- results_christmas_carol/sentences_by_pair_full_book.json (updated)
+- results_christmas_carol/chapters/chapter_1_interactions.txt
+- results_christmas_carol/chapters/chapter_2_interactions.txt
+- results_christmas_carol/chapters/chapter_3_interactions.txt
+- results_christmas_carol/chapters/chapter_4_interactions.txt
+- results_christmas_carol/chapters/chapter_5_interactions.txt
+
+FILES REMOVED:
+==============
+
+- results_christmas_carol/chapter_0_interactions.txt
+- results_christmas_carol/chapter_0_proper_interactions.txt
+- results_christmas_carol/chapter_1_interactions.txt
+- results_christmas_carol/chapter_1_proper_interactions.txt
+- results_christmas_carol/chapter_2_interactions.txt
+- results_christmas_carol/chapter_2_proper_interactions.txt
+- results_christmas_carol/chapter_3_interactions.txt
+- results_christmas_carol/chapter_3_proper_interactions.txt
+- results_christmas_carol/chapter_4_interactions.txt
+- results_christmas_carol/chapter_4_proper_interactions.txt
+
+REPOSITORY STATUS:
+==================
+
+- All source code is clean and functional.
+- Output files are organized in results_christmas_carol/chapters/
+- No temporary or intermediate files remain.
+- Ready for future runs with the same format.</content>
+<parameter name="filePath">/Users/alessandrobottardi/Desktop/bocconi/AI/nlp/project/NLP-Graph/SESSION_REPORT.txt

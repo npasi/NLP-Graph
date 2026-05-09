@@ -86,6 +86,10 @@ def _patch_booknlp_for_windows() -> None:
 
     The fix is idempotent: calling this function twice is a no-op.
     """
+    import platform
+    if platform.system() != "Windows":
+        return
+
     global _BOOKNLP_PATCHED
     if _BOOKNLP_PATCHED:
         return

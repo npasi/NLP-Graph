@@ -1,10 +1,33 @@
 ======================================================================
-CHAPTER 2 - PROPER NAME INTERACTIONS
+CHAPTER 3 - PROPER NAME INTERACTIONS
 Total unique proper name pairs: 44
 ======================================================================
 
-[PAIR 1] Bob ◄──► Christmas
+[PAIR 1] Bob ◄──► Father
 ----------------------------------------------------------------------
+  • So Martha hid herself, and in came little Bob, the father,
+  • with at least three feet of comforter exclusive of the fringe,
+  • hanging down before him; and his threadbare clothes darned
+  • up and brushed, to look seasonable; and Tiny Tim upon his
+  • shoulder.
+
+[PAIR 2] Bob ◄──► Martha
+----------------------------------------------------------------------
+  • So Martha hid herself, and in came little Bob, the father,
+  • with at least three feet of comforter exclusive of the fringe,
+  • hanging down before him; and his threadbare clothes darned
+  • up and brushed, to look seasonable; and Tiny Tim upon his
+  • shoulder.
+  • "Why, where's our Martha?" cried Bob Cratchit, looking
+  • round.
+  • "Not coming
+  • upon Christmas Day!"
+  • 
+  • Martha didn't like to see him disappointed, if it were only
+  • in joke; so she came out prematurely from behind the closet
+  • door, and ran into his arms, while the two young Cratchits
+  • hustled Tiny Tim, and bore him off into the wash-house,
+  • that he might hear the pudding singing in the copper.
   • Mrs. Cratchit made
   • the gravy (ready beforehand in a little saucepan) hissing hot;
   • Master Peter mashed the potatoes with incredible vigour;
@@ -16,27 +39,8 @@ Total unique proper name pairs: 44
   • they should shriek for goose before their turn came to be
   • helped.
 
-[PAIR 2] Bob ◄──► Dear
+[PAIR 3] Bob ◄──► Miss Belinda
 ----------------------------------------------------------------------
-  • Then Bob proposed:
-  • "A Merry Christmas to us all, my dears.
-
-[PAIR 3] Bob ◄──► Martha
-----------------------------------------------------------------------
-  • So Martha hid herself, and in came little Bob, the father,
-  • with at least three feet of comforter exclusive of the fringe,
-  • hanging down before him; and his threadbare clothes darned
-  • up and brushed, to look seasonable; and Tiny Tim upon his
-  • shoulder.
-  • "Why, where's our Martha?" cried Bob Cratchit, looking
-  • round.
-  • "Not coming
-  • upon Christmas Day!"
-  • Martha didn't like to see him disappointed, if it were only
-  • in joke; so she came out prematurely from behind the closet
-  • door, and ran into his arms, while the two young Cratchits
-  • hustled Tiny Tim, and bore him off into the wash-house,
-  • that he might hear the pudding singing in the copper.
   • Mrs. Cratchit made
   • the gravy (ready beforehand in a little saucepan) hissing hot;
   • Master Peter mashed the potatoes with incredible vigour;
@@ -76,12 +80,14 @@ Total unique proper name pairs: 44
   • Bob Cratchit said, and calmly
   • too, that he regarded it as the greatest success achieved by
   • Mrs. Cratchit since their marriage.
+  • "Mr. Scrooge!" said Bob; "I'll give you Mr. Scrooge, the
+  • Founder of the Feast!"
+  • "
+  • 
+  • "I'll drink his health for your sake and the Day's," said
+  • Mrs. Cratchit, "not for his.
 
-[PAIR 5] Bob ◄──► Old Fezziwig
-----------------------------------------------------------------------
-  • You know he is, Robert!
-
-[PAIR 6] Bob ◄──► Peter
+[PAIR 5] Bob ◄──► Peter
 ----------------------------------------------------------------------
   • Then up rose Mrs. Cratchit, Cratchit's wife, dressed out
   • but poorly in a twice-turned gown, but brave in ribbons,
@@ -116,11 +122,12 @@ Total unique proper name pairs: 44
   • eye for Master Peter, which would bring in, if obtained, full
   • five-and-sixpence weekly.
 
+[PAIR 6] Bob ◄──► Robert
+----------------------------------------------------------------------
+  • You know he is, Robert!
+
 [PAIR 7] Bob ◄──► Scrooge
 ----------------------------------------------------------------------
-  • "Mr. Scrooge!" said Bob; "I'll give you Mr. Scrooge, the
-  • Founder of the Feast!"
-  • You know he is, Robert!
   • And perhaps it was the pleasure the good Spirit had in
   • showing off this power of his, or else it was his own kind,
   • generous, hearty nature, and his sympathy with all poor
@@ -131,8 +138,24 @@ Total unique proper name pairs: 44
   • torch.
   • "Mr. Scrooge!" said Bob; "I'll give you Mr. Scrooge, the
   • Founder of the Feast!"
+  • You know he is, Robert!
+  • "
+  • 
+  • "I'll drink his health for your sake and the Day's," said
+  • Mrs. Cratchit, "not for his.
 
-[PAIR 8] Bob ◄──► Tiny Tim
+[PAIR 8] Bob ◄──► Spirit
+----------------------------------------------------------------------
+  • And perhaps it was the pleasure the good Spirit had in
+  • showing off this power of his, or else it was his own kind,
+  • generous, hearty nature, and his sympathy with all poor
+  • men, that led him straight to Scrooge's clerk's; for there he
+  • went, and took Scrooge with him, holding to his robe; and
+  • on the threshold of the door the Spirit smiled, and stopped
+  • to bless Bob Cratchit's dwelling with the sprinkling of his
+  • torch.
+
+[PAIR 9] Bob ◄──► Spirit
 ----------------------------------------------------------------------
   • So Martha hid herself, and in came little Bob, the father,
   • with at least three feet of comforter exclusive of the fringe,
@@ -144,6 +167,7 @@ Total unique proper name pairs: 44
   • from church, and had come home rampant.
   • "Not coming
   • upon Christmas Day!"
+  • 
   • Martha didn't like to see him disappointed, if it were only
   • in joke; so she came out prematurely from behind the closet
   • door, and ran into his arms, while the two young Cratchits
@@ -180,116 +204,82 @@ Total unique proper name pairs: 44
   • they should shriek for goose before their turn came to be
   • helped.
 
-[PAIR 9] Christmas ◄──► Martha
+[PAIR 10] Father ◄──► Martha
 ----------------------------------------------------------------------
-  • Mrs. Cratchit made
-  • the gravy (ready beforehand in a little saucepan) hissing hot;
-  • Master Peter mashed the potatoes with incredible vigour;
-  • Miss Belinda sweetened up the apple-sauce; Martha dusted
-  • the hot plates; Bob took Tiny Tim beside him in a tiny
-  • corner at the table; the two young Cratchits set chairs for
-  • everybody, not forgetting themselves, and mounting guard
-  • upon their posts, crammed spoons into their mouths, lest
-  • they should shriek for goose before their turn came to be
-  • helped.
+  • So Martha hid herself, and in came little Bob, the father,
+  • with at least three feet of comforter exclusive of the fringe,
+  • hanging down before him; and his threadbare clothes darned
+  • up and brushed, to look seasonable; and Tiny Tim upon his
+  • shoulder.
 
-[PAIR 10] Christmas ◄──► Mrs. Cratchit
+[PAIR 11] Father ◄──► Spirit
 ----------------------------------------------------------------------
-  • Mrs. Cratchit made
-  • the gravy (ready beforehand in a little saucepan) hissing hot;
-  • Master Peter mashed the potatoes with incredible vigour;
-  • Miss Belinda sweetened up the apple-sauce; Martha dusted
-  • the hot plates; Bob took Tiny Tim beside him in a tiny
-  • corner at the table; the two young Cratchits set chairs for
-  • everybody, not forgetting themselves, and mounting guard
-  • upon their posts, crammed spoons into their mouths, lest
-  • they should shriek for goose before their turn came to be
-  • helped.
-  • But now, the plates being changed by Miss
-  • Belinda, Mrs. Cratchit left the room alone--too nervous to
-  • bear witnesses--to take the pudding up and bring it in.
+  • So Martha hid herself, and in came little Bob, the father,
+  • with at least three feet of comforter exclusive of the fringe,
+  • hanging down before him; and his threadbare clothes darned
+  • up and brushed, to look seasonable; and Tiny Tim upon his
+  • shoulder.
 
-[PAIR 11] Christmas ◄──► Peter
+[PAIR 12] Fred ◄──► Scrooge 's nephew
 ----------------------------------------------------------------------
-  • Mrs. Cratchit made
-  • the gravy (ready beforehand in a little saucepan) hissing hot;
-  • Master Peter mashed the potatoes with incredible vigour;
-  • Miss Belinda sweetened up the apple-sauce; Martha dusted
-  • the hot plates; Bob took Tiny Tim beside him in a tiny
-  • corner at the table; the two young Cratchits set chairs for
-  • everybody, not forgetting themselves, and mounting guard
-  • upon their posts, crammed spoons into their mouths, lest
-  • they should shriek for goose before their turn came to be
-  • helped.
-
-[PAIR 12] Christmas ◄──► Tiny Tim
-----------------------------------------------------------------------
-  • Mrs. Cratchit made
-  • the gravy (ready beforehand in a little saucepan) hissing hot;
-  • Master Peter mashed the potatoes with incredible vigour;
-  • Miss Belinda sweetened up the apple-sauce; Martha dusted
-  • the hot plates; Bob took Tiny Tim beside him in a tiny
-  • corner at the table; the two young Cratchits set chairs for
-  • everybody, not forgetting themselves, and mounting guard
-  • upon their posts, crammed spoons into their mouths, lest
-  • they should shriek for goose before their turn came to be
-  • helped.
-
-[PAIR 13] Dear ◄──► Tiny Tim
-----------------------------------------------------------------------
-  • "God bless us every one!" said Tiny Tim, the last of all.
-
-[PAIR 14] Dick ◄──► Scrooge 's nephew
-----------------------------------------------------------------------
-  • Ha, ha, ha, ha!"
-  • "He said that Christmas was a humbug, as I live!"
-
-[PAIR 15] Fred ◄──► Scrooge
-----------------------------------------------------------------------
+  • "He believed it too!"
+  • 
   • "More shame for him, Fred!" said Scrooge's niece,
   • indignantly.
-  • "
+  • However,
+  • his offences carry their own punishment, and I have nothing
+  • to say against him."
+  • 
   • "I'm sure he is very rich, Fred," hinted Scrooge's niece.
   • "At least you always tell me so."
+  • 
+  • "What of that, my dear!" said Scrooge's nephew.
+
+[PAIR 13] Fred ◄──► Scrooge
+----------------------------------------------------------------------
+  • "He believed it too!"
+  • 
+  • "More shame for him, Fred!" said Scrooge's niece,
+  • indignantly.
+  • However,
+  • his offences carry their own punishment, and I have nothing
+  • to say against him."
+  • 
+  • "I'm sure he is very rich, Fred," hinted Scrooge's niece.
+  • "At least you always tell me so."
+  • 
   • "What of that, my dear!" said Scrooge's nephew.
   • "Do go on, Fred," said Scrooge's niece, clapping her hands.
   • "He has given us plenty of merriment, I am sure," said
   • Fred, "and it would be ungrateful not to drink his health.
+  • Here is a glass of mulled wine ready to our hand at the
+  • moment; and I say, 'Uncle Scrooge!'
 
-[PAIR 16] Fred ◄──► Scrooge 's nephew
+[PAIR 14] Marley ◄──► Scrooge
 ----------------------------------------------------------------------
-  • "More shame for him, Fred!" said Scrooge's niece,
-  • indignantly.
-  • "At least you always tell me so."
-  • "What of that, my dear!" said Scrooge's nephew.
+  • He felt that he was restored to consciousness
+  • in the right nick of time, for the especial purpose of holding
+  • a conference with the second messenger despatched to him
+  • through Jacob Marley's intervention.
+  • The crisp leaves of holly, mistletoe, and
+  • ivy reflected back the light, as if so many little mirrors had
+  • been scattered there; and such a mighty blaze went roaring
+  • up the chimney, as that dull petrification of a hearth had
+  • never known in Scrooge's time, or Marley's, or for many and
+  • many a winter season gone.
+  • When this strain of music sounded, all the
+  • things that Ghost had shown him, came upon his mind; he
+  • softened more and more; and thought that if he could have
+  • listened to it often, years ago, he might have cultivated the
+  • kindnesses of life for his own happiness with his own hands,
+  • without resorting to the sexton's spade that buried Jacob
+  • Marley.
+  • As the last stroke ceased to vibrate, he remembered the
+  • prediction of old Jacob Marley, and lifting up his eyes,
+  • beheld a solemn Phantom, draped and hooded, coming, like
+  • a mist along the ground, towards him.
 
-[PAIR 17] Fred ◄──► Scrooge 's niece
-----------------------------------------------------------------------
-  • "More shame for him, Fred!" said Scrooge's niece,
-  • indignantly.
-  • "
-  • "I'm sure he is very rich, Fred," hinted Scrooge's niece.
-  • "Do go on, Fred," said Scrooge's niece, clapping her hands.
-
-[PAIR 18] Man ◄──► Scrooge
-----------------------------------------------------------------------
-  • and know
-  • me better, man!"
-  • Scrooge entered timidly, and hung his head before this
-  • Spirit.
-  • "Man," said the Ghost, "if man you be in heart, not
-  • adamant, forbear that wicked cant until you have discovered
-  • What the surplus is, and Where it is.
-
-[PAIR 19] Marley ◄──► Scrooge
-----------------------------------------------------------------------
-  • to hear
-  • the Insect on the leaf pronouncing on the too much life
-  • among his hungry brothers in the dust!"
-  • Scrooge bent before the Ghost's rebuke, and trembling cast
-  • his eyes upon the ground.
-
-[PAIR 20] Marley ◄──► Spirit
+[PAIR 15] Marley ◄──► the Ghost
 ----------------------------------------------------------------------
   • When this strain of music sounded, all the
   • things that Ghost had shown him, came upon his mind; he
@@ -298,10 +288,8 @@ Total unique proper name pairs: 44
   • kindnesses of life for his own happiness with his own hands,
   • without resorting to the sexton's spade that buried Jacob
   • Marley.
-  • Have you had many brothers, Spirit?"
-  • "More than eighteen hundred," said the Ghost.
 
-[PAIR 21] Martha ◄──► Mrs. Cratchit
+[PAIR 16] Martha ◄──► Miss Belinda
 ----------------------------------------------------------------------
   • Mrs. Cratchit made
   • the gravy (ready beforehand in a little saucepan) hissing hot;
@@ -314,7 +302,20 @@ Total unique proper name pairs: 44
   • they should shriek for goose before their turn came to be
   • helped.
 
-[PAIR 22] Martha ◄──► Peter
+[PAIR 17] Martha ◄──► Mrs. Cratchit
+----------------------------------------------------------------------
+  • Mrs. Cratchit made
+  • the gravy (ready beforehand in a little saucepan) hissing hot;
+  • Master Peter mashed the potatoes with incredible vigour;
+  • Miss Belinda sweetened up the apple-sauce; Martha dusted
+  • the hot plates; Bob took Tiny Tim beside him in a tiny
+  • corner at the table; the two young Cratchits set chairs for
+  • everybody, not forgetting themselves, and mounting guard
+  • upon their posts, crammed spoons into their mouths, lest
+  • they should shriek for goose before their turn came to be
+  • helped.
+
+[PAIR 18] Martha ◄──► Peter
 ----------------------------------------------------------------------
   • Mrs. Cratchit made
   • the gravy (ready beforehand in a little saucepan) hissing hot;
@@ -331,7 +332,7 @@ Total unique proper name pairs: 44
   • Peter;" at which Peter pulled up his collars so high that you
   • couldn't have seen his head if you had been there.
 
-[PAIR 23] Martha ◄──► Tiny Tim
+[PAIR 19] Martha ◄──► Spirit
 ----------------------------------------------------------------------
   • So Martha hid herself, and in came little Bob, the father,
   • with at least three feet of comforter exclusive of the fringe,
@@ -340,6 +341,7 @@ Total unique proper name pairs: 44
   • shoulder.
   • "Not coming
   • upon Christmas Day!"
+  • 
   • Martha didn't like to see him disappointed, if it were only
   • in joke; so she came out prematurely from behind the closet
   • door, and ran into his arms, while the two young Cratchits
@@ -356,21 +358,49 @@ Total unique proper name pairs: 44
   • they should shriek for goose before their turn came to be
   • helped.
 
-[PAIR 24]  Cratchit.my dear ◄──► Mrs
+[PAIR 20] Miss Belinda ◄──► Mrs. Cratchit
 ----------------------------------------------------------------------
-  • "Why, bless your heart alive, my dear, how late you are!"
-  • said Mrs. Cratchit, kissing her a dozen times, and taking off
-  • her shawl and bonnet for her with officious zeal.
-  • "Sit ye down before the fire, my dear, and have
-  • a warm, Lord bless ye!"
+  • Mrs. Cratchit made
+  • the gravy (ready beforehand in a little saucepan) hissing hot;
+  • Master Peter mashed the potatoes with incredible vigour;
+  • Miss Belinda sweetened up the apple-sauce; Martha dusted
+  • the hot plates; Bob took Tiny Tim beside him in a tiny
+  • corner at the table; the two young Cratchits set chairs for
+  • everybody, not forgetting themselves, and mounting guard
+  • upon their posts, crammed spoons into their mouths, lest
+  • they should shriek for goose before their turn came to be
+  • helped.
+  • But now, the plates being changed by Miss
+  • Belinda, Mrs. Cratchit left the room alone--too nervous to
+  • bear witnesses--to take the pudding up and bring it in.
 
-[PAIR 25]  Cratchit.Old Fezziwig ◄──► Mrs
+[PAIR 21] Miss Belinda ◄──► Peter
 ----------------------------------------------------------------------
-  • "
-  • "I'll drink his health for your sake and the Day's," said
-  • Mrs. Cratchit, "not for his.
+  • Mrs. Cratchit made
+  • the gravy (ready beforehand in a little saucepan) hissing hot;
+  • Master Peter mashed the potatoes with incredible vigour;
+  • Miss Belinda sweetened up the apple-sauce; Martha dusted
+  • the hot plates; Bob took Tiny Tim beside him in a tiny
+  • corner at the table; the two young Cratchits set chairs for
+  • everybody, not forgetting themselves, and mounting guard
+  • upon their posts, crammed spoons into their mouths, lest
+  • they should shriek for goose before their turn came to be
+  • helped.
 
-[PAIR 26]  Cratchit.Peter ◄──► Mrs
+[PAIR 22] Miss Belinda ◄──► Spirit
+----------------------------------------------------------------------
+  • Mrs. Cratchit made
+  • the gravy (ready beforehand in a little saucepan) hissing hot;
+  • Master Peter mashed the potatoes with incredible vigour;
+  • Miss Belinda sweetened up the apple-sauce; Martha dusted
+  • the hot plates; Bob took Tiny Tim beside him in a tiny
+  • corner at the table; the two young Cratchits set chairs for
+  • everybody, not forgetting themselves, and mounting guard
+  • upon their posts, crammed spoons into their mouths, lest
+  • they should shriek for goose before their turn came to be
+  • helped.
+
+[PAIR 23] Mrs ◄──► Peter
 ----------------------------------------------------------------------
   • Then up rose Mrs. Cratchit, Cratchit's wife, dressed out
   • but poorly in a twice-turned gown, but brave in ribbons,
@@ -393,51 +423,27 @@ Total unique proper name pairs: 44
   • they should shriek for goose before their turn came to be
   • helped.
 
-[PAIR 27]  Cratchit.Scrooge ◄──► Mrs
+[PAIR 24] Mrs ◄──► Scrooge
 ----------------------------------------------------------------------
-  • "
-  • "It should be Christmas Day, I am sure," said she, "on
-  • which one drinks the health of such an odious, stingy, hard,
-  • unfeeling man as Mr. Scrooge.
-  • "
-  • "I'll drink his health for your sake and the Day's," said
-  • Mrs. Cratchit, "not for his.
+  • "Mr. Scrooge!" said Bob; "I'll give you Mr. Scrooge, the
+  • Founder of the Feast!"
   • "I wish I had him here.
   • I'd give him a piece
   • of my mind to feast upon, and I hope he'd have a good
   • appetite for it."
+  • Christmas Day."
+  • 
+  • "It should be Christmas Day, I am sure," said she, "on
+  • which one drinks the health of such an odious, stingy, hard,
+  • unfeeling man as Mr. Scrooge.
+  • "
+  • 
+  • "I'll drink his health for your sake and the Day's," said
+  • Mrs. Cratchit, "not for his.
+  • He'll be very merry and
+  • very happy, I have no doubt!"
 
-[PAIR 28]  Cratchit.the children ◄──► Mrs
-----------------------------------------------------------------------
-  • The children drank the toast after her.
-
-[PAIR 29]  Cratchit.the Founder of the Feast ◄──► Mrs
-----------------------------------------------------------------------
-  • "The Founder of the Feast indeed!" cried Mrs. Cratchit,
-  • reddening.
-
-[PAIR 30]  Cratchit.the two young Cratchits ◄──► Mrs
-----------------------------------------------------------------------
-  • Mrs. Cratchit made
-  • the gravy (ready beforehand in a little saucepan) hissing hot;
-  • Master Peter mashed the potatoes with incredible vigour;
-  • Miss Belinda sweetened up the apple-sauce; Martha dusted
-  • the hot plates; Bob took Tiny Tim beside him in a tiny
-  • corner at the table; the two young Cratchits set chairs for
-  • everybody, not forgetting themselves, and mounting guard
-  • upon their posts, crammed spoons into their mouths, lest
-  • they should shriek for goose before their turn came to be
-  • helped.
-  • Eked out by apple-sauce and mashed potatoes,
-  • it was a sufficient dinner for the whole family; indeed, as
-  • Mrs. Cratchit said with great delight (surveying one small
-  • atom of a bone upon the dish), they hadn't ate it all at
-  • last!
-  • Bob Cratchit said, and calmly
-  • too, that he regarded it as the greatest success achieved by
-  • Mrs. Cratchit since their marriage.
-
-[PAIR 31]  Cratchit.Tiny Tim ◄──► Mrs
+[PAIR 25] Mrs ◄──► Spirit
 ----------------------------------------------------------------------
   • "And your brother, Tiny Tim!
   • "And how did little Tim behave?" asked Mrs. Cratchit,
@@ -461,14 +467,7 @@ Total unique proper name pairs: 44
   • excited by the two young Cratchits, beat on the table with
   • the handle of his knife, and feebly cried Hurrah!
 
-[PAIR 32] Old Fezziwig ◄──► Scrooge
-----------------------------------------------------------------------
-  • You know he is, Robert!
-  • "
-  • "I'll drink his health for your sake and the Day's," said
-  • Mrs. Cratchit, "not for his.
-
-[PAIR 33] Peter ◄──► Tiny Tim
+[PAIR 26] Peter ◄──► Spirit
 ----------------------------------------------------------------------
   • His active little crutch was heard upon the floor, and back
   • came Tiny Tim before another word was spoken, escorted by
@@ -490,10 +489,37 @@ Total unique proper name pairs: 44
   • they should shriek for goose before their turn came to be
   • helped.
 
-[PAIR 34] Scrooge ◄──► Scrooge 's nephew
+[PAIR 27] Robert ◄──► Scrooge
+----------------------------------------------------------------------
+  • You know he is, Robert!
+
+[PAIR 28] Scrooge 's nephew ◄──► the Ghost
+----------------------------------------------------------------------
+  • My opinion is, that it was a done
+  • thing between him and Scrooge's nephew; and that the
+  • Ghost of Christmas Present knew it.
+
+[PAIR 29] Scrooge 's nephew ◄──► the Ghost
+----------------------------------------------------------------------
+  • Ha, ha, ha, ha!"
+  • 
+  • "He said that Christmas was a humbug, as I live!"
+
+[PAIR 30] Scrooge 's nephew ◄──► Topper
+----------------------------------------------------------------------
+  • My opinion is, that it was a done
+  • thing between him and Scrooge's nephew; and that the
+  • Ghost of Christmas Present knew it.
+  • Likewise at the game of How, When, and Where, she was
+  • very great, and to the secret joy of Scrooge's nephew, beat
+  • her sisters hollow: though they were sharp girls too, as Topper
+  • could have told you.
+
+[PAIR 31] Scrooge ◄──► Scrooge 's nephew
 ----------------------------------------------------------------------
   • "Ha, ha!" laughed Scrooge's nephew.
   • "Ha, ha, ha!"
+  • 
   • If you should happen, by any unlikely chance, to know a
   • man more blest in a laugh than Scrooge's nephew, all I can
   • say is, I should like to know him too.
@@ -503,17 +529,31 @@ Total unique proper name pairs: 44
   • laughed as heartily as he.
   • cried
   • Scrooge's nephew.
+  • "He believed it too!"
+  • 
   • "More shame for him, Fred!" said Scrooge's niece,
   • indignantly.
   • "He's a comical old fellow," said Scrooge's nephew, "that's
   • the truth: and not so pleasant as he might be.
+  • However,
+  • his offences carry their own punishment, and I have nothing
+  • to say against him."
+  • 
+  • "I'm sure he is very rich, Fred," hinted Scrooge's niece.
   • "At least you always tell me so."
+  • 
   • "What of that, my dear!" said Scrooge's nephew.
+  • "
+  • 
+  • "I have no patience with him," observed Scrooge's niece.
   • "Oh, I have!" said Scrooge's nephew.
+  • "Indeed, I think he loses a very good dinner," interrupted
+  • Scrooge's niece.
   • I'm very glad to hear it," said Scrooge's nephew,
   • "because I haven't great faith in these young housekeepers.
   • He is such a
   • ridiculous fellow!"
+  • 
   • Scrooge's nephew revelled in another laugh, and as it was
   • impossible to keep the infection off; though the plump sister
   • tried hard to do it with aromatic vinegar; his example was
@@ -522,8 +562,6 @@ Total unique proper name pairs: 44
   • the consequence of his taking a dislike to us, and not making
   • merry with us, is, as I think, that he loses some pleasant
   • moments, which could do him no harm.
-  • "A Merry Christmas and a Happy New Year to the old
-  • man, whatever he is!" said Scrooge's nephew.
   • My opinion is, that it was a done
   • thing between him and Scrooge's nephew; and that the
   • Ghost of Christmas Present knew it.
@@ -537,48 +575,78 @@ Total unique proper name pairs: 44
   • was.
   • "A Merry Christmas and a Happy New Year to the old
   • man, whatever he is!" said Scrooge's nephew.
+  • "He wouldn't
+  • take it from me, but may he have it, nevertheless.
 
-[PAIR 35] Scrooge ◄──► Scrooge 's niece
+[PAIR 32] Scrooge ◄──► Spirit
 ----------------------------------------------------------------------
-  • When Scrooge's nephew laughed in this way: holding
-  • his sides, rolling his head, and twisting his face into the
-  • most extravagant contortions: Scrooge's niece, by marriage,
-  • laughed as heartily as he.
-  • "More shame for him, Fred!" said Scrooge's niece,
-  • indignantly.
+  • "Look upon me!"
+  • 
+  • Scrooge reverently did so.
+  • "You have never seen the like of me before!"
+  • "Spirit," said Scrooge submissively, "conduct me where
+  • you will.
+  • To-night, if you have aught
+  • to teach me, let me profit by it.
+  • The sight of these poor revellers
+  • appeared to interest the Spirit very much, for he stood with
+  • Scrooge beside him in a baker's doorway, and taking off the
+  • covers as their bearers passed, sprinkled incense on their
+  • dinners from his torch.
+  • "There are some upon this earth of yours," returned the Spirit,
+  • "who lay claim to know us, and who do their deeds of passion,
+  • pride, ill-will, hatred, envy, bigotry, and selfishness
+  • in our name, who are as strange to us and all our kith and
+  • kin, as if they had never lived.
+  • And perhaps it was the pleasure the good Spirit had in
+  • showing off this power of his, or else it was his own kind,
+  • generous, hearty nature, and his sympathy with all poor
+  • men, that led him straight to Scrooge's clerk's; for there he
+  • went, and took Scrooge with him, holding to his robe; and
+  • on the threshold of the door the Spirit smiled, and stopped
+  • to bless Bob Cratchit's dwelling with the sprinkling of his
+  • torch.
   • "
-  • "I'm sure he is very rich, Fred," hinted Scrooge's niece.
-  • "
-  • "I have no patience with him," observed Scrooge's niece.
-  • "Indeed, I think he loses a very good dinner," interrupted
-  • Scrooge's niece.
-  • "Do go on, Fred," said Scrooge's niece, clapping her hands.
-  • Scrooge's niece played well upon the harp; and
-  • played among other tunes a simple little air (a mere nothing:
-  • you might learn to whistle it in two minutes), which had
-  • been familiar to the child who fetched Scrooge from the
-  • boarding-school, as he had been reminded by the Ghost of
-  • Christmas Past.
-  • Scrooge's niece was not one of the blind-man's buff party,
-  • but was made comfortable with a large chair and a footstool,
-  • in a snug corner, where the Ghost and Scrooge were close
-  • behind her.
-  • Likewise at the game of How, When, and Where, she was
-  • very great, and to the secret joy of Scrooge's nephew, beat
-  • her sisters hollow: though they were sharp girls too, as Topper
-  • could have told you.
+  • 
+  • Scrooge hung his head to hear his own words quoted by
+  • the Spirit, and was overcome with penitence and grief.
+  • By this time it was getting dark, and snowing pretty
+  • heavily; and as Scrooge and the Spirit went along the streets,
+  • the brightness of the roaring fires in kitchens, parlours, and
+  • all sorts of rooms, was wonderful.
+  • It was a much greater surprise to Scrooge
+  • to recognise it as his own nephew's and to find himself in a
+  • bright, dry, gleaming room, with the Spirit standing smiling
+  • by his side, and looking at that same nephew with approving
+  • affability!
+  • But the whole scene
+  • passed off in the breath of the last word spoken by his
+  • nephew; and he and the Spirit were again upon their travels.
+  • In almshouse, hospital, and jail, in misery's every
+  • refuge, where vain man in his little brief authority had not
+  • made fast the door, and barred the Spirit out, he left his
+  • blessing, and taught Scrooge his precepts.
+  • "Are there no prisons?" said the Spirit, turning on him
+  • for the last time with his own words.
 
-[PAIR 36] Scrooge ◄──► Scrooge 's niece 's sisters
+[PAIR 33] Scrooge ◄──► Spirit
 ----------------------------------------------------------------------
-  • Scrooge's niece's sisters, and all the other ladies, expressed
-  • the same opinion.
-  • What do you say, Topper?"
-  • Topper had clearly got his eye upon one of Scrooge's niece's
-  • sisters, for he answered that a bachelor was a wretched outcast,
-  • who had no right to express an opinion on the subject.
-
-[PAIR 37] Scrooge ◄──► Spirit
-----------------------------------------------------------------------
+  • He was not the dogged Scrooge he had been; and
+  • though the Spirit's eyes were clear and kind, he did not like
+  • to meet them.
+  • "Spirit," said Scrooge submissively, "conduct me where
+  • you will.
+  • "Because it needs it most."
+  • 
+  • "Spirit," said Scrooge, after a moment's thought, "I wonder
+  • you, of all the beings in the many worlds about us, should
+  • desire to cramp these people's opportunities of innocent
+  • enjoyment.
+  • "You would deprive them of their means of dining every
+  • seventh day, often the only day on which they can be said
+  • to dine at all," said Scrooge.
+  • "Spirit," said Scrooge, with an interest he had never felt
+  • before, "tell me if Tiny Tim will live.
   • But, they were happy, grateful, pleased
   • with one another, and contented with the time; and when
   • they faded, and looked happier yet in the bright sprinklings
@@ -586,34 +654,6 @@ Total unique proper name pairs: 44
   • them, and especially on Tiny Tim, until the last.
   • The Spirit did not tarry here, but bade Scrooge hold his
   • robe, and passing on above the moor, sped--whither?
-  • He felt that he was restored to consciousness
-  • in the right nick of time, for the especial purpose of holding
-  • a conference with the second messenger despatched to him
-  • through Jacob Marley's intervention.
-  • The crisp leaves of holly, mistletoe, and
-  • ivy reflected back the light, as if so many little mirrors had
-  • been scattered there; and such a mighty blaze went roaring
-  • up the chimney, as that dull petrification of a hearth had
-  • never known in Scrooge's time, or Marley's, or for many and
-  • many a winter season gone.
-  • As the last stroke ceased to vibrate, he remembered the
-  • prediction of old Jacob Marley, and lifting up his eyes,
-  • beheld a solemn Phantom, draped and hooded, coming, like
-  • a mist along the ground, towards him.
-  • He was not the dogged Scrooge he had been; and
-  • though the Spirit's eyes were clear and kind, he did not like
-  • to meet them.
-  • "Look upon me!"
-  • Scrooge reverently did so.
-  • "Spirit," said Scrooge submissively, "conduct me where
-  • you will.
-  • "Because it needs it most."
-  • "Spirit," said Scrooge, after a moment's thought, "I wonder
-  • you, of all the beings in the many worlds about us, should
-  • desire to cramp these people's opportunities of innocent
-  • enjoyment.
-  • "Spirit," said Scrooge, with an interest he had never felt
-  • before, "tell me if Tiny Tim will live.
   • Scrooge had observed this change, but never spoke of
   • it, until they left a children's Twelfth Night party, when,
   • looking at the Spirit as they stood together in an open place,
@@ -623,19 +663,60 @@ Total unique proper name pairs: 44
   • something strange, and not belonging to yourself, protruding
   • from your skirts.
 
-[PAIR 38] Scrooge ◄──► Tiny Tim
+[PAIR 34] Scrooge ◄──► the Ghost
 ----------------------------------------------------------------------
-  • But, they were happy, grateful, pleased
-  • with one another, and contented with the time; and when
-  • they faded, and looked happier yet in the bright sprinklings
-  • of the Spirit's torch at parting, Scrooge had his eye upon
-  • them, and especially on Tiny Tim, until the last.
-  • "Spirit," said Scrooge, with an interest he had never felt
-  • before, "tell me if Tiny Tim will live.
+  • My opinion is, that it was a done
+  • thing between him and Scrooge's nephew; and that the
+  • Ghost of Christmas Present knew it.
 
-[PAIR 39] Scrooge ◄──► Topper
+[PAIR 35] Scrooge ◄──► the Ghost
+----------------------------------------------------------------------
+  • and know
+  • me better, man!"
+  • 
+  • Scrooge entered timidly, and hung his head before this
+  • Spirit.
+  • Again the Ghost sped on, above the black and heaving sea
+  • --on, on--until, being far away, as he told Scrooge, from any
+  • shore, they lighted on a ship.
+  • Scrooge's niece was not one of the blind-man's buff party,
+  • but was made comfortable with a large chair and a footstool,
+  • in a snug corner, where the Ghost and Scrooge were close
+  • behind her.
+  • The Ghost was greatly pleased to find him in this mood,
+  • and looked upon him with such favour, that he begged like
+  • a boy to be allowed to stay until the guests departed.
+  • Uncle
+  • Scrooge!"
+  • 
+  • Uncle Scrooge had imperceptibly become so gay and light
+  • of heart, that he would have pledged the unconscious
+  • company in return, and thanked them in an inaudible speech,
+  • if the Ghost had given him time.
+  • It was strange, too, that while Scrooge remained
+  • unaltered in his outward form, the Ghost grew older, clearly
+  • older.
+
+[PAIR 36] Scrooge ◄──► the Ghost
+----------------------------------------------------------------------
+  • Scrooge bent before the Ghost's rebuke, and trembling cast
+  • his eyes upon the ground.
+  • When this strain of music sounded, all the
+  • things that Ghost had shown him, came upon his mind; he
+  • softened more and more; and thought that if he could have
+  • listened to it often, years ago, he might have cultivated the
+  • kindnesses of life for his own happiness with his own hands,
+  • without resorting to the sexton's spade that buried Jacob
+  • Marley.
+
+[PAIR 37] Scrooge ◄──► THE SPIRITS THE Phantom
+----------------------------------------------------------------------
+  • "Are spirits' lives so short?" asked Scrooge.
+
+[PAIR 38] Scrooge ◄──► Topper
 ----------------------------------------------------------------------
   • What do you say, Topper?"
+  • 
   • Topper had clearly got his eye upon one of Scrooge's niece's
   • sisters, for he answered that a bachelor was a wretched outcast,
   • who had no right to express an opinion on the subject.
@@ -647,49 +728,43 @@ Total unique proper name pairs: 44
   • her sisters hollow: though they were sharp girls too, as Topper
   • could have told you.
 
-[PAIR 40] Scrooge 's nephew ◄──► Scrooge 's niece
+[PAIR 39] Spirit ◄──► Spirit
 ----------------------------------------------------------------------
-  • When Scrooge's nephew laughed in this way: holding
-  • his sides, rolling his head, and twisting his face into the
-  • most extravagant contortions: Scrooge's niece, by marriage,
-  • laughed as heartily as he.
-  • "More shame for him, Fred!" said Scrooge's niece,
-  • indignantly.
-  • Likewise at the game of How, When, and Where, she was
-  • very great, and to the secret joy of Scrooge's nephew, beat
-  • her sisters hollow: though they were sharp girls too, as Topper
-  • could have told you.
+  • Have you had many brothers, Spirit?"
+  • 
+  • "More than eighteen hundred," said the Ghost.
+  • "Spirit," said Scrooge submissively, "conduct me where
+  • you will.
+  • "Wouldn't you?"
+  • 
+  • "I!" cried the Spirit.
 
-[PAIR 41] Scrooge 's nephew ◄──► Topper
+[PAIR 40] Spirit ◄──► the Ghost
+----------------------------------------------------------------------
+  • "I am the Ghost of Christmas Present," said the Spirit.
+
+[PAIR 41] Spirit ◄──► the Ghost
+----------------------------------------------------------------------
+  • Have you had many brothers, Spirit?"
+  • 
+  • "More than eighteen hundred," said the Ghost.
+
+[PAIR 42] Spirit ◄──► the Ghost
+----------------------------------------------------------------------
+  • The very lamplighter, who ran on before,
+  • dotting the dusky street with specks of light, and who was
+  • dressed to spend the evening somewhere, laughed out loudly
+  • as the Spirit passed, though little kenned the lamplighter
+  • that he had any company but Christmas!
+
+[PAIR 43] Spirit ◄──► the Ghost
+----------------------------------------------------------------------
+  • Have you had many brothers, Spirit?"
+  • 
+  • "More than eighteen hundred," said the Ghost.
+
+[PAIR 44] the Ghost ◄──► Topper
 ----------------------------------------------------------------------
   • My opinion is, that it was a done
   • thing between him and Scrooge's nephew; and that the
   • Ghost of Christmas Present knew it.
-  • Likewise at the game of How, When, and Where, she was
-  • very great, and to the secret joy of Scrooge's nephew, beat
-  • her sisters hollow: though they were sharp girls too, as Topper
-  • could have told you.
-
-[PAIR 42] Scrooge 's niece ◄──► Topper
-----------------------------------------------------------------------
-  • Likewise at the game of How, When, and Where, she was
-  • very great, and to the secret joy of Scrooge's nephew, beat
-  • her sisters hollow: though they were sharp girls too, as Topper
-  • could have told you.
-
-[PAIR 43] Scrooge 's niece 's sisters ◄──► Topper
-----------------------------------------------------------------------
-  • What do you say, Topper?"
-  • Topper had clearly got his eye upon one of Scrooge's niece's
-  • sisters, for he answered that a bachelor was a wretched outcast,
-  • who had no right to express an opinion on the subject.
-
-[PAIR 44] Spirit ◄──► Tiny Tim
-----------------------------------------------------------------------
-  • "Spirit," said Scrooge, with an interest he had never felt
-  • before, "tell me if Tiny Tim will live.
-  • But, they were happy, grateful, pleased
-  • with one another, and contented with the time; and when
-  • they faded, and looked happier yet in the bright sprinklings
-  • of the Spirit's torch at parting, Scrooge had his eye upon
-  • them, and especially on Tiny Tim, until the last.
