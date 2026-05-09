@@ -102,7 +102,7 @@ def _print_table(results: list[dict]) -> None:
             f"{r['book_id']:<16} {r['chapter_count']:>4} "
             f"{r['min_words']:>6} {r['max_words']:>7} "
             f"{r['zero_word_sections']:>5} {r['short_sections']:>6} "
-            f"{r['winner']:<12} {titles_str}"
+            f"{(r.get('winner') or 'fallback'):<12} {titles_str}"
         )
 
 

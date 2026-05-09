@@ -7,6 +7,9 @@ __pycache__/
 # All data/ contents are generated or large corpus files — never commit
 data/**
 
+# Project-local raw corpus storage: copy-only, not tracked
+corpus/**
+
 # All run outputs, caches, and archives are generated
 outputs/**
 cache/**
