@@ -4,11 +4,14 @@ import argparse
 import logging
 import os
 import re as _re
+import sys
 import urllib.request
 from pathlib import Path
 from typing import Optional
 
-from booknlp.booknlp import BookNLP
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
 logger = logging.getLogger(__name__)
 
@@ -157,6 +160,10 @@ def run_booknlp_per_chapter(
     if model_path is not None:
         model_params["model_path"] = str(model_path)
         _ensure_booknlp_models(model_path, model_size)
+
+    # Import after project-root sys.path insertion so our `pkg_resources.py` shim
+    # (repo root) is discoverable even when running this file as `python src/...`.
+    from booknlp.booknlp import BookNLP
 
     booknlp = BookNLP(language, model_params)
 

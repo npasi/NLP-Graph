@@ -17,9 +17,17 @@ Usage (Colab example):
 Optional overrides (useful when running from Google Drive on Colab):
     --data-root /content/drive/MyDrive/book_graph_pipeline/data
 
-Structure expected under data-root:
-    archive/corpus/   book .txt files
-    archive/csv/      GT .csv files
+Input layouts supported under data-root:
+
+1) Dataset layout (preferred when present):
+    dataset/texts/         book .txt files named like "<book_id>_*.txt"
+    dataset/ground_truth/  GT .csv files named like "<book_id>_*.csv"
+
+2) Archive layout (legacy fallback):
+    archive/corpus/   book .txt files named like "<book_id>_*.txt"
+    archive/csv/      GT .csv files named like "<book_id>_*.csv"
+
+Shared structure:
     splits/train_val_test.json
     models/           BookNLP model weights
     output/chapters/  chapter splits (written here)
@@ -62,6 +70,31 @@ def _count_gt_chapters(csv_path: Path) -> int:
     with csv_path.open(encoding="utf-8", errors="replace") as f:
         header = f.readline().strip().split(",")
     return sum(1 for col in header if re.match(r"^chapter_\d+$", col.strip(), re.IGNORECASE))
+
+def _choose_input_dirs(
+    data_root: Path,
+    texts_dir: Optional[Path],
+    gt_dir: Optional[Path],
+) -> tuple[Path, Path]:
+    """Pick input directories for texts + GT.
+
+    Priority:
+      1) CLI overrides (--texts-dir/--gt-dir)
+      2) dataset/ layout if it exists and has files
+      3) archive/ layout (legacy)
+    """
+    if (texts_dir is None) != (gt_dir is None):
+        raise ValueError("Use both --texts-dir and --gt-dir together (or neither).")
+    if texts_dir is not None and gt_dir is not None:
+        return texts_dir, gt_dir
+
+    dataset_texts = data_root / "dataset" / "texts"
+    dataset_gt = data_root / "dataset" / "ground_truth"
+    if dataset_texts.is_dir() and dataset_gt.is_dir():
+        if any(dataset_texts.glob("*.txt")) and any(dataset_gt.glob("*.csv")):
+            return dataset_texts, dataset_gt
+
+    return data_root / "archive" / "corpus", data_root / "archive" / "csv"
 
 
 def _write_chapters(book_id: str, chapters: List[dict], books_root: Path) -> Path:
@@ -185,6 +218,16 @@ def main(argv=None) -> None:
     p.add_argument("--data-root", default=None,
                    help="Override data root (default: <project>/data). "
                         "Useful on Colab with Google Drive.")
+    p.add_argument(
+        "--texts-dir",
+        default=None,
+        help="Override texts directory (expects '<book_id>_*.txt'). If set, you must also set --gt-dir.",
+    )
+    p.add_argument(
+        "--gt-dir",
+        default=None,
+        help="Override ground-truth directory (expects '<book_id>_*.csv'). If set, you must also set --texts-dir.",
+    )
     p.add_argument("--model-size", choices=["small", "big"], default="big")
     p.add_argument("--pipeline", default="entity,quote,supersense,event,coref")
     p.add_argument("--log-level", default="INFO",
@@ -199,8 +242,11 @@ def main(argv=None) -> None:
 
     data_root = Path(args.data_root) if args.data_root else _PROJECT_ROOT / "data"
 
-    corpus_dir          = data_root / "archive" / "corpus"
-    csv_dir             = data_root / "archive" / "csv"
+    corpus_dir, csv_dir = _choose_input_dirs(
+        data_root,
+        Path(args.texts_dir) if args.texts_dir else None,
+        Path(args.gt_dir) if args.gt_dir else None,
+    )
     books_root          = data_root / "output" / "chapters"
     booknlp_output_root = data_root / "output" / "booknlp"
     model_path          = data_root / "models"
@@ -213,6 +259,8 @@ def main(argv=None) -> None:
         book_ids = split_data[args.split]
 
     logger.info("Running pipeline for split=%s (%d books)", args.split, len(book_ids))
+    logger.info("Input texts: %s", corpus_dir.resolve())
+    logger.info("Input GT:    %s", csv_dir.resolve())
 
     ok, failed = 0, []
     for i, book_id in enumerate(book_ids, 1):

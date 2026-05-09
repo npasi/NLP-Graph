@@ -15,7 +15,9 @@ def _default_booknlp_root(book_id: str) -> Path:
 
 
 def _default_chapters_root(book_id: str) -> Path:
-    return Path("data") / "output" / "chapters" / str(book_id)
+    # Chapters are written by splitters under:
+    #   data/output/chapters/<book_id>/chapters/chapter_000.txt ...
+    return Path("data") / "output" / "chapters" / str(book_id) / "chapters"
 
 
 def _parse_chapter_id(run_dir_name: str) -> Optional[int]:
