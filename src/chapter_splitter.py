@@ -221,6 +221,43 @@ _ALLCAPS_METADATA_RE = re.compile(
     re.IGNORECASE,
 )
 
+_ALLCAPS_SUPPRESS_RE = re.compile(
+    r"^(?:"
+    r"TRANSCRIBER(?:’|')?S?\s+NOTES|"
+    r"CHAPTER\s+PAGE|"
+    r"PUBLISHERS?\b|"
+    r"PRINTED\b|"
+    r"COPYRIGHT\b|"
+    r"LIST\s+OF\s+ILLUSTRATIONS|"
+    r"ILLUSTRATIONS?\b"
+    r")",
+    re.IGNORECASE,
+)
+
+_TITLE_PAGE_AUTHOR_RE = re.compile(r"^[A-Z][A-Z'’&.\- ]{0,80}\.?$")
+
+
+def _next_nonblank_line(text: str) -> Optional[str]:
+    for line in text.splitlines():
+        if line.strip():
+            return line.strip()
+    return None
+
+
+def _looks_like_title_page_heading(text: str, heading_start: int, heading_end: int) -> bool:
+    if heading_start > int(len(text) * 0.15):
+        return False
+    next_line = _next_nonblank_line(text[heading_end:])
+    if not next_line:
+        return False
+    if _ALLCAPS_METADATA_RE.match(next_line):
+        return True
+    if _ALLCAPS_BOILERPLATE_RE.match(next_line):
+        return True
+    if _TITLE_PAGE_AUTHOR_RE.match(next_line) and len(next_line.split()) <= 5:
+        return True
+    return False
+
 
 def _has_blank_line_before(text: str, pos: int) -> bool:
     """True if *pos* is preceded by a blank line or by only whitespace.
@@ -317,6 +354,10 @@ _WORD_HEADING_RE = re.compile(
 )
 
 _ROMAN_ONLY_RE = re.compile(r"^[ \t]*(?P<num>[IVXLCDM]{1,6})\.?[ \t\r]*$", re.MULTILINE)
+_ROMAN_TITLED_RE = re.compile(
+    r"^[ \t]*(?P<num>[IVXLCDM]{1,6})\.?[ \t]+(?P<title>[A-Z][^\r\n]{0,80})\r?$",
+    re.MULTILINE,
+)
 _NUMBER_TITLED_RE = re.compile(r"^[ \t]*(?P<num>\d{1,3})[ \t]+(?P<title>[A-Z][^\r\n]{0,80})\r?$", re.MULTILINE)
 _NUMBER_ONLY_RE = re.compile(r"^[ \t]*(?P<num>\d{1,3})\.?[ \t\r]*$", re.MULTILINE)
 
@@ -360,6 +401,10 @@ def _detect_allcaps_headings(text: str) -> List[HeadingRec]:
             continue
         if _ALLCAPS_METADATA_RE.match(title):
             continue
+        if _ALLCAPS_SUPPRESS_RE.match(title):
+            continue
+        if _looks_like_title_page_heading(text, m.start(), m.end()):
+            continue
         if not _has_blank_line_before(text, m.start()):
             continue
         out.append(
@@ -392,6 +437,27 @@ def _detect_roman_only(text: str) -> List[HeadingRec]:
                 "num": num_val,
                 "num_text": m.group("num"),
                 "title": "",
+                "raw": m.group(0).strip(),
+                "word": "",
+            }
+        )
+    return out
+
+
+def _detect_roman_titled(text: str) -> List[HeadingRec]:
+    out: List[HeadingRec] = []
+    for m in _ROMAN_TITLED_RE.finditer(text):
+        num_val = _roman_to_int(m.group("num"))
+        if num_val is None:
+            continue
+        title = m.group("title").strip(" .:-–—\t")
+        out.append(
+            {
+                "start": m.start(),
+                "end": m.end(),
+                "num": num_val,
+                "num_text": m.group("num"),
+                "title": title,
                 "raw": m.group(0).strip(),
                 "word": "",
             }
@@ -446,11 +512,36 @@ def _detect_number_only(text: str) -> List[HeadingRec]:
 
 _DETECTORS: List[Tuple[str, Callable[[str], List[HeadingRec]]]] = [
     ("word", _detect_word_headings),
+    ("roman-title", _detect_roman_titled),
     ("allcaps", _detect_allcaps_headings),
     ("roman-only", _detect_roman_only),
     ("number-titled", _detect_number_titled),
     ("number-only", _detect_number_only),
 ]
+
+_DETECTOR_PRIORITY: Dict[str, int] = {
+    "word": 5,
+    "roman-title": 4,
+    "roman-only": 3,
+    "number-titled": 2,
+    "number-only": 1,
+    "allcaps": 0,
+}
+
+
+def _prefer_candidate(
+    current_name: Optional[str],
+    current_headings: List[HeadingRec],
+    candidate_name: str,
+    candidate_headings: List[HeadingRec],
+) -> bool:
+    if current_name is None:
+        return True
+    if len(candidate_headings) > len(current_headings):
+        return True
+    if len(candidate_headings) < len(current_headings):
+        return False
+    return _DETECTOR_PRIORITY.get(candidate_name, 0) > _DETECTOR_PRIORITY.get(current_name, 0)
 
 
 def _drop_toc_and_duplicates(text: str, headings: List[HeadingRec]) -> List[HeadingRec]:
@@ -673,7 +764,17 @@ def _try_nested_chapters(
     containers = [h for h in non_toc if h["_is_container"]]
     leaves = [h for h in non_toc if not h["_is_container"]]
 
-    if len(containers) < 2 or len(leaves) < MIN_HEADINGS_FOR_VALID_SCHEME:
+    if len(containers) < 2:
+        return None
+    if not leaves:
+        if all(c.get("container_body_len", 0) >= TOC_BODY_MAX_TOKENS for c in containers):
+            logger.info(
+                "Container-only structure detected: %d sections.",
+                len(containers),
+            )
+            return containers
+        return None
+    if len(leaves) < MIN_HEADINGS_FOR_VALID_SCHEME:
         return None
 
     # Walk all non-TOC headings in document order, maintaining a context stack.
@@ -823,7 +924,7 @@ def split_into_chapters(text: str) -> List[dict]:
             logger.debug("Detector %s rejected: %d headings.", name, len(cleaned))
             continue
 
-        if winner_name is None or len(cleaned) >= 2 * len(winner_headings):
+        if _prefer_candidate(winner_name, winner_headings, name, cleaned):
             logger.info(
                 "Splitter detector '%s' now leading: %d headings.", name, len(cleaned)
             )
@@ -903,7 +1004,7 @@ def split_into_chapters_with_debug(text: str) -> Tuple[List[dict], dict]:
 
         if not valid:
             continue
-        if winner_name is None or len(cleaned) >= 2 * len(winner_headings):
+        if _prefer_candidate(winner_name, winner_headings, name, cleaned):
             winner_name = name
             winner_headings = cleaned
 

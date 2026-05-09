@@ -314,6 +314,74 @@ class TestNestedPartChapter(unittest.TestCase):
         self.assertNotIn("Part II", titles)
 
 
+class TestSplitterHardening(unittest.TestCase):
+    def test_part_only_sections_are_preserved(self):
+        text = _wrap_gutenberg(
+            "\nPART I\n\n" + _BODY +
+            "\n\nPART II\n\n" + _BODY
+        )
+        chapters = split_into_chapters(text)
+        self.assertEqual(len(chapters), 2)
+        self.assertEqual(chapters[0]["title"], "Part I")
+        self.assertEqual(chapters[1]["title"], "Part II")
+
+    def test_sparse_allcaps_does_not_beat_roman_chapters(self):
+        text = _wrap_gutenberg(
+            "\n\nETHAN FROME\n\n" + _BODY +
+            "\n\nFOR FIFTY YEARS.\n\n" + _BODY +
+            "\n\nETHAN FROME AND ENDURANCE HIS WIFE,\n\n" + _BODY +
+            "\n\nI\n\n" + _BODY +
+            "\n\nII\n\n" + _BODY +
+            "\n\nIII\n\n" + _BODY
+        )
+        chapters = split_into_chapters(text)
+        titles = [ch["title"] for ch in chapters]
+        self.assertEqual(len(chapters), 3)
+        self.assertNotIn("ETHAN FROME", titles)
+        self.assertNotIn("FOR FIFTY YEARS.", titles)
+        self.assertNotIn("ETHAN FROME AND ENDURANCE HIS WIFE,", titles)
+        self.assertEqual([ch["raw_heading"] for ch in chapters], ["I", "II", "III"])
+
+    def test_title_page_allcaps_heading_is_suppressed(self):
+        text = _wrap_gutenberg(
+            "\nTHE SCARLET LETTER.\n\n"
+            "NATHANIEL HAWTHORNE.\n\n"
+            "ILLUSTRATED.\n\n"
+            "\n\nTHE PRISON-DOOR\n\n" + _BODY +
+            "\n\nTHE MARKET-PLACE\n\n" + _BODY +
+            "\n\nTHE RECOGNITION\n\n" + _BODY
+        )
+        chapters = split_into_chapters(text)
+        titles = [ch["title"] for ch in chapters]
+        self.assertNotIn("THE SCARLET LETTER.", titles)
+        self.assertIn("THE PRISON-DOOR", titles)
+        self.assertIn("THE MARKET-PLACE", titles)
+        self.assertIn("THE RECOGNITION", titles)
+
+    def test_transcriber_notes_are_not_chapters(self):
+        text = _wrap_gutenberg(
+            "\nChapter 1\n\n" + _BODY +
+            "\n\nChapter 2\n\n" + _BODY +
+            "\n\nChapter 3\n\n" + _BODY +
+            "\n\nTRANSCRIBER’S NOTES\n\n"
+            "Editorial notes about the text.\n"
+        )
+        chapters = split_into_chapters(text)
+        titles = [ch["title"] for ch in chapters]
+        self.assertEqual(len(chapters), 3)
+        self.assertNotIn("TRANSCRIBER’S NOTES", titles)
+
+    def test_roman_numeral_plus_title_line_produces_chapters(self):
+        text = _wrap_gutenberg(
+            "\nI. How Candide was brought up in a\n\n" + _BODY +
+            "\n\nII. What became of Candide among the Bulgarians.\n\n" + _BODY +
+            "\n\nIII. How Candide made his escape from the Bulgarians.\n\n" + _BODY
+        )
+        chapters = split_into_chapters(text)
+        self.assertEqual(len(chapters), 3)
+        self.assertIn("Chapter I: How Candide was brought up in a", chapters[0]["title"])
+
+
 # ── 8. Nested VOLUME + BOOK + CHAPTER (3-level) ──────────────────────────────
 
 class TestNestedVolumeBookChapter(unittest.TestCase):
