@@ -1,0 +1,42 @@
+{
+  "book_id": "110",
+  "gt_csv": "data\\dataset\\ground_truth\\110_jude_the_obscure_affinity_sparknotes.csv",
+  "chapters": [
+    "chapter_1",
+    "chapter_2",
+    "chapter_3",
+    "chapter_4",
+    "chapter_5",
+    "chapter_6"
+  ],
+  "sources": {
+    "GT": {
+      "csv": "data\\dataset\\ground_truth\\110_jude_the_obscure_affinity_sparknotes.csv",
+      "out_dir": "data\\share_with_friend_clean\\graphs\\test\\110\\GT\\per_chapter",
+      "written": [
+        "chapter_1",
+        "chapter_2",
+        "chapter_3",
+        "chapter_4",
+        "chapter_5",
+        "chapter_6"
+      ],
+      "skipped": [],
+      "n_written": 6
+    },
+    "pearson_2ep": {
+      "csv": "data\\predictions\\prevprefix_test_pearson_2ep\\110_predicted.csv",
+      "out_dir": "data\\share_with_friend_clean\\graphs\\test\\110\\pearson_2ep\\per_chapter",
+      "written": [
+        "chapter_1",
+        "chapter_2",
+        "chapter_3",
+        "chapter_4",
+        "chapter_5",
+        "chapter_6"
+      ],
+      "skipped": [],
+      "n_written": 6
+    }
+  }
+}

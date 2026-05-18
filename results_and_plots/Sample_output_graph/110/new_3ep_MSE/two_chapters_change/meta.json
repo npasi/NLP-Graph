@@ -1,0 +1,16 @@
+{
+  "book": "Predicted",
+  "csv": "data\\predictions\\prevprefix_test_3ep_mse\\110_predicted.csv",
+  "chapter_a": "chapter_5",
+  "chapter_b": "chapter_6",
+  "title_label": "new_3ep_MSE",
+  "top_k_edges_union": 10,
+  "files": {
+    "a": "data\\share_with_friend_clean\\graphs\\test\\110\\new_3ep_MSE\\two_chapters_change\\graph_pred_chapter_5.png",
+    "b": "data\\share_with_friend_clean\\graphs\\test\\110\\new_3ep_MSE\\two_chapters_change\\graph_pred_chapter_6.png"
+  },
+  "book_id": "110",
+  "layout_csv": "data\\dataset\\ground_truth\\110_jude_the_obscure_affinity_sparknotes.csv",
+  "pred_csv": "data\\predictions\\prevprefix_test_3ep_mse\\110_predicted.csv",
+  "transition_index_0based": 4
+}

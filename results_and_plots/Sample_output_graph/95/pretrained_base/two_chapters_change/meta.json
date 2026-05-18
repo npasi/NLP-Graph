@@ -1,0 +1,16 @@
+{
+  "book": "Predicted",
+  "csv": "data\\predictions\\pretrained_base\\95_predicted.csv",
+  "chapter_a": "chapter_5",
+  "chapter_b": "chapter_6",
+  "title_label": "pretrained_base",
+  "top_k_edges_union": 10,
+  "files": {
+    "a": "data\\share_with_friend_clean\\graphs\\test\\95\\pretrained_base\\two_chapters_change\\graph_pred_chapter_5.png",
+    "b": "data\\share_with_friend_clean\\graphs\\test\\95\\pretrained_base\\two_chapters_change\\graph_pred_chapter_6.png"
+  },
+  "book_id": "95",
+  "layout_csv": "data\\dataset\\ground_truth\\95_ulysses_affinity.csv",
+  "pred_csv": "data\\predictions\\pretrained_base\\95_predicted.csv",
+  "transition_index_0based": 4
+}

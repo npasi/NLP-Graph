@@ -1,0 +1,40 @@
+{
+  "book_id": "110",
+  "gt_csv": "data\\dataset\\ground_truth\\110_jude_the_obscure_affinity_sparknotes.csv",
+  "chapter_a": "chapter_5",
+  "chapter_b": "chapter_6",
+  "mean_abs_delta_topk": 0.27625,
+  "max_abs_delta_topk": 0.6,
+  "transition_index_0based": 4,
+  "GT": "data\\share_with_friend_clean\\graphs\\test\\110\\GT\\two_chapters_max_change",
+  "models": {
+    "pretrained_base": {
+      "pred_csv": "data\\predictions\\pretrained_base\\110_predicted.csv",
+      "out_dir": "data\\share_with_friend_clean\\graphs\\test\\110\\pretrained_base\\two_chapters_max_change",
+      "png_a": "data\\share_with_friend_clean\\graphs\\test\\110\\pretrained_base\\two_chapters_max_change\\graph_pred_chapter_5.png",
+      "png_b": "data\\share_with_friend_clean\\graphs\\test\\110\\pretrained_base\\two_chapters_max_change\\graph_pred_chapter_6.png"
+    },
+    "old_1ep_MSE": {
+      "pred_csv": "data\\predictions\\prevprefix_test_1ep\\110_predicted.csv",
+      "out_dir": "data\\share_with_friend_clean\\graphs\\test\\110\\old_1ep_MSE\\two_chapters_max_change",
+      "png_a": "data\\share_with_friend_clean\\graphs\\test\\110\\old_1ep_MSE\\two_chapters_max_change\\graph_pred_chapter_5.png",
+      "png_b": "data\\share_with_friend_clean\\graphs\\test\\110\\old_1ep_MSE\\two_chapters_max_change\\graph_pred_chapter_6.png"
+    },
+    "new_3ep_MSE": {
+      "pred_csv": "data\\predictions\\prevprefix_test_3ep_mse\\110_predicted.csv",
+      "out_dir": "data\\share_with_friend_clean\\graphs\\test\\110\\new_3ep_MSE\\two_chapters_max_change",
+      "png_a": "data\\share_with_friend_clean\\graphs\\test\\110\\new_3ep_MSE\\two_chapters_max_change\\graph_pred_chapter_5.png",
+      "png_b": "data\\share_with_friend_clean\\graphs\\test\\110\\new_3ep_MSE\\two_chapters_max_change\\graph_pred_chapter_6.png"
+    },
+    "pearson_2ep": {
+      "pred_csv": "data\\predictions\\prevprefix_test_pearson_2ep\\110_predicted.csv",
+      "out_dir": "data\\share_with_friend_clean\\graphs\\test\\110\\pearson_2ep\\two_chapters_max_change",
+      "png_a": "data\\share_with_friend_clean\\graphs\\test\\110\\pearson_2ep\\two_chapters_max_change\\graph_pred_chapter_5.png",
+      "png_b": "data\\share_with_friend_clean\\graphs\\test\\110\\pearson_2ep\\two_chapters_max_change\\graph_pred_chapter_6.png"
+    }
+  },
+  "GT_png": {
+    "a": "data\\share_with_friend_clean\\graphs\\test\\110\\GT\\two_chapters_max_change\\graph_gt_chapter_5.png",
+    "b": "data\\share_with_friend_clean\\graphs\\test\\110\\GT\\two_chapters_max_change\\graph_gt_chapter_6.png"
+  }
+}

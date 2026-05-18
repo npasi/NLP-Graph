@@ -1,0 +1,14 @@
+{
+  "book": "Jude The Obscure",
+  "csv": "data\\dataset\\ground_truth\\110_jude_the_obscure_affinity_sparknotes.csv",
+  "chapter_a": "chapter_5",
+  "chapter_b": "chapter_6",
+  "title_label": "GT",
+  "top_k_edges_union": 10,
+  "files": {
+    "a": "data\\share_with_friend_clean\\graphs\\test\\110\\GT\\two_chapters_change\\graph_gt_chapter_5.png",
+    "b": "data\\share_with_friend_clean\\graphs\\test\\110\\GT\\two_chapters_change\\graph_gt_chapter_6.png"
+  },
+  "book_id": "110",
+  "transition_index_0based": 4
+}

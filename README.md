@@ -1,27 +1,57 @@
-# NLP-Graph (BookNLP per-chapter pipeline)
+# Book Graph Pipeline
 
-This repo contains a small, reproducible pipeline to go from a raw book `.txt`
-to per-chapter BookNLP outputs and a few derived JSON artefacts.
+End-to-end pipeline that turns raw Project Gutenberg novels into chapter-level
+character-interaction graphs (BookNLP + PMI + VADER) and fine-tunes a
+Longformer regression model to predict pairwise affinity scores in `[0, 1]`.
 
-## Setup
+Course: Language Technology — Bocconi University, 2025/2026.
 
-Use **Python 3.11** for BookNLP + tokenizers compatibility.
+---
+
+## 1. Installation
+
+Use **Python 3.11** (required by BookNLP + `tokenizers==0.13.3`).
+
+### Linux / macOS
 
 ```bash
+git clone https://github.com/npasi/NLP-Graph.git
 cd NLP-Graph
-python3.11 -m venv .venv311
-. .venv311/bin/activate
-python -m pip install -U pip
+git checkout BRANCH-CON-I-RAGAZZI
+
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -U pip setuptools
 python -m pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-## Important: BERT / model downloads
+### Windows (PowerShell)
 
-Running the **big** model requires downloading BookNLP model weights the first time:
+```powershell
+git clone https://github.com/npasi/NLP-Graph.git
+cd NLP-Graph
+git checkout BRANCH-CON-I-RAGAZZI
 
-- cached under `data/booknlp_models/` (downloaded automatically by `run_booknlp_per_chapter.py`)
-- plus HuggingFace tokenizer cache (recommended to keep local to the repo):
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip setuptools
+python -m pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+```
+
+### GPU (optional, recommended for Longformer training)
+
+Install a CUDA-matched PyTorch build before `requirements.txt`:
+
+```bash
+# CUDA 12.1 example
+pip install torch --index-url https://download.pytorch.org/whl/cu121
+```
+
+### Caches (recommended)
+
+Keep HuggingFace and BookNLP model weights local to the repo:
 
 ```bash
 export HF_HOME="$PWD/data/hf_cache"
@@ -29,204 +59,162 @@ export TRANSFORMERS_CACHE="$PWD/data/hf_cache"
 export XDG_CACHE_HOME="$PWD/data/hf_cache"
 ```
 
-## End-to-end pipeline (raw book -> where we are now)
-
-Assuming your raw input is:
-
-- `data/raw/46.txt`
-
-### 1) Split into chapters (and strip Gutenberg footer)
-
-```bash
-python src/step1_split_only.py --input data/raw/46.txt --book-id 46 --debug --log-level INFO
-```
-
-Outputs:
-- `data/books/46/chapters/chapter_000.txt` ... `chapter_004.txt`
-- `data/books/46/chapters/chapters.json`
-
-### 2) Run BookNLP per chapter (big model, full pipeline)
-
-```bash
-python run_booknlp_per_chapter.py --book-id 46 --model-size big --pipeline entity,quote,supersense,event,coref --log-level INFO
-```
-
-Outputs (one folder per chapter):
-- `data/booknlp_chapter_output/46/booknlp_46_chapter_0000/*`
-- ...
-- `data/booknlp_chapter_output/46/booknlp_46_chapter_0004/*`
-
-### 3) Derived JSON artefacts (no new NLP; reads BookNLP outputs only)
-
-Characters (counts + aliases), per chapter:
-
-```bash
-python src/step2_character_list_per_chapter.py --book-id 46
-```
-
-Predicates between character pairs (unordered), per chapter:
-
-```bash
-python src/step3_predicates_between_characters.py --book-id 46
-```
-
-Concatenated co-occurrence sentences for every possible unordered character pair, per chapter:
-
-```bash
-python src/step4_sentences_by_character_pair.py --book-id 46
-```
-
-## Notes
-
-- This repo ignores `data/**` by default in git, except `data/raw/46.txt` as a reference input.
-- BookNLP is CPU by default; first run is slower due to model downloads.
-
-### Generate listings HTML (read-only)
+PowerShell equivalent:
 
 ```powershell
-python -m src.booknlp_listings_html --run-dir data/booknlp_only_output/my_run --run-id my_run
+$env:HF_HOME       = "$PWD\data\hf_cache"
+$env:TRANSFORMERS_CACHE = "$PWD\data\hf_cache"
+$env:XDG_CACHE_HOME = "$PWD\data\hf_cache"
 ```
 
-Produces:
+### Verify the install
 
-- `data/booknlp_only_output/my_run/my_run.book.listings.html`
-
-### Extract (agent, predicate, patient) triplets
-
-```powershell
-python -m src.booknlp_event_triplets --run-dir data/booknlp_only_output/my_run --run-id my_run
-```
-
-Produces:
-
-- `my_run.event_triplets.tsv`
-- `my_run.event_triplets.jsonl`
-
-### About data/ in git
-
-This repo keeps the same folder structure, but **does not commit** heavy/replicable caches.
-Empty `data/*` folders are tracked via `.gitkeep`.
-
-### Legacy pipeline notes
-
-The README below contains older notes from a larger pipeline version. The current repo focuses on the BookNLP runners and graph-ready outputs above.
-
-### End-to-end on every LitBank book
-
-```powershell
-python -X utf8 -m src.pipeline
-```
-
-The pipeline is driven directly by the LitBank checkout: it processes
-**every** book shipped in `data/litbank/entities/tsv/` (100 books). There
-is no hand-curated list.
-
-Each successful book produces:
-
-- `data/graphs/chapters/<slug>.pkl` — `list[networkx.Graph]`, one per chapter.
-- `data/graphs/chapters/<slug>_metadata.json` — chapter stats.
-- `data/graphs/gold/<slug>_gold.pkl` — single `networkx.Graph` from
-  LitBank gold annotations.
-
-Books that fail (download error, BookNLP crash) are logged and skipped —
-the pipeline moves on.
-
-### Smaller / selective runs
-
-```powershell
-# only one Gutenberg id (must be present in LitBank)
-python -X utf8 -m src.pipeline --book 1342
-
-# only the first N LitBank books (handy for a smoke test)
-python -X utf8 -m src.pipeline --limit 3
-
-# smaller / faster BookNLP model
-python -X utf8 -m src.pipeline --model-size small
-
-# mix them
-python -X utf8 -m src.pipeline --limit 3 --model-size small
-```
-
-### Programmatic use
-
-```python
-from src.pipeline import process_book, process_catalog
-
-# one book by LitBank slug
-result = process_book("1342_pride_and_prejudice")
-print(result["chapter_graphs"][0].nodes(data=True))
-
-# several books by Gutenberg id
-all_results = process_catalog(gutenberg_ids=[1342, 84], model_size="small")
+```bash
+python -c "import torch, transformers, booknlp, spacy, networkx; print('ok')"
 ```
 
 ---
 
-## Graph schemas
+## 2. Repository layout
 
-### Chapter graphs (`chapters/<slug>.pkl`)
+```
+.
+├── data/                      # folder skeleton only (all artifacts are .gitignored)
+│   ├── archive/               # legacy / bulky duplicates
+│   ├── dataset/               # ground_truth/, texts/, interactions/
+│   ├── evaluation/            # all_results/, compare/, diagnostics/
+│   ├── models/                # BookNLP weights + fine-tuned Longformer
+│   ├── output/                # BookNLP chapter outputs
+│   ├── predictions/           # per-book affinity CSVs (per model)
+│   ├── share_with_friend_clean/  # graphs + metrics export
+│   ├── splits/                # train/val/test split JSON
+│   └── training/              # training/val/test JSONL
+├── results_and_plots/         # paper-ready figures and tables (committed)
+├── src/                       # graph-building pipeline (BookNLP + lexicon)
+├── src/longformer_pipeline/   # Longformer fine-tuning + inference + plots
+├── requirements.txt
+└── README.md
+```
 
-Undirected `networkx.Graph`, one per chapter.
-
-- **Nodes** — one per BookNLP coref cluster classified as PER:
-  - `name` — canonical name (most frequent proper mention).
-  - `aliases` — all surface forms seen (proper + common).
-  - `mention_count` — mention count.
-  - `gender` — BookNLP-inferred gender (`unknown` when absent).
-- **Edges** — two characters within a 100-token window at least once:
-  - `weight` — number of co-occurrence windows.
-  - `sentiment` — `"positive" / "negative" / "neutral"` (VADER averaged
-    over the co-occurrence windows; BookNLP does not emit sentiment).
-  - `sentiment_score` — raw VADER compound score in `[-1, 1]`.
-  - `description` — short snippet from the most charged window.
-- **Graph-level** — `chapter_id`, `chapter_title`, `num_tokens`,
-  `short_chapter` (`True` when `num_tokens < 200`), `book_title`,
-  `gutenberg_id`.
-
-### Gold graphs (`gold/<slug>_gold.pkl`)
-
-Single `networkx.Graph` built only from the ~2 000 annotated words in
-LitBank (PER entities + coref chains).
-
-- **Nodes** — one per LitBank coref chain that has at least one PER
-  mention:
-  - `name` — longest mention text in the chain.
-  - `aliases` — every mention surface form in the chain.
-  - `mention_count` — number of mentions of the chain.
-- **Edges** — two chains appearing in the same sentence at least once:
-  - `weight` — number of co-occurring sentences.
-- **Graph-level** — `source` = `"litbank_gold"`, `gutenberg_id`,
-  `book_title`, `num_tokens`.
+> **Note on `data/`**: only the folder skeleton (via `.gitkeep`) is tracked.
+> Datasets, model weights, predictions, BookNLP outputs and evaluation
+> artifacts are not committed — regenerate them with the scripts below.
 
 ---
 
-## Notes & caveats
+## 3. End-to-end pipeline
 
-- LitBank covers ~2 000 words per book — that's the first few pages. The
-  gold graph is therefore tiny and is not directly comparable to a
-  full-chapter graph; it's a reference for evaluating BookNLP on the
-  same passage.
-- BookNLP is run **per chapter** (simpler, restartable). Global
-  coreference across chapters is not attempted in this phase.
-- Downloads, LitBank clones and BookNLP outputs are all cached — reruns
-  are cheap.
-- English only (all preset books qualify).
+Place a raw book at `data/raw/<book_id>.txt` (Project Gutenberg works well).
 
-## BookNLP compatibility patches
+### 3.1 Chapter splitting
 
-BookNLP 1.0.7.1 ships with two upstream issues that the pipeline
-monkey-patches transparently at load time (see
-``_patch_booknlp_for_windows`` in ``src/graph_builder.py``):
+```bash
+python src/step1_split_only.py --input data/raw/46.txt --book-id 46 --log-level INFO
+# -> data/output/chapters/46/chapters/chapter_000.txt ...
+```
 
-1. **Windows paths.** ``entity_tagger.py``, ``litbank_coref.py`` and
-   ``bert_qa.py`` use ``model_file.split("/")[-1]`` to derive a model
-   basename. On Windows the backslashes in the path leak into the
-   HuggingFace repo id and the call is rejected. The patch swaps the
-   logic for ``os.path.basename``.
-2. **New transformers releases.** BookNLP checkpoints still carry the
-   ``bert.embeddings.position_ids`` buffer that recent ``transformers``
-   versions have removed. The patch reloads the state dict with
-   ``strict=False`` so the stale key is silently dropped.
+### 3.2 BookNLP per chapter (entity, quote, supersense, event, coref)
 
-Both fixes are no-ops on Linux / macOS and on older ``transformers``
-versions — they just become irrelevant.
+```bash
+python src/run_booknlp_per_chapter.py --book-id 46 --model-size big \
+    --pipeline entity,quote,supersense,event,coref
+# -> data/output/booknlp/46/booknlp_46_chapter_NNNN/*
+```
+
+### 3.3 Derived artifacts (no new NLP)
+
+```bash
+python src/step2_character_list_per_chapter.py       --book-id 46
+python src/step3_predicates_between_characters.py    --book-id 46
+python src/step4_sentences_by_character_pair.py      --book-id 46
+```
+
+### 3.4 Chapter graphs (PMI + VADER lexicon)
+
+```bash
+python -m src.run_pipeline_all_books --book 46
+# -> data/graphs/chapters/<slug>.pkl + metadata
+```
+
+---
+
+## 4. Longformer fine-tuning
+
+All scripts live under `src/longformer_pipeline/` (set `PYTHONPATH=src`).
+
+### 4.1 Build training JSONL from GT + chapter interactions
+
+```bash
+python -m longformer_pipeline.build_dataset \
+    --gt-dir data/dataset/ground_truth \
+    --interactions-dir data/dataset/interactions \
+    --output-dir data/training \
+    --texts-dir data/dataset/texts
+```
+
+Produces `data/training/{train,val,test}.jsonl`.
+
+### 4.2 Train (MSE or Pearson + Weighted-MSE composite loss)
+
+```bash
+python -m longformer_pipeline.train \
+    --train-path data/training/train.jsonl \
+    --val-path   data/training/val.jsonl \
+    --output-dir data/models/longformer_prevprefix_full_1ep \
+    --epochs 1 --batch-size 4 --learning-rate 2e-5
+```
+
+### 4.3 Book-level inference (carry-forward for absent pairs)
+
+```bash
+python -m longformer_pipeline.inference \
+    --book-id 95 \
+    --interactions-dir data/dataset/interactions \
+    --model-dir data/models/longformer_prevprefix_full_1ep/best \
+    --output-csv data/predictions/prevprefix_test_1ep/95_predicted.csv
+```
+
+### 4.4 Evaluation, comparison plots, SHAP
+
+```bash
+python -m longformer_pipeline.export_friend_pack         # metrics + graph PNGs
+python -m longformer_pipeline.plot_two_chapters_batch    # max-change transition
+python -m longformer_pipeline.plot_all_chapters_batch    # per-chapter graphs
+python -m longformer_pipeline.explain_shap               # region + token SHAP
+```
+
+---
+
+## 5. Results and figures
+
+All paper-ready figures and tables are committed under `results_and_plots/`:
+
+| folder | content |
+|---|---|
+| `Sample_output_graph/` | predicted graphs for test books (95, 99, 110) |
+| `Sample_Improvement/`  | full graph set for book 110 (all models) |
+| `training_testing_results/` | train/val/test comparison metrics + plots |
+| `sample_book_improvements/` | val books 86, 91 + aggregate (pretrained vs FT) |
+| `histplots/` | GT vs prediction value and Δ distributions |
+
+---
+
+## 6. BookNLP compatibility patches
+
+`src/graph_builder.py` monkey-patches two known issues at import time:
+
+1. **Windows paths.** `entity_tagger.py`, `litbank_coref.py`, `bert_qa.py`
+   use `model_file.split("/")[-1]` which breaks on Windows back-slashes;
+   replaced with `os.path.basename`.
+2. **New `transformers` releases.** BookNLP checkpoints still carry the
+   stale `bert.embeddings.position_ids` buffer; loaded with `strict=False`
+   so the key is silently dropped.
+
+Both fixes are no-ops on Linux/macOS and on older `transformers`.
+
+---
+
+## 7. License & attribution
+
+Academic project. BookNLP © David Bamman et al.; LitBank, VADER, Longformer
+under their respective licenses.

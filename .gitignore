@@ -1,23 +1,12 @@
+# Python
 .venv/
 __pycache__/
 **/__pycache__/
 *.pyc
+*.pyo
 .ipynb_checkpoints/
 
-# Local caches / large derived artifacts (replicable)
-# Ignore ALL data by default (keep raw/46.txt only)
-data/**
-
-# Keep this one reference raw file
-!data/raw/46.txt
-
-# Keep empty folder structure markers (if present)
-!data/raw/.gitkeep
-!data/booknlp_only_output/.gitkeep
-!data/booknlp_output/.gitkeep
-!data/books/.gitkeep
-
-# OS / editor noise
+# OS / editor
 Thumbs.db
 Desktop.ini
 .DS_Store
@@ -25,3 +14,22 @@ Desktop.ini
 # Secrets
 .env
 *.key
+
+# Local notes / scratch
+paper.txt
+reorganize.ps1
+REPO_SUMMARY.txt
+SESSION_REPORT.txt
+*.zip
+
+# ---------------------------------------------------------------------------
+# data/  -> only track folder skeleton via .gitkeep, everything else ignored
+# ---------------------------------------------------------------------------
+data/*
+!data/.gitkeep
+!data/*/
+data/*/*
+!data/*/.gitkeep
+!data/*/*/
+data/*/*/*
+!data/*/*/.gitkeep

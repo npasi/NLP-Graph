@@ -1,0 +1,16 @@
+{
+  "book": "Predicted",
+  "csv": "data\\predictions\\prevprefix_test_pearson_2ep\\99_predicted.csv",
+  "chapter_a": "chapter_1",
+  "chapter_b": "chapter_2",
+  "title_label": "pearson_2ep",
+  "top_k_edges_union": 10,
+  "files": {
+    "a": "data\\share_with_friend_clean\\graphs\\test\\99\\pearson_2ep\\two_chapters_change\\graph_pred_chapter_1.png",
+    "b": "data\\share_with_friend_clean\\graphs\\test\\99\\pearson_2ep\\two_chapters_change\\graph_pred_chapter_2.png"
+  },
+  "book_id": "99",
+  "layout_csv": "data\\dataset\\ground_truth\\99_the_ambassadors_henry_james_affinity.csv",
+  "pred_csv": "data\\predictions\\prevprefix_test_pearson_2ep\\99_predicted.csv",
+  "transition_index_0based": 0
+}
